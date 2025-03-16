@@ -5,7 +5,7 @@
 // https://www.prisma.io/docs/orm/prisma-migrate
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -37,4 +37,94 @@ model UserCredential {
   publicKey  Bytes
   transports String?
   counter    BigInt
+}
+
+model Plant {
+  id                  String           @id @default(uuid())
+  name                String
+  price               Decimal
+  stock               Int
+  categoryId          String
+  category            Category         @relation(fields: [categoryId], references: [id])
+  presentationType    PresentationType
+  presentationDetails String?
+  photos              Photo[]
+  saleDetails         SaleDetail[] // 🔹 Added relation to SaleDetail
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+  deletedAt           DateTime?
+}
+
+model Category {
+  id          String    @id @default(uuid())
+  name        String    @unique
+  description String?
+  plants      Plant[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+}
+
+model Customer {
+  id        String     @id @default(uuid())
+  name      String
+  phone     String     @unique
+  email     String?
+  saleNotes SaleNote[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  deletedAt DateTime?
+}
+
+model SaleNote {
+  id          String       @id @default(uuid())
+  customerId  String
+  customer    Customer     @relation(fields: [customerId], references: [id])
+  nurseryId   String
+  nursery     Nursery      @relation(fields: [nurseryId], references: [id])
+  saleDetails SaleDetail[]
+  total       Decimal
+  folio       String       @unique
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  deletedAt   DateTime?
+}
+
+model SaleDetail {
+  id         String   @id @default(uuid())
+  saleNoteId String
+  saleNote   SaleNote @relation(fields: [saleNoteId], references: [id])
+  plantId    String
+  plant      Plant    @relation(fields: [plantId], references: [id])
+  price      Decimal // Price at which the plant was sold
+  quantity   Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Nursery {
+  id        String     @id @default(uuid())
+  name      String
+  address   String
+  phone     String
+  logo      String?
+  rfc       String
+  saleNotes SaleNote[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  deletedAt DateTime?
+}
+
+model Photo {
+  id        String   @id @default(uuid())
+  url       String
+  plantId   String
+  plant     Plant    @relation(fields: [plantId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+enum PresentationType {
+  BAG
+  POT
+  HANGING
 }
