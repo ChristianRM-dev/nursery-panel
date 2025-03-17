@@ -1,4 +1,5 @@
 import { db } from 'src/lib/db'
+import { paginate } from 'src/lib/pagination'
 import type {
   QueryResolvers,
   MutationResolvers,
@@ -11,38 +12,26 @@ export const plants: QueryResolvers['plants'] = async ({
   search,
 }) => {
   const { page, pageSize } = pagination
-  const { sortField, sortOrder } = sort || { sortField: 'createdAt', sortOrder: 'desc' }
-  const { search: searchTerm } = search || { search: '' }
+  const { sortField, sortOrder = 'desc' } = sort || {} // Default to 'desc'
+  const { search: searchTerm } = search || {}
 
-  const where = searchTerm
-    ? {
-        OR: [
-          { name: { contains: searchTerm, mode: 'insensitive' } },
-          { presentationDetails: { contains: searchTerm, mode: 'insensitive' } },
-        ],
-      }
-    : {}
+  // Ensure sortOrder is explicitly typed as "asc" | "desc"
+  const validatedSortOrder = sortOrder === 'asc' ? 'asc' : 'desc'
 
-  const total = await db.plant.count({ where })
-  const plants = await db.plant.findMany({
-    where,
-    skip: (page - 1) * pageSize,
-    take: pageSize,
-    orderBy: { [sortField]: sortOrder },
-    include: { category: true, photos: true, saleDetails: true },
-  })
-
-  return {
-    data: plants,
-    meta: {
-      total,
+  return paginate(
+    db.plant,
+    {},
+    { category: true, photos: true, saleDetails: true },
+    {
       page,
       pageSize,
-      totalPages: Math.ceil(total / pageSize),
-    },
-  }
+      sortField,
+      sortOrder: validatedSortOrder, // Use validated sortOrder
+      search: searchTerm,
+      searchFields: ['name', 'presentationDetails'],
+    }
+  )
 }
-
 
 export const plant: QueryResolvers['plant'] = ({ id }) => {
   return db.plant.findUnique({

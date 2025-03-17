@@ -1,94 +1,80 @@
-import { useEffect, useRef } from 'react'
-
-import { Form, Label, TextField, Submit, FieldError } from '@redwoodjs/forms'
-import { navigate, routes } from '@redwoodjs/router'
-import { Metadata } from '@redwoodjs/web'
-import { toast, Toaster } from '@redwoodjs/web/toast'
-
-import { useAuth } from 'src/auth'
+import { useEffect, useRef } from 'react';
+import { navigate, routes } from '@redwoodjs/router';
+import { Metadata } from '@redwoodjs/web';
+import { useAuth } from 'src/auth';
+import { TextInput, Button, Card, Title, Text, Flex, Stack } from '@mantine/core';
+import { notifications } from '@mantine/notifications';
+import { IconCheck, IconX } from '@tabler/icons-react';
 
 const ForgotPasswordPage = () => {
-  const { isAuthenticated, forgotPassword } = useAuth()
+  const { isAuthenticated, forgotPassword } = useAuth();
 
+  // Redirect if already authenticated
   useEffect(() => {
     if (isAuthenticated) {
-      navigate(routes.home())
+      navigate(routes.home());
     }
-  }, [isAuthenticated])
+  }, [isAuthenticated]);
 
-  const usernameRef = useRef<HTMLInputElement>(null)
+  // Focus on the username field on page load
+  const usernameRef = useRef<HTMLInputElement>(null);
   useEffect(() => {
-    usernameRef?.current?.focus()
-  }, [])
+    usernameRef.current?.focus();
+  }, []);
 
-  const onSubmit = async (data: { username: string }) => {
-    const response = await forgotPassword(data.username)
+  const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const username = formData.get('username') as string;
+
+    const response = await forgotPassword(username);
 
     if (response.error) {
-      toast.error(response.error)
+      notifications.show({
+        title: 'Error',
+        message: response.error,
+        color: 'red',
+        icon: <IconX />,
+      });
     } else {
-      // The function `forgotPassword.handler` in api/src/functions/auth.js has
-      // been invoked, let the user know how to get the link to reset their
-      // password (sent in email, perhaps?)
-      toast.success(
-        'A link to reset your password was sent to ' + response.email
-      )
-      navigate(routes.login())
+      notifications.show({
+        title: 'Success',
+        message: `A link to reset your password was sent to ${response.email}`,
+        color: 'green',
+        icon: <IconCheck />,
+      });
+      navigate(routes.login());
     }
-  }
+  };
 
   return (
     <>
       <Metadata title="Forgot Password" />
 
-      <main className="rw-main">
-        <Toaster toastOptions={{ className: 'rw-toast', duration: 6000 }} />
-        <div className="rw-scaffold rw-login-container">
-          <div className="rw-segment">
-            <header className="rw-segment-header">
-              <h2 className="rw-heading rw-heading-secondary">
-                Forgot Password
-              </h2>
-            </header>
+      <Flex justify="center" align="center" h="100vh">
+        <Card withBorder shadow="sm" p="lg" w={400}>
+          <Title order={2} ta="center" mb="lg">
+            Forgot Password
+          </Title>
 
-            <div className="rw-segment-main">
-              <div className="rw-form-wrapper">
-                <Form onSubmit={onSubmit} className="rw-form-wrapper">
-                  <div className="text-left">
-                    <Label
-                      name="username"
-                      className="rw-label"
-                      errorClassName="rw-label rw-label-error"
-                    >
-                      Username
-                    </Label>
-                    <TextField
-                      name="username"
-                      className="rw-input"
-                      errorClassName="rw-input rw-input-error"
-                      ref={usernameRef}
-                      validation={{
-                        required: {
-                          value: true,
-                          message: 'Username is required',
-                        },
-                      }}
-                    />
-
-                    <FieldError name="username" className="rw-field-error" />
-                  </div>
-
-                  <div className="rw-button-group">
-                    <Submit className="rw-button rw-button-blue">Submit</Submit>
-                  </div>
-                </Form>
-              </div>
-            </div>
-          </div>
-        </div>
-      </main>
+          <form onSubmit={onSubmit}>
+            <Stack>
+              <TextInput
+                name="username"
+                label="Username"
+                placeholder="Enter your username"
+                ref={usernameRef}
+                required
+              />
+              <Button type="submit" fullWidth>
+                Submit
+              </Button>
+            </Stack>
+          </form>
+        </Card>
+      </Flex>
     </>
-  )
-}
+  );
+};
 
-export default ForgotPasswordPage
+export default ForgotPasswordPage;

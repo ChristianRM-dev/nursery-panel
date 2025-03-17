@@ -1,3 +1,4 @@
+// api/src/graphql/categories.sdl.ts
 export const schema = gql`
   type Category {
     id: String!
@@ -9,8 +10,17 @@ export const schema = gql`
     deletedAt: DateTime
   }
 
+  type CategoriesResponse {
+    data: [Category!]!
+    meta: PaginationMeta!
+  }
+
   type Query {
-    categories: [Category!]! @requireAuth
+    categories(
+      pagination: PaginationInput!
+      sort: SortInput
+      search: SearchInput
+    ): CategoriesResponse! @requireAuth
     category(id: String!): Category @requireAuth
   }
 

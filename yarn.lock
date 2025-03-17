@@ -1632,7 +1632,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:^7.18.3, @babel/runtime@npm:^7.20.13":
+"@babel/runtime@npm:^7.18.3, @babel/runtime@npm:^7.20.13, @babel/runtime@npm:^7.5.5, @babel/runtime@npm:^7.8.7":
   version: 7.26.10
   resolution: "@babel/runtime@npm:7.26.10"
   dependencies:
@@ -4052,6 +4052,30 @@ __metadata:
   peerDependencies:
     react: ^18.x || ^19.x
   checksum: 10c0/539b0de3993e2f78f0989b0309211c5d59f04db71a2a831cd6c1cf37f3d843231b30a9830f72b75ee49591f215173c6ddb2c09ce14306973356aefa2c6f831c4
+  languageName: node
+  linkType: hard
+
+"@mantine/notifications@npm:^7.17.2":
+  version: 7.17.2
+  resolution: "@mantine/notifications@npm:7.17.2"
+  dependencies:
+    "@mantine/store": "npm:7.17.2"
+    react-transition-group: "npm:4.4.5"
+  peerDependencies:
+    "@mantine/core": 7.17.2
+    "@mantine/hooks": 7.17.2
+    react: ^18.x || ^19.x
+    react-dom: ^18.x || ^19.x
+  checksum: 10c0/7f780cb3fa936a3f0abf9880e1a0c71bcaccf760c259ae25a3d86a1014367c58de4e093169bbd2a9c572cebd28bdef264d1920e1b8c73b8387f1d3354327ff08
+  languageName: node
+  linkType: hard
+
+"@mantine/store@npm:7.17.2":
+  version: 7.17.2
+  resolution: "@mantine/store@npm:7.17.2"
+  peerDependencies:
+    react: ^18.x || ^19.x
+  checksum: 10c0/89e9c1d77ebfeeef660a97ac06a8e676dc71472c5f6f681274f5843da96c76a5f05490d56842af0f1634fb4b7cc09f05309abaccae902790af26b1cc8aa7b0bc
   languageName: node
   linkType: hard
 
@@ -9171,6 +9195,16 @@ __metadata:
   version: 0.6.3
   resolution: "dom-accessibility-api@npm:0.6.3"
   checksum: 10c0/10bee5aa514b2a9a37c87cd81268db607a2e933a050074abc2f6fa3da9080ebed206a320cbc123567f2c3087d22292853bdfdceaffdd4334ffe2af9510b29360
+  languageName: node
+  linkType: hard
+
+"dom-helpers@npm:^5.0.1":
+  version: 5.2.1
+  resolution: "dom-helpers@npm:5.2.1"
+  dependencies:
+    "@babel/runtime": "npm:^7.8.7"
+    csstype: "npm:^3.0.2"
+  checksum: 10c0/f735074d66dd759b36b158fa26e9d00c9388ee0e8c9b16af941c38f014a37fc80782de83afefd621681b19ac0501034b4f1c4a3bff5caa1b8667f0212b5e124c
   languageName: node
   linkType: hard
 
@@ -15196,7 +15230,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prop-types@npm:^15.7.2, prop-types@npm:^15.8.1":
+"prop-types@npm:^15.6.2, prop-types@npm:^15.7.2, prop-types@npm:^15.8.1":
   version: 15.8.1
   resolution: "prop-types@npm:15.8.1"
   dependencies:
@@ -15583,6 +15617,21 @@ __metadata:
   peerDependencies:
     react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
   checksum: 10c0/652d290d316c55a253507ecf65ca27f2162801dace10c715f2241203e81d82e9de6d282095b758b26c6bc9e1af9ca552cab5c3a361b230e5fcf25bec31e1bd25
+  languageName: node
+  linkType: hard
+
+"react-transition-group@npm:4.4.5":
+  version: 4.4.5
+  resolution: "react-transition-group@npm:4.4.5"
+  dependencies:
+    "@babel/runtime": "npm:^7.5.5"
+    dom-helpers: "npm:^5.0.1"
+    loose-envify: "npm:^1.4.0"
+    prop-types: "npm:^15.6.2"
+  peerDependencies:
+    react: ">=16.6.0"
+    react-dom: ">=16.6.0"
+  checksum: 10c0/2ba754ba748faefa15f87c96dfa700d5525054a0141de8c75763aae6734af0740e77e11261a1e8f4ffc08fd9ab78510122e05c21c2d79066c38bb6861a886c82
   languageName: node
   linkType: hard
 
@@ -18250,6 +18299,7 @@ __metadata:
     "@mantine/core": "npm:^7.17.2"
     "@mantine/form": "npm:^7.17.2"
     "@mantine/hooks": "npm:^7.17.2"
+    "@mantine/notifications": "npm:^7.17.2"
     "@redwoodjs/auth-dbauth-web": "npm:8.5.0"
     "@redwoodjs/forms": "npm:8.5.0"
     "@redwoodjs/router": "npm:8.5.0"

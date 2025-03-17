@@ -1,13 +1,36 @@
+import { db } from 'src/lib/db'
+import { paginate } from 'src/lib/pagination'
 import type {
   QueryResolvers,
   MutationResolvers,
   CategoryRelationResolvers,
 } from 'types/graphql'
 
-import { db } from 'src/lib/db'
+export const categories: QueryResolvers['categories'] = async ({
+  pagination,
+  sort,
+  search,
+}) => {
+  const { page, pageSize } = pagination
+  const { sortField, sortOrder = 'desc' } = sort || {} // Default to 'desc'
+  const { search: searchTerm } = search || {}
 
-export const categories: QueryResolvers['categories'] = () => {
-  return db.category.findMany()
+  // Ensure sortOrder is explicitly typed as "asc" | "desc"
+  const validatedSortOrder = sortOrder === 'asc' ? 'asc' : 'desc'
+
+  return paginate(
+    db.category,
+    {},
+    { plants: true },
+    {
+      page,
+      pageSize,
+      sortField,
+      sortOrder: validatedSortOrder, // Use validated sortOrder
+      search: searchTerm,
+      searchFields: ['name', 'description'],
+    }
+  )
 }
 
 export const category: QueryResolvers['category'] = ({ id }) => {

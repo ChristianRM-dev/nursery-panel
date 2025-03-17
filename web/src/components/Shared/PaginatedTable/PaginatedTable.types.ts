@@ -41,3 +41,4 @@ export interface TableQuery {
   sort?: { sortField: string; sortOrder: 'asc' | 'desc' };
   search?: { search: string };
 }
+

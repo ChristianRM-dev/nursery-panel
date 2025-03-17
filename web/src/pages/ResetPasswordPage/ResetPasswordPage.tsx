@@ -1,121 +1,125 @@
-import { useEffect, useRef, useState } from 'react'
-
+import { useEffect, useRef, useState } from 'react';
+import { navigate, routes } from '@redwoodjs/router';
+import { Metadata } from '@redwoodjs/web';
+import { useAuth } from 'src/auth';
 import {
-  Form,
-  Label,
-  PasswordField,
-  Submit,
-  FieldError,
-} from '@redwoodjs/forms'
-import { navigate, routes } from '@redwoodjs/router'
-import { Metadata } from '@redwoodjs/web'
-import { toast, Toaster } from '@redwoodjs/web/toast'
-
-import { useAuth } from 'src/auth'
+  PasswordInput,
+  Button,
+  Card,
+  Title,
+  Text,
+  Flex,
+  Stack,
+  Loader,
+} from '@mantine/core';
+import { notifications } from '@mantine/notifications';
+import { IconCheck, IconX } from '@tabler/icons-react';
 
 const ResetPasswordPage = ({ resetToken }: { resetToken: string }) => {
   const { isAuthenticated, reauthenticate, validateResetToken, resetPassword } =
-    useAuth()
-  const [enabled, setEnabled] = useState(true)
+    useAuth();
+  const [enabled, setEnabled] = useState(true);
+  const [isValidatingToken, setIsValidatingToken] = useState(true);
 
+  // Redirect if already authenticated
   useEffect(() => {
     if (isAuthenticated) {
-      navigate(routes.home())
+      navigate(routes.home());
     }
-  }, [isAuthenticated])
+  }, [isAuthenticated]);
 
+  // Validate the reset token
   useEffect(() => {
     const validateToken = async () => {
-      const response = await validateResetToken(resetToken)
+      const response = await validateResetToken(resetToken);
       if (response.error) {
-        setEnabled(false)
-        toast.error(response.error)
+        setEnabled(false);
+        notifications.show({
+          title: 'Error',
+          message: response.error,
+          color: 'red',
+          icon: <IconX />,
+        });
       } else {
-        setEnabled(true)
+        setEnabled(true);
       }
-    }
-    validateToken()
-  }, [resetToken, validateResetToken])
+      setIsValidatingToken(false);
+    };
+    validateToken();
+  }, [resetToken, validateResetToken]);
 
-  const passwordRef = useRef<HTMLInputElement>(null)
+  // Focus on the password field on page load
+  const passwordRef = useRef<HTMLInputElement>(null);
   useEffect(() => {
-    passwordRef.current?.focus()
-  }, [])
+    passwordRef.current?.focus();
+  }, []);
 
-  const onSubmit = async (data: Record<string, string>) => {
+  const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const password = formData.get('password') as string;
+
     const response = await resetPassword({
       resetToken,
-      password: data.password,
-    })
+      password,
+    });
 
     if (response.error) {
-      toast.error(response.error)
+      notifications.show({
+        title: 'Error',
+        message: response.error,
+        color: 'red',
+        icon: <IconX />,
+      });
     } else {
-      toast.success('Password changed!')
-      await reauthenticate()
-      navigate(routes.login())
+      notifications.show({
+        title: 'Success',
+        message: 'Password changed!',
+        color: 'green',
+        icon: <IconCheck />,
+      });
+      await reauthenticate();
+      navigate(routes.login());
     }
+  };
+
+  if (isValidatingToken) {
+    return (
+      <Flex justify="center" align="center" h="100vh">
+        <Loader size="lg" />
+      </Flex>
+    );
   }
 
   return (
     <>
       <Metadata title="Reset Password" />
 
-      <main className="rw-main">
-        <Toaster toastOptions={{ className: 'rw-toast', duration: 6000 }} />
-        <div className="rw-scaffold rw-login-container">
-          <div className="rw-segment">
-            <header className="rw-segment-header">
-              <h2 className="rw-heading rw-heading-secondary">
-                Reset Password
-              </h2>
-            </header>
+      <Flex justify="center" align="center" h="100vh">
+        <Card withBorder shadow="sm" p="lg" w={400}>
+          <Title order={2} ta="center" mb="lg">
+            Reset Password
+          </Title>
 
-            <div className="rw-segment-main">
-              <div className="rw-form-wrapper">
-                <Form onSubmit={onSubmit} className="rw-form-wrapper">
-                  <div className="text-left">
-                    <Label
-                      name="password"
-                      className="rw-label"
-                      errorClassName="rw-label rw-label-error"
-                    >
-                      New Password
-                    </Label>
-                    <PasswordField
-                      name="password"
-                      autoComplete="new-password"
-                      className="rw-input"
-                      errorClassName="rw-input rw-input-error"
-                      disabled={!enabled}
-                      ref={passwordRef}
-                      validation={{
-                        required: {
-                          value: true,
-                          message: 'New Password is required',
-                        },
-                      }}
-                    />
-
-                    <FieldError name="password" className="rw-field-error" />
-                  </div>
-
-                  <div className="rw-button-group">
-                    <Submit
-                      className="rw-button rw-button-blue"
-                      disabled={!enabled}
-                    >
-                      Submit
-                    </Submit>
-                  </div>
-                </Form>
-              </div>
-            </div>
-          </div>
-        </div>
-      </main>
+          <form onSubmit={onSubmit}>
+            <Stack>
+              <PasswordInput
+                name="password"
+                label="New Password"
+                placeholder="Enter your new password"
+                ref={passwordRef}
+                disabled={!enabled}
+                required
+              />
+              <Button type="submit" fullWidth disabled={!enabled}>
+                Submit
+              </Button>
+            </Stack>
+          </form>
+        </Card>
+      </Flex>
     </>
-  )
-}
+  );
+};
 
-export default ResetPasswordPage
+export default ResetPasswordPage;

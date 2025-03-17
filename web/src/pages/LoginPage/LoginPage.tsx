@@ -1,21 +1,23 @@
-import { useEffect, useRef, useState } from 'react'
-
+import { useEffect, useRef, useState } from 'react';
+import { Link, navigate, routes } from '@redwoodjs/router';
+import { Metadata } from '@redwoodjs/web';
+import { useAuth } from 'src/auth';
 import {
-  Form,
-  Label,
-  TextField,
-  PasswordField,
-  Submit,
-  FieldError,
-} from '@redwoodjs/forms'
-import { Link, navigate, routes } from '@redwoodjs/router'
-import { Metadata } from '@redwoodjs/web'
-import { toast, Toaster } from '@redwoodjs/web/toast'
+  TextInput,
+  PasswordInput,
+  Button,
+  Card,
+  Title,
+  Text,
+  Flex,
+  Stack,
+  Anchor,
+} from '@mantine/core';
+import { notifications } from '@mantine/notifications';
+import { IconCheck, IconX } from '@tabler/icons-react';
 
-import { useAuth } from 'src/auth'
-
-const WELCOME_MESSAGE = 'Welcome back!'
-const REDIRECT = routes.home()
+const WELCOME_MESSAGE = 'Welcome back!';
+const REDIRECT = routes.home();
 
 const LoginPage = ({ type }) => {
   const {
@@ -24,244 +26,245 @@ const LoginPage = ({ type }) => {
     loading,
     logIn,
     reauthenticate,
-  } = useAuth()
-  const [shouldShowWebAuthn, setShouldShowWebAuthn] = useState(false)
+  } = useAuth();
+  const [shouldShowWebAuthn, setShouldShowWebAuthn] = useState(false);
   const [showWebAuthn, setShowWebAuthn] = useState(
     webAuthn.isEnabled() && type !== 'password'
-  )
+  );
 
-  // should redirect right after login or wait to show the webAuthn prompts?
+  // Redirect after login or WebAuthn setup
   useEffect(() => {
     if (isAuthenticated && (!shouldShowWebAuthn || webAuthn.isEnabled())) {
-      navigate(REDIRECT)
+      navigate(REDIRECT);
     }
-  }, [isAuthenticated, shouldShowWebAuthn])
+  }, [isAuthenticated, shouldShowWebAuthn]);
 
-  // if WebAuthn is enabled, show the prompt as soon as the page loads
+  // Show WebAuthn prompt on page load if enabled
   useEffect(() => {
     if (!loading && !isAuthenticated && showWebAuthn) {
-      onAuthenticate()
+      onAuthenticate();
     }
-  }, [loading, isAuthenticated])
+  }, [loading, isAuthenticated]);
 
-  // focus on the username field as soon as the page loads
-  const usernameRef = useRef()
+  // Focus on the username field on page load
+  const usernameRef = useRef<HTMLInputElement>(null);
   useEffect(() => {
-    usernameRef.current && usernameRef.current.focus()
-  }, [])
+    usernameRef.current?.focus();
+  }, []);
 
-  const onSubmit = async (data) => {
-    const webAuthnSupported = await webAuthn.isSupported()
+  const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const username = formData.get('username') as string;
+    const password = formData.get('password') as string;
+
+    const webAuthnSupported = await webAuthn.isSupported();
 
     if (webAuthnSupported) {
-      setShouldShowWebAuthn(true)
+      setShouldShowWebAuthn(true);
     }
-    const response = await logIn({
-      username: data.username,
-      password: data.password,
-    })
+
+    const response = await logIn({ username, password });
 
     if (response.message) {
-      // auth details good, but user not logged in
-      toast(response.message)
+      notifications.show({
+        title: 'Message',
+        message: response.message,
+        color: 'blue',
+        icon: <IconCheck />,
+      });
     } else if (response.error) {
-      // error while authenticating
-      toast.error(response.error)
+      notifications.show({
+        title: 'Error',
+        message: response.error,
+        color: 'red',
+        icon: <IconX />,
+      });
     } else {
-      // user logged in
       if (webAuthnSupported) {
-        setShowWebAuthn(true)
+        setShowWebAuthn(true);
       } else {
-        toast.success(WELCOME_MESSAGE)
+        notifications.show({
+          title: 'Success',
+          message: WELCOME_MESSAGE,
+          color: 'green',
+          icon: <IconCheck />,
+        });
       }
     }
-  }
+  };
 
   const onAuthenticate = async () => {
     try {
-      await webAuthn.authenticate()
-      await reauthenticate()
-      toast.success(WELCOME_MESSAGE)
-      navigate(REDIRECT)
+      await webAuthn.authenticate();
+      await reauthenticate();
+      notifications.show({
+        title: 'Success',
+        message: WELCOME_MESSAGE,
+        color: 'green',
+        icon: <IconCheck />,
+      });
+      navigate(REDIRECT);
     } catch (e) {
       if (e.name === 'WebAuthnDeviceNotFoundError') {
-        toast.error(
-          'Device not found, log in with Username/Password to continue'
-        )
-        setShowWebAuthn(false)
+        notifications.show({
+          title: 'Error',
+          message: 'Device not found, log in with Username/Password to continue',
+          color: 'red',
+          icon: <IconX />,
+        });
+        setShowWebAuthn(false);
       } else {
-        toast.error(e.message)
+        notifications.show({
+          title: 'Error',
+          message: e.message,
+          color: 'red',
+          icon: <IconX />,
+        });
       }
     }
-  }
+  };
 
   const onRegister = async () => {
     try {
-      await webAuthn.register()
-      toast.success(WELCOME_MESSAGE)
-      navigate(REDIRECT)
+      await webAuthn.register();
+      notifications.show({
+        title: 'Success',
+        message: WELCOME_MESSAGE,
+        color: 'green',
+        icon: <IconCheck />,
+      });
+      navigate(REDIRECT);
     } catch (e) {
-      toast.error(e.message)
+      notifications.show({
+        title: 'Error',
+        message: e.message,
+        color: 'red',
+        icon: <IconX />,
+      });
     }
-  }
+  };
 
   const onSkip = () => {
-    toast.success(WELCOME_MESSAGE)
-    setShouldShowWebAuthn(false)
-  }
+    notifications.show({
+      title: 'Success',
+      message: WELCOME_MESSAGE,
+      color: 'green',
+      icon: <IconCheck />,
+    });
+    setShouldShowWebAuthn(false);
+  };
 
-  const AuthWebAuthnPrompt = () => {
-    return (
-      <div className="rw-webauthn-wrapper">
-        <h2>WebAuthn Login Enabled</h2>
-        <p>Log in with your fingerprint, face or PIN</p>
-        <div className="rw-button-group">
-          <button className="rw-button rw-button-blue" onClick={onAuthenticate}>
-            Open Authenticator
-          </button>
-        </div>
-      </div>
-    )
-  }
+  const AuthWebAuthnPrompt = () => (
+    <Card withBorder shadow="sm" p="lg">
+      <Title order={2} ta="center" mb="md">
+        WebAuthn Login Enabled
+      </Title>
+      <Text ta="center" mb="lg">
+        Log in with your fingerprint, face, or PIN
+      </Text>
+      <Button fullWidth onClick={onAuthenticate}>
+        Open Authenticator
+      </Button>
+    </Card>
+  );
 
   const RegisterWebAuthnPrompt = () => (
-    <div className="rw-webauthn-wrapper">
-      <h2>No more Passwords!</h2>
-      <p>
-        Depending on your device you can log in with your fingerprint, face or
-        PIN next time.
-      </p>
-      <div className="rw-button-group">
-        <button className="rw-button rw-button-blue" onClick={onRegister}>
+    <Card withBorder shadow="sm" p="lg">
+      <Title order={2} ta="center" mb="md">
+        No More Passwords!
+      </Title>
+      <Text ta="center" mb="lg">
+        Depending on your device, you can log in with your fingerprint, face, or PIN next time.
+      </Text>
+      <Stack>
+        <Button fullWidth onClick={onRegister}>
           Turn On
-        </button>
-        <button className="rw-button" onClick={onSkip}>
-          Skip for now
-        </button>
-      </div>
-    </div>
-  )
+        </Button>
+        <Button variant="outline" fullWidth onClick={onSkip}>
+          Skip for Now
+        </Button>
+      </Stack>
+    </Card>
+  );
 
   const PasswordForm = () => (
-    <Form onSubmit={onSubmit} className="rw-form-wrapper">
-      <Label
-        name="username"
-        className="rw-label"
-        errorClassName="rw-label rw-label-error"
-      >
-        Username
-      </Label>
-      <TextField
-        name="username"
-        className="rw-input"
-        errorClassName="rw-input rw-input-error"
-        ref={usernameRef}
-        autoFocus
-        validation={{
-          required: {
-            value: true,
-            message: 'Username is required',
-          },
-        }}
-      />
-
-      <FieldError name="username" className="rw-field-error" />
-
-      <Label
-        name="password"
-        className="rw-label"
-        errorClassName="rw-label rw-label-error"
-      >
-        Password
-      </Label>
-      <PasswordField
-        name="password"
-        className="rw-input"
-        errorClassName="rw-input rw-input-error"
-        autoComplete="current-password"
-        validation={{
-          required: {
-            value: true,
-            message: 'Password is required',
-          },
-        }}
-      />
-
-      <div className="rw-forgot-link">
-        <Link to={routes.forgotPassword()} className="rw-forgot-link">
+    <form onSubmit={onSubmit}>
+      <Stack>
+        <TextInput
+          name="username"
+          label="Username"
+          placeholder="Enter your username"
+          ref={usernameRef}
+          required
+        />
+        <PasswordInput
+          name="password"
+          label="Password"
+          placeholder="Enter your password"
+          required
+        />
+        <Anchor component={Link} to={routes.forgotPassword()} size="sm">
           Forgot Password?
-        </Link>
-      </div>
-
-      <FieldError name="password" className="rw-field-error" />
-
-      <div className="rw-button-group">
-        <Submit className="rw-button rw-button-blue">Login</Submit>
-      </div>
-    </Form>
-  )
+        </Anchor>
+        <Button type="submit" fullWidth>
+          Login
+        </Button>
+      </Stack>
+    </form>
+  );
 
   const formToRender = () => {
     if (showWebAuthn) {
-      if (webAuthn.isEnabled()) {
-        return <AuthWebAuthnPrompt />
-      } else {
-        return <RegisterWebAuthnPrompt />
-      }
+      return webAuthn.isEnabled() ? <AuthWebAuthnPrompt /> : <RegisterWebAuthnPrompt />;
     } else {
-      return <PasswordForm />
+      return <PasswordForm />;
     }
-  }
+  };
 
   const linkToRender = () => {
     if (showWebAuthn) {
       if (webAuthn.isEnabled()) {
         return (
-          <div className="rw-login-link">
-            <span>or login with </span>{' '}
-            <a href="?type=password" className="rw-link">
+          <Text ta="center" mt="md">
+            or login with{' '}
+            <Anchor component={Link} to="?type=password">
               username and password
-            </a>
-          </div>
-        )
+            </Anchor>
+          </Text>
+        );
       }
     } else {
       return (
-        <div className="rw-login-link">
-          <span>Don&apos;t have an account?</span>{' '}
-          <Link to={routes.signup()} className="rw-link">
+        <Text ta="center" mt="md">
+          Don&apos;t have an account?{' '}
+          <Anchor component={Link} to={routes.signup()}>
             Sign up!
-          </Link>
-        </div>
-      )
+          </Anchor>
+        </Text>
+      );
     }
-  }
+  };
 
   if (loading) {
-    return null
+    return null;
   }
 
   return (
     <>
       <Metadata title="Login" />
 
-      <main className="rw-main">
-        <Toaster toastOptions={{ className: 'rw-toast', duration: 6000 }} />
-        <div className="rw-scaffold rw-login-container">
-          <div className="rw-segment">
-            <header className="rw-segment-header">
-              <h2 className="rw-heading rw-heading-secondary">Login</h2>
-            </header>
-
-            <div className="rw-segment-main">
-              <div className="rw-form-wrapper">{formToRender()}</div>
-            </div>
-          </div>
+      <Flex justify="center" align="center" h="100vh">
+        <Card withBorder shadow="sm" p="lg" w={400}>
+          <Title order={2} ta="center" mb="lg">
+            Login
+          </Title>
+          {formToRender()}
           {linkToRender()}
-        </div>
-      </main>
+        </Card>
+      </Flex>
     </>
-  )
-}
+  );
+};
 
-export default LoginPage
+export default LoginPage;

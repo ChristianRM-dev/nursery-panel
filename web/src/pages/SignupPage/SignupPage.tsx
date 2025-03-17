@@ -1,126 +1,110 @@
-import { useEffect, useRef } from 'react'
-
+import { useEffect, useRef } from 'react';
+import { Link, navigate, routes } from '@redwoodjs/router';
+import { Metadata } from '@redwoodjs/web';
+import { useAuth } from 'src/auth';
 import {
-  Form,
-  Label,
-  TextField,
-  PasswordField,
-  FieldError,
-  Submit,
-} from '@redwoodjs/forms'
-import { Link, navigate, routes } from '@redwoodjs/router'
-import { Metadata } from '@redwoodjs/web'
-import { toast, Toaster } from '@redwoodjs/web/toast'
-
-import { useAuth } from 'src/auth'
+  TextInput,
+  PasswordInput,
+  Button,
+  Card,
+  Title,
+  Text,
+  Flex,
+  Stack,
+  Anchor,
+} from '@mantine/core';
+import { notifications } from '@mantine/notifications';
+import { IconCheck, IconX } from '@tabler/icons-react';
 
 const SignupPage = () => {
-  const { isAuthenticated, signUp } = useAuth()
+  const { isAuthenticated, signUp } = useAuth();
 
+  // Redirect if already authenticated
   useEffect(() => {
     if (isAuthenticated) {
-      navigate(routes.home())
+      navigate(routes.home());
     }
-  }, [isAuthenticated])
+  }, [isAuthenticated]);
 
-  // focus on username box on page load
-  const usernameRef = useRef<HTMLInputElement>(null)
+  // Focus on the username field on page load
+  const usernameRef = useRef<HTMLInputElement>(null);
   useEffect(() => {
-    usernameRef.current?.focus()
-  }, [])
+    usernameRef.current?.focus();
+  }, []);
 
-  const onSubmit = async (data: Record<string, string>) => {
-    const response = await signUp({
-      username: data.username,
-      password: data.password,
-    })
+  const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const username = formData.get('username') as string;
+    const password = formData.get('password') as string;
+
+    const response = await signUp({ username, password });
 
     if (response.message) {
-      toast(response.message)
+      notifications.show({
+        title: 'Message',
+        message: response.message,
+        color: 'blue',
+        icon: <IconCheck />,
+      });
     } else if (response.error) {
-      toast.error(response.error)
+      notifications.show({
+        title: 'Error',
+        message: response.error,
+        color: 'red',
+        icon: <IconX />,
+      });
     } else {
-      // user is signed in automatically
-      toast.success('Welcome!')
+      notifications.show({
+        title: 'Success',
+        message: 'Welcome!',
+        color: 'green',
+        icon: <IconCheck />,
+      });
     }
-  }
+  };
 
   return (
     <>
       <Metadata title="Signup" />
 
-      <main className="rw-main">
-        <Toaster toastOptions={{ className: 'rw-toast', duration: 6000 }} />
-        <div className="rw-scaffold rw-login-container">
-          <div className="rw-segment">
-            <header className="rw-segment-header">
-              <h2 className="rw-heading rw-heading-secondary">Signup</h2>
-            </header>
+      <Flex justify="center" align="center" h="100vh">
+        <Card withBorder shadow="sm" p="lg" w={400}>
+          <Title order={2} ta="center" mb="lg">
+            Sign Up
+          </Title>
 
-            <div className="rw-segment-main">
-              <div className="rw-form-wrapper">
-                <Form onSubmit={onSubmit} className="rw-form-wrapper">
-                  <Label
-                    name="username"
-                    className="rw-label"
-                    errorClassName="rw-label rw-label-error"
-                  >
-                    Username
-                  </Label>
-                  <TextField
-                    name="username"
-                    className="rw-input"
-                    errorClassName="rw-input rw-input-error"
-                    ref={usernameRef}
-                    validation={{
-                      required: {
-                        value: true,
-                        message: 'Username is required',
-                      },
-                    }}
-                  />
-                  <FieldError name="username" className="rw-field-error" />
+          <form onSubmit={onSubmit}>
+            <Stack>
+              <TextInput
+                name="username"
+                label="Username"
+                placeholder="Enter your username"
+                ref={usernameRef}
+                required
+              />
+              <PasswordInput
+                name="password"
+                label="Password"
+                placeholder="Enter your password"
+                required
+              />
+              <Button type="submit" fullWidth>
+                Sign Up
+              </Button>
+            </Stack>
+          </form>
 
-                  <Label
-                    name="password"
-                    className="rw-label"
-                    errorClassName="rw-label rw-label-error"
-                  >
-                    Password
-                  </Label>
-                  <PasswordField
-                    name="password"
-                    className="rw-input"
-                    errorClassName="rw-input rw-input-error"
-                    autoComplete="current-password"
-                    validation={{
-                      required: {
-                        value: true,
-                        message: 'Password is required',
-                      },
-                    }}
-                  />
-                  <FieldError name="password" className="rw-field-error" />
-
-                  <div className="rw-button-group">
-                    <Submit className="rw-button rw-button-blue">
-                      Sign Up
-                    </Submit>
-                  </div>
-                </Form>
-              </div>
-            </div>
-          </div>
-          <div className="rw-login-link">
-            <span>Already have an account?</span>{' '}
-            <Link to={routes.login()} className="rw-link">
+          <Text ta="center" mt="md">
+            Already have an account?{' '}
+            <Anchor component={Link} to={routes.login()}>
               Log in!
-            </Link>
-          </div>
-        </div>
-      </main>
+            </Anchor>
+          </Text>
+        </Card>
+      </Flex>
     </>
-  )
-}
+  );
+};
 
-export default SignupPage
+export default SignupPage;

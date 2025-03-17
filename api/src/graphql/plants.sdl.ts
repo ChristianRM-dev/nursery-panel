@@ -1,3 +1,4 @@
+// api/src/graphql/plants.sdl.ts
 export const schema = gql`
   type Plant {
     id: String!
@@ -21,30 +22,9 @@ export const schema = gql`
     HANGING
   }
 
-  input PaginationInput {
-    page: Int!
-    pageSize: Int!
-  }
-
-  input SortInput {
-    sortField: String!
-    sortOrder: String! # 'asc' or 'desc'
-  }
-
-  input SearchInput {
-    search: String
-  }
-
   type PlantsResponse {
     data: [Plant!]!
     meta: PaginationMeta!
-  }
-
-  type PaginationMeta {
-    total: Int!
-    page: Int!
-    pageSize: Int!
-    totalPages: Int!
   }
 
   type Query {
