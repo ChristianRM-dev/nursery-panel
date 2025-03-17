@@ -1,9 +1,9 @@
 
 import { IconEdit, IconTrash } from '@tabler/icons-react';
 import { TableConfig } from 'src/components/Shared/PaginatedTable/PaginatedTable.types';
-import { PlantsTableRow } from './PlantsTable.types';
+import { PlantTableRow } from './PlantTable.types';
 
-export const plantsTableConfig: TableConfig<PlantsTableRow> = {
+export const plantTableConfig: TableConfig<PlantTableRow> = {
   columns: [
     { field: 'name', header: 'Name' },
     { field: 'price', header: 'Price' },

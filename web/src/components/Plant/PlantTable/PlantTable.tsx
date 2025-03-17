@@ -1,15 +1,14 @@
 import React, { useCallback, useMemo } from 'react';
 import {
-  GetPaginatedPlantsItem,
   useGetPaginatedPlants,
 } from 'src/hooks/Plants/useGetPaginatedPlants';
-import { PlantsTableRow } from './PlantsTable.types';
-import { plantsTableConfig } from './PlantsTable.config';
+import { PlantTableRow } from './PlantTable.types';
+import { plantTableConfig } from './PlantTable.config';
 import { TableActionEvent, TableQuery } from 'src/components/Shared/PaginatedTable/PaginatedTable.types';
 import PaginatedTable from 'src/components/Shared/PaginatedTable/PaginatedTable';
 
-const PlantsTable = () => {
-  console.log('PlantsTable rendered'); // Debug log
+const PlantTable = () => {
+  console.log('PlantTable rendered'); // Debug log
 
   const { plants, meta, refetch, loading } = useGetPaginatedPlants({
     page: 1,
@@ -25,7 +24,7 @@ const PlantsTable = () => {
   }, [plants]);
 
   // Memoize the handleAction function
-  const handleAction = useCallback((event: TableActionEvent<PlantsTableRow>) => {
+  const handleAction = useCallback((event: TableActionEvent<PlantTableRow>) => {
     console.log('Action:', event.type, 'on row:', event.row);
   }, []);
 
@@ -37,9 +36,9 @@ const PlantsTable = () => {
 
   return (
     <>
-      <PaginatedTable<PlantsTableRow>
+      <PaginatedTable<PlantTableRow>
         data={tableData}
-        config={plantsTableConfig}
+        config={plantTableConfig}
         pagination={{
           ...meta,
         }}
@@ -51,4 +50,4 @@ const PlantsTable = () => {
   );
 };
 
-export default React.memo(PlantsTable); // Memoize the component
+export default React.memo(PlantTable); // Memoize the component

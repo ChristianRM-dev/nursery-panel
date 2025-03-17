@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import { Title, Container, rem } from '@mantine/core';
+import { Title, Container } from '@mantine/core';
 import { FloatingActionButton } from 'src/components/Shared/FloatingActionButton/FloatingActionButton';
 
 interface AdminTablePageLayoutProps {

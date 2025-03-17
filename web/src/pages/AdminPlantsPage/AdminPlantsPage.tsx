@@ -1,12 +1,13 @@
 import { Metadata } from '@redwoodjs/web'
 import React, { useCallback, memo } from 'react'
-import PlantsTable from 'src/components/Plants/PlantsTable/PlantsTable'
+import PlantTable from 'src/components/Plant/PlantTable/PlantTable'
 import { AdminTablePageLayout } from 'src/layouts/AdminTablePageLayout/AdminTablePageLayout'
+import { routes, navigate } from '@redwoodjs/router'
 
 const AdminPlantsPage: React.FC = memo(() => {
   const handleFabClick = useCallback(() => {
     console.log('Floating Action Button Clicked!')
-    // Add your logic for handling the FAB click (e.g., open a modal to add a new plant)
+    navigate(routes.adminNewPlant())
   }, [])
 
   return (
@@ -14,7 +15,7 @@ const AdminPlantsPage: React.FC = memo(() => {
       <Metadata title="AdminPlants" description="AdminPlants page" />
 
       <AdminTablePageLayout title="Plants" onFabClick={handleFabClick}>
-        <PlantsTable />
+        <PlantTable />
       </AdminTablePageLayout>
     </>
   )
