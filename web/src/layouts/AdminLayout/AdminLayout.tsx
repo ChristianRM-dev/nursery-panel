@@ -1,15 +1,43 @@
-import { AppShell, Burger, Group, Text, ActionIcon, NavLink } from '@mantine/core'
+import {
+  AppShell,
+  Burger,
+  Group,
+  Text,
+  ActionIcon,
+  NavLink,
+} from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
-import { IconSun, IconMoonStars, IconDashboard, IconUsers, IconSettings } from '@tabler/icons-react'
+import {
+  IconSun,
+  IconMoonStars,
+  IconDashboard,
+  IconSoup,
+  IconFlower,
+} from '@tabler/icons-react'
 import { useMantineColorScheme } from '@mantine/core'
 import { Link, routes } from '@redwoodjs/router'
+
+const createIcon = (IconComponent: React.FC<any>) => (
+  <IconComponent size={24} stroke={1.5} />
+)
 
 const AdminLayout = ({ children }) => {
   const [opened, { toggle }] = useDisclosure()
   const { colorScheme, toggleColorScheme } = useMantineColorScheme()
   const dark = colorScheme === 'dark'
 
-
+  const navbarOptions = [
+    {
+      label: 'Dashboard',
+      route: routes.adminDashboard(),
+      icon: createIcon(IconDashboard),
+    },
+    {
+      label: 'Plants',
+      route: routes.adminPlants(),
+      icon: createIcon(IconFlower),
+    },
+  ]
 
   return (
     <AppShell
@@ -25,7 +53,12 @@ const AdminLayout = ({ children }) => {
       <AppShell.Header>
         <Group h="100%" px="md" justify="space-between">
           <Group>
-            <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
+            <Burger
+              opened={opened}
+              onClick={toggle}
+              hiddenFrom="sm"
+              size="sm"
+            />
             <Text size="xl" fw="bold">
               Admin Panel
             </Text>
@@ -43,24 +76,15 @@ const AdminLayout = ({ children }) => {
 
       {/* Navbar */}
       <AppShell.Navbar p="md">
-        <NavLink
-          label="Dashboard"
-          leftSection={<IconDashboard size={20} />}
-          component={Link}
-          to={routes.adminDashboard()}
-        />
-        {/* <NavLink
-          label="Users"
-          leftSection={<IconUsers size={20} />}
-          component={Link}
-          to={routes.adminUsers()}
-        />
-        <NavLink
-          label="Settings"
-          leftSection={<IconSettings size={20} />}
-          component={Link}
-          to={routes.adminSettings()}
-        /> */}
+        {navbarOptions.map((option, index) => (
+          <NavLink
+            key={index}
+            label={option.label}
+            leftSection={option.icon}
+            component={Link}
+            to={option.route}
+          />
+        ))}
       </AppShell.Navbar>
 
       {/* Main Content */}

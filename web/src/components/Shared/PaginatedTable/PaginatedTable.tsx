@@ -14,10 +14,11 @@ import {
   TableConfig,
   TablePagination,
   TableQuery,
+  TableRow,
 } from './PaginatedTable.types'
 
 // PaginatedTable Component
-const PaginatedTable = <T extends { id: number }>({
+const PaginatedTable = <T extends TableRow>({
   data,
   config,
   pagination,

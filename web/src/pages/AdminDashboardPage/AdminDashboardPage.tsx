@@ -1,6 +1,5 @@
 // import { Link, routes } from '@redwoodjs/router'
 import { Metadata } from '@redwoodjs/web'
-import PlantList from 'src/components/Plants/PlantsTable'
 
 const AdminDashboardPage = () => {
   return (
@@ -16,7 +15,6 @@ const AdminDashboardPage = () => {
           My default route is named `adminDashboard`, link to me with:
           `<Link to={routes.adminDashboard()}>AdminDashboard</Link>`
       */}
-      <PlantList />
     </>
   )
 }

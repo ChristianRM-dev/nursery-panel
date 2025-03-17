@@ -17,7 +17,7 @@ import { notifications } from '@mantine/notifications';
 import { IconCheck, IconX } from '@tabler/icons-react';
 
 const WELCOME_MESSAGE = 'Welcome back!';
-const REDIRECT = routes.home();
+const REDIRECT = routes.adminDashboard();
 
 const LoginPage = ({ type }) => {
   const {

@@ -1,7 +1,12 @@
 import { gql, useQuery } from '@apollo/client'
+import { GetPaginatedPlants, GetPaginatedPlantsVariables } from 'types/graphql'
 
 const GET_PAGINATED_PLANTS = gql`
-  query GetPaginatedPlants($pagination: PaginationInput!, $sort: SortInput, $search: SearchInput) {
+  query GetPaginatedPlants(
+    $pagination: PaginationInput!
+    $sort: SortInput
+    $search: SearchInput
+  ) {
     plants(pagination: $pagination, sort: $sort, search: $search) {
       data {
         id
@@ -39,6 +44,8 @@ interface UseGetPaginatedPlantsProps {
   search?: string
 }
 
+export type GetPaginatedPlantsItem =GetPaginatedPlants["plants"]["data"]
+
 export const useGetPaginatedPlants = ({
   page,
   pageSize,
@@ -46,7 +53,10 @@ export const useGetPaginatedPlants = ({
   sortOrder = 'desc',
   search = '',
 }: UseGetPaginatedPlantsProps) => {
-  const { data, loading, error, refetch } = useQuery(GET_PAGINATED_PLANTS, {
+  const { data, loading, error, refetch } = useQuery<
+    GetPaginatedPlants,
+    GetPaginatedPlantsVariables
+  >(GET_PAGINATED_PLANTS, {
     variables: {
       pagination: { page, pageSize },
       sort: sortField ? { sortField, sortOrder } : null,
