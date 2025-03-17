@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { Title, Container, rem } from '@mantine/core';
 import { FloatingActionButton } from 'src/components/Shared/FloatingActionButton/FloatingActionButton';
 
@@ -12,7 +12,7 @@ interface AdminTablePageLayoutProps {
  * A layout component specifically designed for table-based admin pages.
  * It includes a title, a content area (for the table), and a floating action button (FAB).
  */
-export const AdminTablePageLayout: React.FC<AdminTablePageLayoutProps> = ({
+export const AdminTablePageLayout: React.FC<AdminTablePageLayoutProps> = memo(({
   title,
   children,
   onFabClick,
@@ -31,4 +31,6 @@ export const AdminTablePageLayout: React.FC<AdminTablePageLayoutProps> = ({
       <FloatingActionButton onClick={onFabClick} />
     </Container>
   );
-};
+});
+
+export default AdminTablePageLayout;

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { ActionIcon, rem } from '@mantine/core';
 import { IconPlus } from '@tabler/icons-react';
 
@@ -6,9 +6,7 @@ interface FloatingActionButtonProps {
   onClick?: () => void;
 }
 
-export const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
-  onClick,
-}) => {
+export const FloatingActionButton: React.FC<FloatingActionButtonProps> = memo(({ onClick }) => {
   return (
     <ActionIcon
       variant="filled"
@@ -26,4 +24,6 @@ export const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
       <IconPlus size={rem(24)} />
     </ActionIcon>
   );
-};
+});
+
+export default FloatingActionButton;

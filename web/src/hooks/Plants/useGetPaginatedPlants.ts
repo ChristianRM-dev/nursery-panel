@@ -44,7 +44,7 @@ interface UseGetPaginatedPlantsProps {
   search?: string
 }
 
-export type GetPaginatedPlantsItem =GetPaginatedPlants["plants"]["data"]
+export type GetPaginatedPlantsItem = GetPaginatedPlants['plants']['data']
 
 export const useGetPaginatedPlants = ({
   page,
@@ -62,7 +62,7 @@ export const useGetPaginatedPlants = ({
       sort: sortField ? { sortField, sortOrder } : null,
       search: search ? { search } : null,
     },
-    fetchPolicy: 'cache-and-network',
+    fetchPolicy: 'network-only',
   })
 
   return {

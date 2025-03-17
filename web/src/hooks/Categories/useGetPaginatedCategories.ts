@@ -1,7 +1,11 @@
 import { gql, useQuery } from '@apollo/client'
 
 const GET_PAGINATED_CATEGORIES = gql`
-  query GetPaginatedCategories($pagination: PaginationInput!, $sort: SortInput, $search: SearchInput) {
+  query GetPaginatedCategories(
+    $pagination: PaginationInput!
+    $sort: SortInput
+    $search: SearchInput
+  ) {
     categories(pagination: $pagination, sort: $sort, search: $search) {
       data {
         id
@@ -45,7 +49,7 @@ export const useGetPaginatedCategories = ({
       sort: sortField ? { sortField, sortOrder } : null,
       search: search ? { search } : null,
     },
-    fetchPolicy: 'cache-and-network',
+    fetchPolicy: 'network-only',
   })
 
   return {

@@ -33,7 +33,7 @@ export const useFilterPlants = ({
       pagination: { page: 1, pageSize: 10 },
       search: { search: query },
     },
-    fetchPolicy: 'cache-and-network',
+    fetchPolicy: 'network-only',
   })
 
   useEffect(() => {

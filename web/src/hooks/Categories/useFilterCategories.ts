@@ -20,16 +20,20 @@ interface UseFilterCategoriesProps {
   initialQuery?: string
 }
 
-export const useFilterCategories = ({ initialQuery = '' }: UseFilterCategoriesProps) => {
+export const useFilterCategories = ({
+  initialQuery = '',
+}: UseFilterCategoriesProps) => {
   const [query, setQuery] = useState(initialQuery)
-  const [filteredCategories, setFilteredCategories] = useState<{ id: string; name: string }[]>([])
+  const [filteredCategories, setFilteredCategories] = useState<
+    { id: string; name: string }[]
+  >([])
 
   const { data, loading, error, refetch } = useQuery(GET_CATEGORIES, {
     variables: {
       pagination: { page: 1, pageSize: 10 },
       search: { search: query },
     },
-    fetchPolicy: 'cache-and-network',
+    fetchPolicy: 'network-only',
   })
 
   useEffect(() => {
