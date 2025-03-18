@@ -20,9 +20,14 @@ import { useFilterCategories } from 'src/hooks/Categories/useFilterCategories';
 interface PlantFormProps {
   onSubmit: (values: PlantFormValues) => void;
   loading: boolean;
+  defaultValues: PlantFormValues; // Add defaultValues prop
 }
 
-export const PlantForm: React.FC<PlantFormProps> = ({ onSubmit, loading }) => {
+export const PlantForm: React.FC<PlantFormProps> = ({
+  onSubmit,
+  loading,
+  defaultValues,
+}) => {
   const {
     filteredCategories,
     loading: loadingCategories,
@@ -33,13 +38,13 @@ export const PlantForm: React.FC<PlantFormProps> = ({ onSubmit, loading }) => {
 
   const form = useForm<PlantFormValues>({
     initialValues: {
-      name: '',
-      price: 1,
-      stock: 1,
-      categoryId: '',
-      presentationType: '',
-      presentationDetails: '',
-      photos: [],
+      name: defaultValues?.name || '',
+      price: defaultValues?.price || 1,
+      stock: defaultValues?.stock || 1,
+      categoryId: defaultValues?.categoryId || '',
+      presentationType: defaultValues?.presentationType || '',
+      presentationDetails: defaultValues?.presentationDetails || '',
+      photos: defaultValues?.photos || [],
     },
     validate: (values) => {
       const result = plantSchema.safeParse(values);
@@ -91,18 +96,18 @@ export const PlantForm: React.FC<PlantFormProps> = ({ onSubmit, loading }) => {
         <Select
           label="Category"
           placeholder="Select a category"
-          {...form.getInputProps("categoryId")}
+          {...form.getInputProps('categoryId')}
           data={categories}
           searchable
           clearable
-          onSearchChange={handleFilterCategories} // Trigger filtering when typing
+          onSearchChange={handleFilterCategories}
           nothingFoundMessage="No categories found"
           disabled={loading || loadingCategories}
         />
         <Select
           label="Presentation"
           placeholder="Select a presentation type"
-          {...form.getInputProps("presentationType")}
+          {...form.getInputProps('presentationType')}
           data={[
             { value: 'BAG', label: 'BAG' },
             { value: 'POT', label: 'POT' },

@@ -39,3 +39,18 @@ export const mapPlantFormValuesToCreatePlantInput = async (
     photos,
   }
 }
+
+/**
+ * Maps `PlantFormValues` to the `UpdatePlantInput` expected by the mutation.
+ */
+export const mapPlantFormValuesToUpdatePlantInput = (
+  values: PlantFormValues
+) => ({
+  name: values.name,
+  price: values.price,
+  stock: values.stock,
+  categoryId: values.categoryId,
+  presentationType: values.presentationType,
+  presentationDetails: values.presentationDetails,
+  photos: values.photos,
+});
