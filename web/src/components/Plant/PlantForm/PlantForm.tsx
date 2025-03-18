@@ -36,8 +36,8 @@ export const PlantForm: React.FC<PlantFormProps> = ({ onSubmit, loading }) => {
       name: '',
       price: 1,
       stock: 1,
-      category: '',
-      presentation: '',
+      categoryId: '',
+      presentationType: '',
       presentationDetails: '',
       photos: [],
     },
@@ -91,7 +91,7 @@ export const PlantForm: React.FC<PlantFormProps> = ({ onSubmit, loading }) => {
         <Select
           label="Category"
           placeholder="Select a category"
-          {...form.getInputProps('category')}
+          {...form.getInputProps("categoryId")}
           data={categories}
           searchable
           clearable
@@ -102,7 +102,7 @@ export const PlantForm: React.FC<PlantFormProps> = ({ onSubmit, loading }) => {
         <Select
           label="Presentation"
           placeholder="Select a presentation type"
-          {...form.getInputProps('presentation')}
+          {...form.getInputProps("presentationType")}
           data={[
             { value: 'BAG', label: 'BAG' },
             { value: 'POT', label: 'POT' },

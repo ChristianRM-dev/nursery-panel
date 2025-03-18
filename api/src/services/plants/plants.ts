@@ -66,11 +66,14 @@ export const createPlant: MutationResolvers['createPlant'] = async ({ input }) =
   // Create the plant in the database with the Blob URLs
   return db.plant.create({
     data: {
-      ...rest,
+      name: rest.name,
+      price: rest.price,
+      stock: rest.stock,
       category: {
-        connect: { id: rest.category }, // Connect to the Category by ID
+        connect: { id: rest.categoryId }, // Connect to the Category by ID
       },
-      presentationType: rest.presentation, // Map `presentation` to `presentationType`
+      presentationType: rest.presentationType, // Use `presentationType` instead of `presentation`
+      presentationDetails: rest.presentationDetails,
       photos: {
         create: uploadedPhotos.map((photo) => ({
           url: photo.url,

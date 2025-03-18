@@ -33,8 +33,8 @@ export const mapPlantFormValuesToCreatePlantInput = async (
     name: values.name,
     price: values.price,
     stock: values.stock,
-    category: values.category, // Assuming `category` is already the ID
-    presentation: values.presentation as PresentationType, // Cast to PresentationType
+    categoryId: values.categoryId, // Assuming `category` is already the ID
+    presentationType: values.presentationType as PresentationType, // Cast to PresentationType
     presentationDetails: values.presentationDetails,
     photos,
   }

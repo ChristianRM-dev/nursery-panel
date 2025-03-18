@@ -40,8 +40,8 @@ export const schema = gql`
   name: String!
   price: Float!
   stock: Int!
-  category: String! # Changed from categoryId to category
-  presentation: PresentationType! # Changed from presentationType to presentation
+  categoryId: String! # Changed from categoryId to category
+  presentationType: PresentationType! # Changed from presentationType to presentation
   presentationDetails: String
   photos: [PhotoInput!]! # Added photos field
 }
