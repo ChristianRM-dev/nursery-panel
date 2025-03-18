@@ -1,3 +1,4 @@
+// web/src/hooks/Plants/useGetPaginatedPlants.ts
 import { gql, useQuery } from '@apollo/client'
 import { GetPaginatedPlants, GetPaginatedPlantsVariables } from 'types/graphql'
 

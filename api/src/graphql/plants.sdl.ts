@@ -37,13 +37,19 @@ export const schema = gql`
   }
 
   input CreatePlantInput {
-    name: String!
-    price: Float!
-    stock: Int!
-    categoryId: String!
-    presentationType: PresentationType!
-    presentationDetails: String
-  }
+  name: String!
+  price: Float!
+  stock: Int!
+  category: String! # Changed from categoryId to category
+  presentation: PresentationType! # Changed from presentationType to presentation
+  presentationDetails: String
+  photos: [PhotoInput!]! # Added photos field
+}
+
+input PhotoInput {
+  path: String!
+  content: String! # Base64-encoded file data
+}
 
   input UpdatePlantInput {
     name: String

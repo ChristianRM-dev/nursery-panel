@@ -6,6 +6,7 @@ import { PlantTableRow } from './PlantTable.types';
 import { plantTableConfig } from './PlantTable.config';
 import { TableActionEvent, TableQuery } from 'src/components/Shared/PaginatedTable/PaginatedTable.types';
 import PaginatedTable from 'src/components/Shared/PaginatedTable/PaginatedTable';
+import { mapGetPaginatedPlantsItemToPlantTableRow } from 'src/utils/Mappers';
 
 const PlantTable = () => {
   console.log('PlantTable rendered'); // Debug log
@@ -37,7 +38,7 @@ const PlantTable = () => {
   return (
     <>
       <PaginatedTable<PlantTableRow>
-        data={tableData}
+        data={mapGetPaginatedPlantsItemToPlantTableRow(plants)}
         config={plantTableConfig}
         pagination={{
           ...meta,

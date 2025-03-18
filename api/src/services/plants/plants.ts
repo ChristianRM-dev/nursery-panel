@@ -1,5 +1,7 @@
+// api/src/services/plants/plants.ts
 import { db } from 'src/lib/db'
 import { paginate } from 'src/lib/pagination'
+import { put } from '@vercel/blob';
 import type {
   QueryResolvers,
   MutationResolvers,
@@ -40,11 +42,47 @@ export const plant: QueryResolvers['plant'] = ({ id }) => {
   })
 }
 
-export const createPlant: MutationResolvers['createPlant'] = ({ input }) => {
+export const createPlant: MutationResolvers['createPlant'] = async ({ input }) => {
+  const { photos, ...rest } = input;
+
+  // Upload photos to Vercel Blob
+  const uploadedPhotos = await Promise.all(
+    photos.map(async (photo) => {
+      // Convert the photo data to a format compatible with Vercel Blob
+      const file = new File([photo.content], photo.path, { type: 'image/jpeg' }); // Adjust the MIME type as needed
+
+      // Upload the file to Vercel Blob
+      const blob = await put(photo.path, file, {
+        access: 'public', // Make the files publicly accessible
+      });
+
+      return {
+        url: blob.url, // Store the Blob URL
+        pathname: blob.pathname, // Use `pathname` instead of `path`
+      };
+    })
+  );
+
+  // Create the plant in the database with the Blob URLs
   return db.plant.create({
-    data: input,
-  })
-}
+    data: {
+      ...rest,
+      category: {
+        connect: { id: rest.category }, // Connect to the Category by ID
+      },
+      presentationType: rest.presentation, // Map `presentation` to `presentationType`
+      photos: {
+        create: uploadedPhotos.map((photo) => ({
+          url: photo.url,
+        })),
+      },
+    },
+    include: {
+      photos: true, // Include photos in the response
+      category: true, // Include category in the response
+    },
+  });
+};
 
 export const updatePlant: MutationResolvers['updatePlant'] = ({ id, input }) => {
   return db.plant.update({

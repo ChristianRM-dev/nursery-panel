@@ -1,6 +1,5 @@
-// web/src/components/Plants/PlantForm/PlantForm.tsx
-import React from 'react'
-import { useForm } from '@mantine/form'
+import React, { useEffect, useState } from 'react';
+import { useForm } from '@mantine/form';
 import {
   TextInput,
   NumberInput,
@@ -10,44 +9,62 @@ import {
   Text,
   Box,
   ActionIcon,
-} from '@mantine/core'
-import { Dropzone, IMAGE_MIME_TYPE } from '@mantine/dropzone'
-import { IconUpload, IconPhoto, IconX, IconTrash } from '@tabler/icons-react'
-import { PlantFormValues, plantSchema } from './PlantForm.schems'
-import FormOverlay from 'src/components/Shared/Form/Overlay/FormOverlay'
+  Select,
+} from '@mantine/core';
+import { Dropzone, IMAGE_MIME_TYPE } from '@mantine/dropzone';
+import { IconUpload, IconPhoto, IconX, IconTrash } from '@tabler/icons-react';
+import { PlantFormValues, plantSchema } from './PlantForm.schema';
+import FormOverlay from 'src/components/Shared/Form/Overlay/FormOverlay';
+import { useFilterCategories } from 'src/hooks/Categories/useFilterCategories';
 
 interface PlantFormProps {
-  onSubmit: (values: PlantFormValues) => void
-  loading: boolean // Add loading prop
+  onSubmit: (values: PlantFormValues) => void;
+  loading: boolean;
 }
 
 export const PlantForm: React.FC<PlantFormProps> = ({ onSubmit, loading }) => {
+  const {
+    filteredCategories,
+    loading: loadingCategories,
+    handleFilter: handleFilterCategories,
+  } = useFilterCategories({ initialQuery: '' });
+
+  const [categories, setCategories] = useState<{ value: string; label: string }[]>([]);
+
   const form = useForm<PlantFormValues>({
     initialValues: {
       name: '',
-      price: 0,
-      stock: 0,
+      price: 1,
+      stock: 1,
       category: '',
+      presentation: '',
       presentationDetails: '',
       photos: [],
     },
     validate: (values) => {
-      const result = plantSchema.safeParse(values)
+      const result = plantSchema.safeParse(values);
       if (!result.success) {
-        return result.error.formErrors.fieldErrors
+        return result.error.formErrors.fieldErrors;
       }
-      return {}
+      return {};
     },
-  })
+  });
 
   const handleDrop = (files: File[]) => {
-    form.setFieldValue('photos', [...form.values.photos, ...files])
-  }
+    form.setFieldValue('photos', [...form.values.photos, ...files]);
+  };
 
   const handleRemoveImage = (index: number) => {
-    const updatedPhotos = form.values.photos.filter((_, i) => i !== index)
-    form.setFieldValue('photos', updatedPhotos)
-  }
+    const updatedPhotos = form.values.photos.filter((_, i) => i !== index);
+    form.setFieldValue('photos', updatedPhotos);
+  };
+
+  useEffect(() => {
+    // Map filtered categories to the format expected by the Select component
+    setCategories(
+      filteredCategories.map((c) => ({ value: c.id, label: c.name }))
+    );
+  }, [filteredCategories]);
 
   return (
     <Box style={{ position: 'relative' }}>
@@ -71,9 +88,26 @@ export const PlantForm: React.FC<PlantFormProps> = ({ onSubmit, loading }) => {
           {...form.getInputProps('stock')}
           disabled={loading}
         />
-        <TextInput
+        <Select
           label="Category"
+          placeholder="Select a category"
           {...form.getInputProps('category')}
+          data={categories}
+          searchable
+          clearable
+          onSearchChange={handleFilterCategories} // Trigger filtering when typing
+          nothingFoundMessage="No categories found"
+          disabled={loading || loadingCategories}
+        />
+        <Select
+          label="Presentation"
+          placeholder="Select a presentation type"
+          {...form.getInputProps('presentation')}
+          data={[
+            { value: 'BAG', label: 'BAG' },
+            { value: 'POT', label: 'POT' },
+            { value: 'HANGING', label: 'HANGING' },
+          ]}
           disabled={loading}
         />
         <Textarea
@@ -121,12 +155,18 @@ export const PlantForm: React.FC<PlantFormProps> = ({ onSubmit, loading }) => {
                 Drag images here or click to select files
               </Text>
               <Text size="sm" c="dimmed" inline mt={7}>
-                Attach as many files as you like, each file should not exceed
-                5mb
+                Attach as many files as you like, each file should not exceed 5mb
               </Text>
             </div>
           </Group>
         </Dropzone>
+
+        {/* Display error message if no photos are selected */}
+        {form.errors.photos && (
+          <Text color="red" size="sm" mt="xs">
+            {form.errors.photos}
+          </Text>
+        )}
 
         {/* Display selected files with remove option */}
         {form.values.photos.length > 0 && (
@@ -169,5 +209,5 @@ export const PlantForm: React.FC<PlantFormProps> = ({ onSubmit, loading }) => {
         </Group>
       </form>
     </Box>
-  )
-}
+  );
+};

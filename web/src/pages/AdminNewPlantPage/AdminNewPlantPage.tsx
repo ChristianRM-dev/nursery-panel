@@ -1,25 +1,31 @@
-// import { Link, routes } from '@redwoodjs/router'
 import { Metadata } from '@redwoodjs/web'
 import { PlantForm } from 'src/components/Plant/PlantForm/PlantForm'
-import { PlantFormValues } from 'src/components/Plant/PlantForm/PlantForm.schems'
 import { Title, Container } from '@mantine/core'
+import { useCreatePlant } from 'src/hooks/Plants/useCreatePlant'
+import { PlantFormValues } from 'src/components/Plant/PlantForm/PlantForm.schema'
+import { mapPlantFormValuesToCreatePlantInput } from 'src/utils/Mappers'
 
 const AdminNewPlantPage: React.FC = () => {
+  const { createPlant, loading, error } = useCreatePlant({
+    onCompleted: (data) => {
+      console.log('Plant created successfully:', data)
+      // Optionally redirect or show a success message
+    },
+    onError: (error) => {
+      console.error('Error creating plant:', error)
+      // Optionally show an error message
+    },
+  })
+
   const handleSubmit = async (values: PlantFormValues) => {
     try {
-      console.log("handleSubmit",values)
-      // Replace with your actual API call
-      const response = await fetch('/api/plants', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(values),
-      })
+      console.log('handleSubmit', values)
 
-      if (!response.ok) {
-        throw new Error('Failed to create plant')
-      }
+      // Map form values to the input expected by the mutation
+      const input = await mapPlantFormValuesToCreatePlantInput(values).then()
+
+      // Call the createPlant mutation
+      await createPlant(input)
 
       // Handle success (e.g., show a notification, redirect, etc.)
       console.log('Plant created successfully')
@@ -37,7 +43,7 @@ const AdminNewPlantPage: React.FC = () => {
         <Title order={1} mb="xl">
           Create Plant
         </Title>
-        <PlantForm onSubmit={handleSubmit} loading={true} />
+        <PlantForm onSubmit={handleSubmit} loading={loading} />
       </Container>
     </>
   )
