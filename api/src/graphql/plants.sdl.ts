@@ -37,19 +37,24 @@ export const schema = gql`
   }
 
   input CreatePlantInput {
-  name: String!
-  price: Float!
-  stock: Int!
-  categoryId: String! # Changed from categoryId to category
-  presentationType: PresentationType! # Changed from presentationType to presentation
-  presentationDetails: String
-  photos: [PhotoInput!]! # Added photos field
-}
+    name: String!
+    price: Float!
+    stock: Int!
+    categoryId: String! # Changed from categoryId to category
+    presentationType: PresentationType! # Changed from presentationType to presentation
+    presentationDetails: String
+    photos: [PhotoInput!]! # Added photos field
+  }
 
-input PhotoInput {
-  path: String!
-  content: String! # Base64-encoded file data
-}
+  input PhotoInput {
+    path: String!
+    content: String! # Base64-encoded file data
+  }
+
+  input UpdatePhotoInput {
+    id: String # For previous created photon
+    file: PhotoInput # For new photos
+  }
 
   input UpdatePlantInput {
     name: String
@@ -58,6 +63,7 @@ input PhotoInput {
     categoryId: String
     presentationType: PresentationType
     presentationDetails: String
+    photos: [UpdatePhotoInput!]! # Added photos field
   }
 
   type Mutation {

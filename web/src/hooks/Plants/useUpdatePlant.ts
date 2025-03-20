@@ -1,4 +1,9 @@
-import { useMutation, gql } from '@apollo/client';
+import { useMutation, gql, ApolloError } from '@apollo/client'
+import {
+  UpdatePlant,
+  UpdatePlantInput,
+  UpdatePlantVariables,
+} from 'types/graphql'
 
 const UPDATE_PLANT = gql`
   mutation UpdatePlant($id: String!, $input: UpdatePlantInput!) {
@@ -16,42 +21,48 @@ const UPDATE_PLANT = gql`
       }
     }
   }
-`;
+`
 
 interface UseUpdatePlantProps {
-  onCompleted?: (data: any) => void;
-  onError?: (error: any) => void;
+  onCompleted?: (data: UpdatePlant['updatePlant']) => void
+  onError?: (error: ApolloError) => void
 }
 
-export const useUpdatePlant = ({ onCompleted, onError }: UseUpdatePlantProps) => {
-  const [updatePlant, { loading, error }] = useMutation(UPDATE_PLANT, {
+export const useUpdatePlant = ({
+  onCompleted,
+  onError,
+}: UseUpdatePlantProps) => {
+  const [updatePlant, { loading, error }] = useMutation<
+    UpdatePlant,
+    UpdatePlantVariables
+  >(UPDATE_PLANT, {
     onCompleted: (data) => {
       if (onCompleted) {
-        onCompleted(data.updatePlant);
+        onCompleted(data.updatePlant)
       }
     },
     onError: (error) => {
       if (onError) {
-        onError(error);
+        onError(error)
       }
     },
-  });
+  })
 
-  const handleUpdatePlant = async (id: string, input: any) => {
+  const handleUpdatePlant = async (id: string, input: UpdatePlantInput) => {
     try {
       const result = await updatePlant({
         variables: { id, input },
-      });
-      return result.data.updatePlant;
+      })
+      return result.data.updatePlant
     } catch (error) {
-      console.error('Error updating plant:', error);
-      throw error;
+      console.error('Error updating plant:', error)
+      throw error
     }
-  };
+  }
 
   return {
     updatePlant: handleUpdatePlant,
     loading,
     error,
-  };
-};
+  }
+}

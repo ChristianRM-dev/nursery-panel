@@ -1,8 +1,10 @@
-import { Metadata } from '@redwoodjs/web'
 import React, { useCallback, memo } from 'react'
+
+import { routes, navigate } from '@redwoodjs/router'
+import { Metadata } from '@redwoodjs/web'
+
 import PlantTable from 'src/components/Plant/PlantTable/PlantTable'
 import { AdminTablePageLayout } from 'src/layouts/AdminTablePageLayout/AdminTablePageLayout'
-import { routes, navigate } from '@redwoodjs/router'
 
 const AdminPlantsPage: React.FC = memo(() => {
   const handleFabClick = useCallback(() => {

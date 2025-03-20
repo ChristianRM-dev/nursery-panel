@@ -1,4 +1,5 @@
 import { Router, Route, PrivateSet, Set } from '@redwoodjs/router'
+
 import { useAuth } from './auth'
 import AdminLayout from './layouts/AdminLayout/AdminLayout'
 
@@ -22,9 +23,9 @@ const Routes = () => {
           <Route path="/admin/dashboard" page={AdminDashboardPage} name="adminDashboard" />
           {/* Plants routes */}
           <Route path="/admin/plants" page={AdminPlantsPage} name="adminPlants" />
-          <Route path="/admin/plant/{id}" page={AdminPlantDetailsPage} name="adminPlantDetails" />
           <Route path="/admin/plant/new" page={AdminNewPlantPage} name="adminNewPlant" />
-          <Route path="/admin/plants/edit/{id}" page={AdminEditPlantPage} name="adminEditPlant" />
+          <Route path="/admin/plant/{id}" page={AdminPlantDetailsPage} name="adminPlantDetails" />
+          <Route path="/admin/plant/edit/{id}" page={AdminEditPlantPage} name="adminEditPlant" />
         </Set>
         {/* <Route path="/admin/users" page={AdminUsersPage} name="adminUsers" />
         <Route path="/admin/settings" page={AdminSettingsPage} name="adminSettings" /> */}

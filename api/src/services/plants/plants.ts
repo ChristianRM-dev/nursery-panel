@@ -1,12 +1,9 @@
 // api/src/services/plants/plants.ts
+import { del, put } from '@vercel/blob'
+import type { QueryResolvers, MutationResolvers } from 'types/graphql'
+
 import { db } from 'src/lib/db'
 import { paginate } from 'src/lib/pagination'
-import { put } from '@vercel/blob';
-import type {
-  QueryResolvers,
-  MutationResolvers,
-  PlantResolvers,
-} from 'types/graphql'
 
 export const plants: QueryResolvers['plants'] = async ({
   pagination,
@@ -42,26 +39,31 @@ export const plant: QueryResolvers['plant'] = ({ id }) => {
   })
 }
 
-export const createPlant: MutationResolvers['createPlant'] = async ({ input }) => {
-  const { photos, ...rest } = input;
+export const createPlant: MutationResolvers['createPlant'] = async ({
+  input,
+}) => {
+  const { photos, ...rest } = input
 
   // Upload photos to Vercel Blob
   const uploadedPhotos = await Promise.all(
     photos.map(async (photo) => {
-      // Convert the photo data to a format compatible with Vercel Blob
-      const file = new File([photo.content], photo.path, { type: 'image/jpeg' }); // Adjust the MIME type as needed
+      // Decode the base64 data
+      const binaryData = Buffer.from(photo.content, 'base64')
+
+      // Create a File object with the decoded data
+      const file = new File([binaryData], photo.path, { type: 'image/jpeg' }) // Adjust the MIME type as needed
 
       // Upload the file to Vercel Blob
       const blob = await put(photo.path, file, {
         access: 'public', // Make the files publicly accessible
-      });
+      })
 
       return {
         url: blob.url, // Store the Blob URL
         pathname: blob.pathname, // Use `pathname` instead of `path`
-      };
+      }
     })
-  );
+  )
 
   // Create the plant in the database with the Blob URLs
   return db.plant.create({
@@ -84,13 +86,85 @@ export const createPlant: MutationResolvers['createPlant'] = async ({ input }) =
       photos: true, // Include photos in the response
       category: true, // Include category in the response
     },
-  });
-};
+  })
+}
 
-export const updatePlant: MutationResolvers['updatePlant'] = ({ id, input }) => {
-  return db.plant.update({
-    data: input,
+export const updatePlant: MutationResolvers['updatePlant'] = async ({
+  id,
+  input,
+}) => {
+  const { photos, ...rest } = input
+
+  // Fetch the existing plant with its photos
+  const existingPlant = await db.plant.findUnique({
     where: { id },
+    include: { photos: true },
+  })
+
+  if (!existingPlant) {
+    throw new Error('Plant not found')
+  }
+
+  // Extract the IDs of the photos that are still present in the input
+  const photoIdsToKeep = photos
+    .filter((photo) => photo.id)
+    .map((photo) => photo.id)
+
+  // Identify photos to delete
+  const photosToDelete = existingPlant.photos.filter(
+    (photo) => !photoIdsToKeep.includes(photo.id)
+  )
+
+  // Delete photos from Vercel Blob
+  await Promise.all(
+    photosToDelete.map(async (photo) => {
+      await del(photo.url) // Delete the photo from Vercel Blob
+    })
+  )
+
+  // Delete photos from the database
+  await db.photo.deleteMany({
+    where: {
+      id: {
+        in: photosToDelete.map((photo) => photo.id),
+      },
+    },
+  })
+
+  // Upload new photos and create them in the database
+  const newPhotos = photos.filter((photo) => photo.file)
+
+  const uploadedPhotos = await Promise.all(
+    newPhotos.map(async (photo) => {
+      const binaryData = Buffer.from(photo.file.content, 'base64')
+      const file = new File([binaryData], photo.file.path, { type: 'image/jpeg' })
+
+      const blob = await put(photo.file.path, file, {
+        access: 'public',
+      })
+
+      return {
+        url: blob.url,
+        pathname: blob.pathname,
+      }
+    })
+  )
+
+  // Update the plant with the new data and photos
+  return db.plant.update({
+    where: { id },
+    data: {
+      ...rest,
+      photos: {
+        create: uploadedPhotos.map((photo) => ({
+          url: photo.url,
+        })),
+      },
+    },
+    include: {
+      photos: true,
+      category: true,
+    },
   })
 }
 

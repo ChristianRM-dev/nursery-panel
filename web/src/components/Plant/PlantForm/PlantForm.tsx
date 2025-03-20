@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { useForm } from '@mantine/form';
+import React, { useEffect, useState } from 'react'
+
 import {
   TextInput,
   NumberInput,
@@ -10,17 +10,20 @@ import {
   Box,
   ActionIcon,
   Select,
-} from '@mantine/core';
-import { Dropzone, IMAGE_MIME_TYPE } from '@mantine/dropzone';
-import { IconUpload, IconPhoto, IconX, IconTrash } from '@tabler/icons-react';
-import { PlantFormValues, plantSchema } from './PlantForm.schema';
-import FormOverlay from 'src/components/Shared/Form/Overlay/FormOverlay';
-import { useFilterCategories } from 'src/hooks/Categories/useFilterCategories';
+} from '@mantine/core'
+import { Dropzone, IMAGE_MIME_TYPE } from '@mantine/dropzone'
+import { useForm } from '@mantine/form'
+import { IconUpload, IconPhoto, IconX, IconTrash } from '@tabler/icons-react'
+
+import FormOverlay from 'src/components/Shared/Form/Overlay/FormOverlay'
+import { useFilterCategories } from 'src/hooks/Categories/useFilterCategories'
+
+import { PlantFormValues, plantSchema } from './PlantForm.schema'
 
 interface PlantFormProps {
-  onSubmit: (values: PlantFormValues) => void;
-  loading: boolean;
-  defaultValues: PlantFormValues; // Add defaultValues prop
+  onSubmit: (values: PlantFormValues) => void
+  loading: boolean
+  defaultValues: PlantFormValues
 }
 
 export const PlantForm: React.FC<PlantFormProps> = ({
@@ -32,9 +35,11 @@ export const PlantForm: React.FC<PlantFormProps> = ({
     filteredCategories,
     loading: loadingCategories,
     handleFilter: handleFilterCategories,
-  } = useFilterCategories({ initialQuery: '' });
+  } = useFilterCategories({ initialQuery: '' })
 
-  const [categories, setCategories] = useState<{ value: string; label: string }[]>([]);
+  const [categories, setCategories] = useState<
+    { value: string; label: string }[]
+  >([])
 
   const form = useForm<PlantFormValues>({
     initialValues: {
@@ -47,36 +52,33 @@ export const PlantForm: React.FC<PlantFormProps> = ({
       photos: defaultValues?.photos || [],
     },
     validate: (values) => {
-      const result = plantSchema.safeParse(values);
+      const result = plantSchema.safeParse(values)
       if (!result.success) {
-        return result.error.formErrors.fieldErrors;
+        return result.error.formErrors.fieldErrors
       }
-      return {};
+      return {}
     },
-  });
+  })
 
   const handleDrop = (files: File[]) => {
-    form.setFieldValue('photos', [...form.values.photos, ...files]);
-  };
+    form.setFieldValue('photos', [...form.values.photos, ...files])
+  }
 
   const handleRemoveImage = (index: number) => {
-    const updatedPhotos = form.values.photos.filter((_, i) => i !== index);
-    form.setFieldValue('photos', updatedPhotos);
-  };
+    const updatedPhotos = form.values.photos.filter((_, i) => i !== index)
+    form.setFieldValue('photos', updatedPhotos)
+  }
 
   useEffect(() => {
-    // Map filtered categories to the format expected by the Select component
     setCategories(
       filteredCategories.map((c) => ({ value: c.id, label: c.name }))
-    );
-  }, [filteredCategories]);
+    )
+  }, [filteredCategories])
 
   return (
     <Box style={{ position: 'relative' }}>
-      {/* Loading Overlay */}
       {loading && <FormOverlay />}
 
-      {/* Form */}
       <form onSubmit={form.onSubmit(onSubmit)}>
         <TextInput
           label="Name"
@@ -160,38 +162,50 @@ export const PlantForm: React.FC<PlantFormProps> = ({
                 Drag images here or click to select files
               </Text>
               <Text size="sm" c="dimmed" inline mt={7}>
-                Attach as many files as you like, each file should not exceed 5mb
+                Attach as many files as you like, each file should not exceed
+                5mb
               </Text>
             </div>
           </Group>
         </Dropzone>
 
-        {/* Display error message if no photos are selected */}
         {form.errors.photos && (
           <Text color="red" size="sm" mt="xs">
             {form.errors.photos}
           </Text>
         )}
 
-        {/* Display selected files with remove option */}
         {form.values.photos.length > 0 && (
           <Box mt="md">
             <Text size="md" mb="sm">
               Selected files:
             </Text>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
-              {form.values.photos.map((file, index) => (
+              {form.values.photos.map((photo, index) => (
                 <div key={index} style={{ position: 'relative' }}>
-                  <img
-                    src={URL.createObjectURL(file)}
-                    alt={`Preview ${index}`}
-                    style={{
-                      width: 100,
-                      height: 100,
-                      objectFit: 'cover',
-                      borderRadius: '4px',
-                    }}
-                  />
+                  {'url' in photo ? (
+                    <img
+                      src={photo.url}
+                      alt={`Preview ${index}`}
+                      style={{
+                        width: 100,
+                        height: 100,
+                        objectFit: 'cover',
+                        borderRadius: '4px',
+                      }}
+                    />
+                  ) : (
+                    <img
+                      src={URL.createObjectURL(photo as File)} // photo is guaranteed to be a File here
+                      alt={`Preview ${index}`}
+                      style={{
+                        width: 100,
+                        height: 100,
+                        objectFit: 'cover',
+                        borderRadius: '4px',
+                      }}
+                    />
+                  )}
                   <ActionIcon
                     style={{ position: 'absolute', top: 5, right: 5 }}
                     color="red"
@@ -214,5 +228,5 @@ export const PlantForm: React.FC<PlantFormProps> = ({
         </Group>
       </form>
     </Box>
-  );
-};
+  )
+}

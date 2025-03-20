@@ -1,10 +1,13 @@
-import { Metadata } from '@redwoodjs/web'
-import { PlantForm } from 'src/components/Plant/PlantForm/PlantForm'
+// web/src/pages/AdminNewPlantPage/AdminNewPlantPage.tsx
 import { Title, Container } from '@mantine/core'
-import { useCreatePlant } from 'src/hooks/Plants/useCreatePlant'
+
+import { Metadata } from '@redwoodjs/web'
+
+import { PlantForm } from 'src/components/Plant/PlantForm/PlantForm'
 import { PlantFormValues } from 'src/components/Plant/PlantForm/PlantForm.schema'
-import { mapPlantFormValuesToCreatePlantInput } from 'src/utils/Mappers'
+import { useCreatePlant } from 'src/hooks/Plants/useCreatePlant'
 import { useNotifications } from 'src/hooks/useNotifications' // Import the custom hook
+import { mapPlantFormValuesToCreatePlantInput } from 'src/utils/Mappers'
 
 const AdminNewPlantPage: React.FC = () => {
   const defaultValues: PlantFormValues = {
@@ -18,7 +21,7 @@ const AdminNewPlantPage: React.FC = () => {
   }
   const { showSuccessNotification, showErrorNotification } = useNotifications() // Use the custom hook
 
-  const { createPlant, loading, error } = useCreatePlant({
+  const { createPlant, loading } = useCreatePlant({
     onCompleted: (data) => {
       console.log('Plant created successfully:', data)
       showSuccessNotification('Plant created successfully!') // Show success notification

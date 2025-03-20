@@ -1,17 +1,20 @@
 import { ReactNode } from 'react'
 
+import { MantineProvider } from '@mantine/core'
+
 import { FatalErrorBoundary, RedwoodProvider } from '@redwoodjs/web'
 import { RedwoodApolloProvider } from '@redwoodjs/web/apollo'
-import { MantineProvider } from '@mantine/core'
+
 import theme from '../config/mantine.config'
 import '@mantine/core/styles.css'
 
 import FatalErrorPage from 'src/pages/FatalErrorPage'
+
 import { AuthProvider, useAuth } from './auth'
 
 import './index.css'
 import './scaffold.css'
-
+import '@mantine/carousel/styles.css'
 interface AppProps {
   children?: ReactNode
 }

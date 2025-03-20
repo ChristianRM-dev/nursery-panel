@@ -1,11 +1,13 @@
-import { Metadata } from '@redwoodjs/web'
-import { useParams } from '@redwoodjs/router'
 import { Title, Container } from '@mantine/core'
+
+import { useParams } from '@redwoodjs/router'
+import { Metadata } from '@redwoodjs/web'
+
 import { PlantForm } from 'src/components/Plant/PlantForm/PlantForm'
-import { useNotifications } from 'src/hooks/useNotifications'
+import { PlantFormValues } from 'src/components/Plant/PlantForm/PlantForm.schema'
 import { useGetPlantById } from 'src/hooks/Plants/useGetPlantById'
 import { useUpdatePlant } from 'src/hooks/Plants/useUpdatePlant'
-import { PlantFormValues } from 'src/components/Plant/PlantForm/PlantForm.schema'
+import { useNotifications } from 'src/hooks/useNotifications'
 import { mapPlantFormValuesToUpdatePlantInput } from 'src/utils/Mappers'
 
 const AdminEditPlantPage: React.FC = () => {
@@ -22,7 +24,7 @@ const AdminEditPlantPage: React.FC = () => {
   // Mutation to update the plant
   const { updatePlant, loading: updatingPlant } = useUpdatePlant({
     onCompleted: (data) => {
-      showSuccessNotification('Plant updated successfully!')
+      showSuccessNotification(`Plant ${data.name} updated successfully!`)
       // Optionally redirect or show a success message
     },
     onError: (error) => {
@@ -30,6 +32,30 @@ const AdminEditPlantPage: React.FC = () => {
       console.error('Error updating plant:', error)
     },
   })
+
+  // Map the fetched plant data to the form's default values
+  const defaultValues: PlantFormValues = plant
+    ? {
+        name: plant.name,
+        price: plant.price,
+        stock: plant.stock,
+        categoryId: plant.categoryId,
+        presentationType: plant.presentationType,
+        presentationDetails: plant.presentationDetails,
+        photos: plant.photos.map((photo) => ({
+          id: photo.id,
+          url: photo.url,
+        })), // Map existing photos
+      }
+    : {
+        name: '',
+        price: 1,
+        stock: 1,
+        categoryId: '',
+        presentationType: '',
+        presentationDetails: '',
+        photos: [],
+      }
 
   const handleSubmit = async (values: PlantFormValues) => {
     try {
@@ -68,7 +94,7 @@ const AdminEditPlantPage: React.FC = () => {
         <PlantForm
           onSubmit={handleSubmit}
           loading={updatingPlant}
-          defaultValues={plant} // Pass the fetched plant data as default values
+          defaultValues={defaultValues} // Pass the mapped default values
         />
       </Container>
     </>

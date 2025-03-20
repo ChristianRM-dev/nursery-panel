@@ -1,5 +1,5 @@
-import { gql, useMutation } from '@apollo/client';
-import { CreatePlant, CreatePlantVariables } from 'types/graphql'; // Adjust the import path as needed
+import { ApolloError, gql, useMutation } from '@apollo/client'
+import { CreatePlant, CreatePlantVariables } from 'types/graphql' // Adjust the import path as needed
 
 export const CREATE_PLANT = gql`
   mutation CreatePlant($input: CreatePlantInput!) {
@@ -22,11 +22,11 @@ export const CREATE_PLANT = gql`
       updatedAt
     }
   }
-`;
+`
 
 interface UseCreatePlantProps {
-  onCompleted?: (data: CreatePlant['createPlant']) => void; // Correct type for onCompleted
-  onError?: (error: Error) => void;
+  onCompleted?: (data: CreatePlant['createPlant']) => void // Correct type for onCompleted
+  onError?: (error: ApolloError) => void
 }
 
 export const useCreatePlant = ({
@@ -39,23 +39,23 @@ export const useCreatePlant = ({
   >(CREATE_PLANT, {
     onCompleted: (data) => {
       if (onCompleted) {
-        onCompleted(data.createPlant); // Pass the mutation result to onCompleted
+        onCompleted(data.createPlant) // Pass the mutation result to onCompleted
       }
     },
     onError: (error) => {
       if (onError) {
-        onError(error);
+        onError(error)
       }
     },
-  });
+  })
 
   const createPlant = (input: CreatePlantVariables['input']) => {
-    return createPlantMutation({ variables: { input } });
-  };
+    return createPlantMutation({ variables: { input } })
+  }
 
   return {
     createPlant,
     loading,
     error,
-  };
-};
+  }
+}

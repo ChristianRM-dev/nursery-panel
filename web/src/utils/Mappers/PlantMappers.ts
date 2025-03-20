@@ -1,7 +1,14 @@
+import {
+  CreatePlantInput,
+  PresentationType,
+  UpdatePlantInput,
+} from 'types/graphql'
+
 import { PlantFormValues } from 'src/components/Plant/PlantForm/PlantForm.schema'
-import { CreatePlantInput, PresentationType } from 'types/graphql'
-import { fileToBase64 } from '../Converters'
 import { GetPaginatedPlantsItem } from 'src/hooks/Plants/useGetPaginatedPlants'
+
+import { fileToBase64 } from '../Converters'
+
 /**
  * Maps `GetPaginatedPlantsItem` to the `PlantTableRow` expected by the PaginatedTable<PlantTableRow> component .
  */
@@ -19,8 +26,9 @@ export const mapPlantFormValuesToCreatePlantInput = async (
   values: PlantFormValues
 ): Promise<CreatePlantInput> => {
   // Convert File objects to base64-encoded strings
-  const photos = await Promise.all(
-    values.photos.map(async (file) => {
+  type PhotoType = CreatePlantInput['photos'][number]
+  const photos: PhotoType[] = await Promise.all(
+    values.photos.map(async (file: File) => {
       const content = await fileToBase64(file) // Convert file to base64
       return {
         path: file.name, // Use file name as path
@@ -43,14 +51,36 @@ export const mapPlantFormValuesToCreatePlantInput = async (
 /**
  * Maps `PlantFormValues` to the `UpdatePlantInput` expected by the mutation.
  */
-export const mapPlantFormValuesToUpdatePlantInput = (
+export const mapPlantFormValuesToUpdatePlantInput = async (
   values: PlantFormValues
-) => ({
-  name: values.name,
-  price: values.price,
-  stock: values.stock,
-  categoryId: values.categoryId,
-  presentationType: values.presentationType,
-  presentationDetails: values.presentationDetails,
-  photos: values.photos,
-});
+): Promise<UpdatePlantInput> => {
+  type PhotoType = UpdatePlantInput['photos'][number]
+
+  // Convert files to base64 asynchronously
+  const photos: PhotoType[] = await Promise.all(
+    values.photos.map(async (photo) => {
+      if ('id' in photo) {
+        return { id: photo.id } // Existing photo
+      } else {
+        const file = photo as File
+        const content = await fileToBase64(file) // Convert file to base64
+        return {
+          file: {
+            path: file.name, // Use file name as path
+            content,
+          },
+        } // New photo (File object)
+      }
+    })
+  )
+
+  return {
+    name: values.name,
+    price: values.price,
+    stock: values.stock,
+    categoryId: values.categoryId,
+    presentationType: values.presentationType as PresentationType,
+    presentationDetails: values.presentationDetails,
+    photos,
+  }
+}
