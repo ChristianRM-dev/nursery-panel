@@ -1,33 +1,36 @@
-import { useEffect, useRef } from 'react';
-import { navigate, routes } from '@redwoodjs/router';
-import { Metadata } from '@redwoodjs/web';
-import { useAuth } from 'src/auth';
-import { TextInput, Button, Card, Title, Text, Flex, Stack } from '@mantine/core';
-import { notifications } from '@mantine/notifications';
-import { IconCheck, IconX } from '@tabler/icons-react';
+import { useEffect, useRef } from 'react'
+
+import { TextInput, Button, Card, Title, Flex, Stack } from '@mantine/core'
+import { notifications } from '@mantine/notifications'
+import { IconCheck, IconX } from '@tabler/icons-react'
+
+import { navigate, routes } from '@redwoodjs/router'
+import { Metadata } from '@redwoodjs/web'
+
+import { useAuth } from 'src/auth'
 
 const ForgotPasswordPage = () => {
-  const { isAuthenticated, forgotPassword } = useAuth();
+  const { isAuthenticated, forgotPassword } = useAuth()
 
   // Redirect if already authenticated
   useEffect(() => {
     if (isAuthenticated) {
-      navigate(routes.home());
+      navigate(routes.home())
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated])
 
   // Focus on the username field on page load
-  const usernameRef = useRef<HTMLInputElement>(null);
+  const usernameRef = useRef<HTMLInputElement>(null)
   useEffect(() => {
-    usernameRef.current?.focus();
-  }, []);
+    usernameRef.current?.focus()
+  }, [])
 
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-    const username = formData.get('username') as string;
+    event.preventDefault()
+    const formData = new FormData(event.currentTarget)
+    const username = formData.get('username') as string
 
-    const response = await forgotPassword(username);
+    const response = await forgotPassword(username)
 
     if (response.error) {
       notifications.show({
@@ -35,46 +38,46 @@ const ForgotPasswordPage = () => {
         message: response.error,
         color: 'red',
         icon: <IconX />,
-      });
+      })
     } else {
       notifications.show({
-        title: 'Success',
-        message: `A link to reset your password was sent to ${response.email}`,
+        title: 'Éxito',
+        message: `Se envió un enlace para restablecer su contraseña a ${response.email}`,
         color: 'green',
         icon: <IconCheck />,
-      });
-      navigate(routes.login());
+      })
+      navigate(routes.login())
     }
-  };
+  }
 
   return (
     <>
-      <Metadata title="Forgot Password" />
+      <Metadata title="Olvidé mi Contraseña" />
 
       <Flex justify="center" align="center" h="100vh">
         <Card withBorder shadow="sm" p="lg" w={400}>
           <Title order={2} ta="center" mb="lg">
-            Forgot Password
+            Olvidé mi Contraseña
           </Title>
 
           <form onSubmit={onSubmit}>
             <Stack>
               <TextInput
                 name="username"
-                label="Username"
-                placeholder="Enter your username"
+                label="Nombre de usuario"
+                placeholder="Ingrese su nombre de usuario"
                 ref={usernameRef}
                 required
               />
               <Button type="submit" fullWidth>
-                Submit
+                Enviar
               </Button>
             </Stack>
           </form>
         </Card>
       </Flex>
     </>
-  );
-};
+  )
+}
 
-export default ForgotPasswordPage;
+export default ForgotPasswordPage

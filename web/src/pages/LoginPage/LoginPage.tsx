@@ -1,7 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
-import { Link, navigate, routes } from '@redwoodjs/router';
-import { Metadata } from '@redwoodjs/web';
-import { useAuth } from 'src/auth';
+import { useEffect, useRef, useState } from 'react'
+
 import {
   TextInput,
   PasswordInput,
@@ -12,12 +10,17 @@ import {
   Flex,
   Stack,
   Anchor,
-} from '@mantine/core';
-import { notifications } from '@mantine/notifications';
-import { IconCheck, IconX } from '@tabler/icons-react';
+} from '@mantine/core'
+import { notifications } from '@mantine/notifications'
+import { IconCheck, IconX } from '@tabler/icons-react'
 
-const WELCOME_MESSAGE = 'Welcome back!';
-const REDIRECT = routes.adminDashboard();
+import { Link, navigate, routes } from '@redwoodjs/router'
+import { Metadata } from '@redwoodjs/web'
+
+import { useAuth } from 'src/auth'
+
+const WELCOME_MESSAGE = '¡Bienvenido de nuevo!'
+const REDIRECT = routes.adminDashboard()
 
 const LoginPage = ({ type }) => {
   const {
@@ -26,245 +29,250 @@ const LoginPage = ({ type }) => {
     loading,
     logIn,
     reauthenticate,
-  } = useAuth();
-  const [shouldShowWebAuthn, setShouldShowWebAuthn] = useState(false);
+  } = useAuth()
+  const [shouldShowWebAuthn, setShouldShowWebAuthn] = useState(false)
   const [showWebAuthn, setShowWebAuthn] = useState(
     webAuthn.isEnabled() && type !== 'password'
-  );
+  )
 
   // Redirect after login or WebAuthn setup
   useEffect(() => {
     if (isAuthenticated && (!shouldShowWebAuthn || webAuthn.isEnabled())) {
-      navigate(REDIRECT);
+      navigate(REDIRECT)
     }
-  }, [isAuthenticated, shouldShowWebAuthn]);
+  }, [isAuthenticated, shouldShowWebAuthn])
 
   // Show WebAuthn prompt on page load if enabled
   useEffect(() => {
     if (!loading && !isAuthenticated && showWebAuthn) {
-      onAuthenticate();
+      onAuthenticate()
     }
-  }, [loading, isAuthenticated]);
+  }, [loading, isAuthenticated])
 
   // Focus on the username field on page load
-  const usernameRef = useRef<HTMLInputElement>(null);
+  const usernameRef = useRef<HTMLInputElement>(null)
   useEffect(() => {
-    usernameRef.current?.focus();
-  }, []);
+    usernameRef.current?.focus()
+  }, [])
 
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-    const username = formData.get('username') as string;
-    const password = formData.get('password') as string;
+    event.preventDefault()
+    const formData = new FormData(event.currentTarget)
+    const username = formData.get('username') as string
+    const password = formData.get('password') as string
 
-    const webAuthnSupported = await webAuthn.isSupported();
+    const webAuthnSupported = await webAuthn.isSupported()
 
     if (webAuthnSupported) {
-      setShouldShowWebAuthn(true);
+      setShouldShowWebAuthn(true)
     }
 
-    const response = await logIn({ username, password });
+    const response = await logIn({ username, password })
 
     if (response.message) {
       notifications.show({
-        title: 'Message',
+        title: 'Mensaje',
         message: response.message,
         color: 'blue',
         icon: <IconCheck />,
-      });
+      })
     } else if (response.error) {
       notifications.show({
         title: 'Error',
         message: response.error,
         color: 'red',
         icon: <IconX />,
-      });
+      })
     } else {
       if (webAuthnSupported) {
-        setShowWebAuthn(true);
+        setShowWebAuthn(true)
       } else {
         notifications.show({
-          title: 'Success',
+          title: 'Éxito',
           message: WELCOME_MESSAGE,
           color: 'green',
           icon: <IconCheck />,
-        });
+        })
       }
     }
-  };
+  }
 
   const onAuthenticate = async () => {
     try {
-      await webAuthn.authenticate();
-      await reauthenticate();
+      await webAuthn.authenticate()
+      await reauthenticate()
       notifications.show({
-        title: 'Success',
+        title: 'Éxito',
         message: WELCOME_MESSAGE,
         color: 'green',
         icon: <IconCheck />,
-      });
-      navigate(REDIRECT);
+      })
+      navigate(REDIRECT)
     } catch (e) {
       if (e.name === 'WebAuthnDeviceNotFoundError') {
         notifications.show({
           title: 'Error',
-          message: 'Device not found, log in with Username/Password to continue',
+          message:
+            'Dispositivo no encontrado, inicie sesión con nombre de usuario/contraseña para continuar',
           color: 'red',
           icon: <IconX />,
-        });
-        setShowWebAuthn(false);
+        })
+        setShowWebAuthn(false)
       } else {
         notifications.show({
           title: 'Error',
           message: e.message,
           color: 'red',
           icon: <IconX />,
-        });
+        })
       }
     }
-  };
+  }
 
   const onRegister = async () => {
     try {
-      await webAuthn.register();
+      await webAuthn.register()
       notifications.show({
-        title: 'Success',
+        title: 'Éxito',
         message: WELCOME_MESSAGE,
         color: 'green',
         icon: <IconCheck />,
-      });
-      navigate(REDIRECT);
+      })
+      navigate(REDIRECT)
     } catch (e) {
       notifications.show({
         title: 'Error',
         message: e.message,
         color: 'red',
         icon: <IconX />,
-      });
+      })
     }
-  };
+  }
 
   const onSkip = () => {
     notifications.show({
-      title: 'Success',
+      title: 'Éxito',
       message: WELCOME_MESSAGE,
       color: 'green',
       icon: <IconCheck />,
-    });
-    setShouldShowWebAuthn(false);
-  };
+    })
+    setShouldShowWebAuthn(false)
+  }
 
   const AuthWebAuthnPrompt = () => (
     <Card withBorder shadow="sm" p="lg">
       <Title order={2} ta="center" mb="md">
-        WebAuthn Login Enabled
+        Inicio de sesión con WebAuthn activado
       </Title>
       <Text ta="center" mb="lg">
-        Log in with your fingerprint, face, or PIN
+        Inicie sesión con su huella digital, rostro o PIN{' '}
       </Text>
       <Button fullWidth onClick={onAuthenticate}>
-        Open Authenticator
+        Abrir autenticador
       </Button>
     </Card>
-  );
+  )
 
   const RegisterWebAuthnPrompt = () => (
     <Card withBorder shadow="sm" p="lg">
       <Title order={2} ta="center" mb="md">
-        No More Passwords!
+        ¡No más contraseñas!
       </Title>
       <Text ta="center" mb="lg">
-        Depending on your device, you can log in with your fingerprint, face, or PIN next time.
+        Dependiendo de su dispositivo, podrá iniciar sesión con su huella
+        digital, rostro o PIN la próxima vez.
       </Text>
       <Stack>
         <Button fullWidth onClick={onRegister}>
-          Turn On
+          Activar
         </Button>
         <Button variant="outline" fullWidth onClick={onSkip}>
-          Skip for Now
+          Omitir por ahora
         </Button>
       </Stack>
     </Card>
-  );
+  )
 
   const PasswordForm = () => (
     <form onSubmit={onSubmit}>
       <Stack>
         <TextInput
           name="username"
-          label="Username"
-          placeholder="Enter your username"
+          label="Nombre de usuario"
+          placeholder="Ingrese su nombre de usuario"
           ref={usernameRef}
           required
         />
         <PasswordInput
           name="password"
-          label="Password"
-          placeholder="Enter your password"
+          label="Contraseña"
+          placeholder="Ingrese su contraseña"
           required
         />
         <Anchor component={Link} to={routes.forgotPassword()} size="sm">
-          Forgot Password?
+          ¿Olvidó su contraseña?
         </Anchor>
         <Button type="submit" fullWidth>
-          Login
+          Iniciar sesión
         </Button>
       </Stack>
     </form>
-  );
+  )
 
   const formToRender = () => {
     if (showWebAuthn) {
-      return webAuthn.isEnabled() ? <AuthWebAuthnPrompt /> : <RegisterWebAuthnPrompt />;
+      return webAuthn.isEnabled() ? (
+        <AuthWebAuthnPrompt />
+      ) : (
+        <RegisterWebAuthnPrompt />
+      )
     } else {
-      return <PasswordForm />;
+      return <PasswordForm />
     }
-  };
+  }
 
   const linkToRender = () => {
     if (showWebAuthn) {
       if (webAuthn.isEnabled()) {
         return (
           <Text ta="center" mt="md">
-            or login with{' '}
+            o inicie sesión con{' '}
             <Anchor component={Link} to="?type=password">
-              username and password
+              nombre de usuario y contraseña
             </Anchor>
           </Text>
-        );
+        )
       }
     } else {
       return (
         <Text ta="center" mt="md">
-          Don&apos;t have an account?{' '}
+          ¿No tiene una cuenta?{' '}
           <Anchor component={Link} to={routes.signup()}>
-            Sign up!
+            ¡Regístrese!
           </Anchor>
         </Text>
-      );
+      )
     }
-  };
+  }
 
   if (loading) {
-    return null;
+    return null
   }
 
   return (
     <>
-      <Metadata title="Login" />
-
+      <Metadata title="Iniciar sesión" />
       <Flex justify="center" align="center" h="100vh">
         <Card withBorder shadow="sm" p="lg" w={400}>
           <Title order={2} ta="center" mb="lg">
-            Login
+            Iniciar sesión
           </Title>
           {formToRender()}
           {linkToRender()}
         </Card>
       </Flex>
     </>
-  );
-};
+  )
+}
 
-export default LoginPage;
+export default LoginPage

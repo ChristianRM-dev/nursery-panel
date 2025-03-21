@@ -16,10 +16,10 @@ const CustomDevFatalErrorPage = () => (
   <Flex justify="center" align="center" h="100vh" bg="gray.1">
     <Card withBorder shadow="sm" p="lg" w={400}>
       <Title order={1} ta="center" mb="md">
-        Something went wrong
+        Algo salió mal {/* Translated to Spanish */}
       </Title>
       <Text ta="center" c="dimmed">
-        An unexpected error occurred. Please try again later.
+        Ocurrió un error inesperado. Por favor, inténtelo de nuevo más tarde. {/* Translated to Spanish */}
       </Text>
     </Card>
   </Flex>
