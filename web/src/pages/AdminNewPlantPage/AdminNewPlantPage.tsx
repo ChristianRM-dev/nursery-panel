@@ -1,6 +1,8 @@
 // web/src/pages/AdminNewPlantPage/AdminNewPlantPage.tsx
-import { Title, Container } from '@mantine/core'
+import { Title, Container, Group, Button } from '@mantine/core'
+import { IconArrowLeft } from '@tabler/icons-react'
 
+import { navigate, routes } from '@redwoodjs/router'
 import { Metadata } from '@redwoodjs/web'
 
 import { PlantForm } from 'src/components/Plant/PlantForm/PlantForm'
@@ -24,8 +26,9 @@ const AdminNewPlantPage: React.FC = () => {
   const { createPlant, loading } = useCreatePlant({
     onCompleted: (data) => {
       console.log('Plant created successfully:', data)
-      showSuccessNotification('Plant created successfully!') // Show success notification
+      showSuccessNotification(`Plant ${data.name} created successfully!`) // Show success notification
       // Optionally redirect or show a success message
+      navigate(routes.adminPlants())
     },
     onError: (error) => {
       console.error('Error creating plant:', error)
@@ -56,6 +59,17 @@ const AdminNewPlantPage: React.FC = () => {
     <>
       <Metadata title="AdminPlantsNew" description="AdminPlantsNew page" />
       <Container size="xl" py="xs">
+        {/* Back and Edit Buttons */}
+        <Group justify="space-between" mb="md">
+          {/* Back Button */}
+          <Button
+            leftSection={<IconArrowLeft size={16} />}
+            variant="subtle"
+            onClick={() => navigate(routes.adminPlants())} // Go back to the previous page
+          >
+            Back
+          </Button>
+        </Group>
         {/* Page Title */}
         <Title order={1} mb="xl">
           Create Plant

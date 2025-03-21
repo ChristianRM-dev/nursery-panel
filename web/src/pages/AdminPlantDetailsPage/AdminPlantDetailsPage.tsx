@@ -1,3 +1,4 @@
+// web/src/pages/AdminPlantDetailsPage/AdminPlantDetailsPage.tsx
 import { Carousel } from '@mantine/carousel'
 import {
   Title,
@@ -9,7 +10,7 @@ import {
   Badge,
   Button,
 } from '@mantine/core'
-import { IconArrowLeft } from '@tabler/icons-react'
+import { IconArrowLeft, IconEdit } from '@tabler/icons-react' // Import the edit icon
 
 import { useParams, navigate, routes } from '@redwoodjs/router'
 import { Metadata } from '@redwoodjs/web'
@@ -38,15 +39,26 @@ const AdminPlantDetailsPage: React.FC = () => {
     <>
       <Metadata title="Plant Details" description="Plant Details page" />
       <Container size="xl" py="xs">
-        {/* Back Button */}
-        <Button
-          leftSection={<IconArrowLeft size={16} />}
-          variant="subtle"
-          onClick={() => navigate(routes.adminPlants())} // Go back to the previous page
-          mb="md"
-        >
-          Back
-        </Button>
+        {/* Back and Edit Buttons */}
+        <Group justify="space-between" mb="md">
+          {/* Back Button */}
+          <Button
+            leftSection={<IconArrowLeft size={16} />}
+            variant="subtle"
+            onClick={() => navigate(routes.adminPlants())} // Go back to the previous page
+          >
+            Back
+          </Button>
+
+          {/* Edit Button */}
+          <Button
+            leftSection={<IconEdit size={16} />}
+            variant="filled"
+            onClick={() => navigate(routes.adminEditPlant({ id: plant.id }))} // Navigate to the edit page
+          >
+            Edit
+          </Button>
+        </Group>
 
         {/* Page Title */}
         <Title order={1} mb="xl">

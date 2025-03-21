@@ -5,6 +5,7 @@ import {
 } from 'types/graphql'
 
 import { PlantFormValues } from 'src/components/Plant/PlantForm/PlantForm.schema'
+import { PlantTableRow } from 'src/components/Plant/PlantTable/PlantTable.types'
 import { GetPaginatedPlantsItem } from 'src/hooks/Plants/useGetPaginatedPlants'
 
 import { fileToBase64 } from '../Converters'
@@ -15,8 +16,12 @@ import { fileToBase64 } from '../Converters'
 
 export const mapGetPaginatedPlantsItemToPlantTableRow = (
   plants: GetPaginatedPlantsItem
-) => {
-  return plants
+): PlantTableRow[] => {
+  return plants.map((plant) => ({
+    ...plant,
+    category: plant.category.name,
+    presentationType: plant.presentationType,
+  }))
 }
 
 /**

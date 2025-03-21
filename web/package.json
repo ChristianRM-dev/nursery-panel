@@ -14,6 +14,7 @@
     "@mantine/carousel": "^7.17.2",
     "@mantine/dropzone": "^7.17.2",
     "@mantine/form": "^7.17.2",
+    "@mantine/modals": "^7.17.2",
     "@mantine/notifications": "^7.17.2",
     "@redwoodjs/auth-dbauth-web": "8.5.0",
     "@redwoodjs/forms": "8.5.0",

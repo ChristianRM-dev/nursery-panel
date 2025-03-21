@@ -35,7 +35,11 @@ export const plants: QueryResolvers['plants'] = async ({
 export const plant: QueryResolvers['plant'] = ({ id }) => {
   return db.plant.findUnique({
     where: { id },
-    include: { category: true, photos: true, saleDetails: true },
+    include: {
+      category: true, // Include the category
+      photos: true, // Include the photos
+      saleDetails: true, // Include the saleDetails
+    },
   })
 }
 
@@ -44,38 +48,45 @@ export const createPlant: MutationResolvers['createPlant'] = async ({
 }) => {
   const { photos, ...rest } = input
 
-  // Upload photos to Vercel Blob
-  const uploadedPhotos = await Promise.all(
-    photos.map(async (photo) => {
-      // Decode the base64 data
-      const binaryData = Buffer.from(photo.content, 'base64')
-
-      // Create a File object with the decoded data
-      const file = new File([binaryData], photo.path, { type: 'image/jpeg' }) // Adjust the MIME type as needed
-
-      // Upload the file to Vercel Blob
-      const blob = await put(photo.path, file, {
-        access: 'public', // Make the files publicly accessible
-      })
-
-      return {
-        url: blob.url, // Store the Blob URL
-        pathname: blob.pathname, // Use `pathname` instead of `path`
-      }
-    })
-  )
-
-  // Create the plant in the database with the Blob URLs
-  return db.plant.create({
+  // First, create the plant in the database to get its ID
+  const plant = await db.plant.create({
     data: {
       name: rest.name,
       price: rest.price,
       stock: rest.stock,
       category: {
-        connect: { id: rest.categoryId }, // Connect to the Category by ID
+        connect: { id: rest.categoryId },
       },
-      presentationType: rest.presentationType, // Use `presentationType` instead of `presentation`
+      presentationType: rest.presentationType,
       presentationDetails: rest.presentationDetails,
+    },
+  })
+
+  // Generate the folder path using the plant's ID
+  const folderPath = `plants/${plant.id}`
+
+  // Upload photos to Vercel Blob in the folder
+  const uploadedPhotos = await Promise.all(
+    photos.map(async (photo) => {
+      const binaryData = Buffer.from(photo.content, 'base64')
+      const file = new File([binaryData], photo.path, { type: 'image/jpeg' })
+
+      // Use the folder path in the Blob path
+      const blob = await put(`${folderPath}/${photo.path}`, file, {
+        access: 'public',
+      })
+
+      return {
+        url: blob.url,
+        pathname: blob.pathname,
+      }
+    })
+  )
+
+  // Update the plant with the photos
+  return db.plant.update({
+    where: { id: plant.id },
+    data: {
       photos: {
         create: uploadedPhotos.map((photo) => ({
           url: photo.url,
@@ -83,8 +94,8 @@ export const createPlant: MutationResolvers['createPlant'] = async ({
       },
     },
     include: {
-      photos: true, // Include photos in the response
-      category: true, // Include category in the response
+      photos: true,
+      category: true,
     },
   })
 }
@@ -104,6 +115,9 @@ export const updatePlant: MutationResolvers['updatePlant'] = async ({
   if (!existingPlant) {
     throw new Error('Plant not found')
   }
+
+  // Generate the folder path using the plant's ID
+  const folderPath = `plants/${existingPlant.id}`
 
   // Extract the IDs of the photos that are still present in the input
   const photoIdsToKeep = photos
@@ -137,9 +151,12 @@ export const updatePlant: MutationResolvers['updatePlant'] = async ({
   const uploadedPhotos = await Promise.all(
     newPhotos.map(async (photo) => {
       const binaryData = Buffer.from(photo.file.content, 'base64')
-      const file = new File([binaryData], photo.file.path, { type: 'image/jpeg' })
+      const file = new File([binaryData], photo.file.path, {
+        type: 'image/jpeg',
+      })
 
-      const blob = await put(photo.file.path, file, {
+      // Use the folder path in the Blob path
+      const blob = await put(`${folderPath}/${photo.file.path}`, file, {
         access: 'public',
       })
 
@@ -168,7 +185,32 @@ export const updatePlant: MutationResolvers['updatePlant'] = async ({
   })
 }
 
-export const deletePlant: MutationResolvers['deletePlant'] = ({ id }) => {
+export const deletePlant: MutationResolvers['deletePlant'] = async ({ id }) => {
+  // Fetch the plant with its photos
+  const plant = await db.plant.findUnique({
+    where: { id },
+    include: { photos: true },
+  })
+
+  if (!plant) {
+    throw new Error('Plant not found')
+  }
+
+  // Delete photos from Vercel Blob
+  await Promise.all(
+    plant.photos.map(async (photo) => {
+      await del(photo.url) // Delete the photo from Vercel Blob
+    })
+  )
+
+  // Delete photos from the database
+  await db.photo.deleteMany({
+    where: {
+      plantId: id, // Delete all photos associated with the plant
+    },
+  })
+
+  // Delete the plant
   return db.plant.delete({
     where: { id },
   })

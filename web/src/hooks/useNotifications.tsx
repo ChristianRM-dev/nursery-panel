@@ -1,6 +1,6 @@
 // web/src/hooks/useNotifications.ts
-import { showNotification } from '@mantine/notifications';
-import { IconCheck, IconX } from '@tabler/icons-react';
+import { showNotification } from '@mantine/notifications'
+import { IconCheck, IconX } from '@tabler/icons-react'
 
 export const useNotifications = () => {
   const showSuccessNotification = (message: string) => {
@@ -9,8 +9,8 @@ export const useNotifications = () => {
       message,
       color: 'teal',
       icon: <IconCheck />,
-    });
-  };
+    })
+  }
 
   const showErrorNotification = (message: string) => {
     showNotification({
@@ -18,8 +18,8 @@ export const useNotifications = () => {
       message,
       color: 'red',
       icon: <IconX />,
-    });
-  };
+    })
+  }
 
-  return { showSuccessNotification, showErrorNotification };
-};
+  return { showSuccessNotification, showErrorNotification }
+}

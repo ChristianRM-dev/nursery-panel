@@ -4082,6 +4082,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@mantine/modals@npm:^7.17.2":
+  version: 7.17.2
+  resolution: "@mantine/modals@npm:7.17.2"
+  peerDependencies:
+    "@mantine/core": 7.17.2
+    "@mantine/hooks": 7.17.2
+    react: ^18.x || ^19.x
+    react-dom: ^18.x || ^19.x
+  checksum: 10c0/2dc5678c6b900c3bf3081eecfa34e84ac7e2374f14631c10ba433f4653029e267a8ab66b25be4e3e23edf42a20ad6869493bca9f38816a29c2ffeb83b48d2226
+  languageName: node
+  linkType: hard
+
 "@mantine/notifications@npm:^7.17.2":
   version: 7.17.2
   resolution: "@mantine/notifications@npm:7.17.2"
@@ -18410,6 +18422,7 @@ __metadata:
     "@mantine/dropzone": "npm:^7.17.2"
     "@mantine/form": "npm:^7.17.2"
     "@mantine/hooks": "npm:^7.17.2"
+    "@mantine/modals": "npm:^7.17.2"
     "@mantine/notifications": "npm:^7.17.2"
     "@redwoodjs/auth-dbauth-web": "npm:8.5.0"
     "@redwoodjs/forms": "npm:8.5.0"

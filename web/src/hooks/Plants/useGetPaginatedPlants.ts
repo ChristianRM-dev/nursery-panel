@@ -16,16 +16,10 @@ const GET_PAGINATED_PLANTS = gql`
         stock
         presentationType
         presentationDetails
-        photos {
-          id
-          url
-        }
         category {
           id
           name
         }
-        createdAt
-        updatedAt
       }
       meta {
         total

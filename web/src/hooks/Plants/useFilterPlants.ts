@@ -1,5 +1,6 @@
 // web/src/hooks/Plants/useFilterPlants.ts
 import { useEffect, useState } from 'react'
+
 import { useQuery, gql } from '@apollo/client'
 
 const GET_PLANTS = gql`

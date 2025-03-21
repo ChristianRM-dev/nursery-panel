@@ -1,3 +1,4 @@
+// web/src/hooks/Plants/useGetPlantById.ts
 import { useQuery, gql } from '@apollo/client'
 import { GetPlantById, GetPlantByIdVariables } from 'types/graphql'
 
