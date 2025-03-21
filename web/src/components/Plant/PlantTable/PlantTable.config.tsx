@@ -1,3 +1,4 @@
+// web/src/components/Plant/PlantTable/PlantTable.config.tsx
 import { Badge, NumberFormatter } from '@mantine/core'
 import { IconDetails, IconEdit, IconTrash } from '@tabler/icons-react'
 
@@ -7,15 +8,15 @@ import { PlantTableRow } from './PlantTable.types'
 
 export const plantTableConfig: TableConfig<PlantTableRow> = {
   columns: [
-    { field: 'name', header: 'Name' },
+    { field: 'name', header: 'Nombre' },
     {
       field: 'price',
-      header: 'Price',
+      header: 'Precio',
       formatter: (value: number) => (
         <>
           <NumberFormatter
             prefix="$"
-            suffix="MXN"
+            suffix=" MXN"
             value={value}
             thousandSeparator
           />
@@ -24,7 +25,7 @@ export const plantTableConfig: TableConfig<PlantTableRow> = {
     },
     {
       field: 'category',
-      header: 'Category',
+      header: 'Categoría',
       formatter: (value: string) => (
         <>
           <Badge color="teal" variant="light">
@@ -35,7 +36,7 @@ export const plantTableConfig: TableConfig<PlantTableRow> = {
     },
     {
       field: 'presentationType',
-      header: 'Presentation Type',
+      header: 'Tipo de Presentación',
       formatter: (value: string) => (
         <>
           <Badge color="blue" variant="light">
@@ -46,9 +47,13 @@ export const plantTableConfig: TableConfig<PlantTableRow> = {
     },
   ],
   actions: [
-    { type: 'Details', icon: <IconDetails />, tooltip: 'See Plant Details' },
-    { type: 'Edit', icon: <IconEdit />, tooltip: 'Edit Plant' },
-    { type: 'Delete', icon: <IconTrash />, tooltip: 'Delete Plant' },
+    {
+      type: 'Details',
+      icon: <IconDetails />,
+      tooltip: 'Ver Detalles de la Planta',
+    },
+    { type: 'Edit', icon: <IconEdit />, tooltip: 'Editar Planta' },
+    { type: 'Delete', icon: <IconTrash />, tooltip: 'Eliminar Planta' },
   ],
-  searchPlaceholder: 'Search plants...',
+  searchPlaceholder: 'Buscar plantas...',
 }

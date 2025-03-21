@@ -62,7 +62,6 @@ const AdminEditPlantPage: React.FC = () => {
 
   const handleSubmit = async (values: PlantFormValues) => {
     try {
-      console.log('handleSubmit', values)
 
       // Map form values to the input expected by the mutation
       const input = await mapPlantFormValuesToUpdatePlantInput(values)

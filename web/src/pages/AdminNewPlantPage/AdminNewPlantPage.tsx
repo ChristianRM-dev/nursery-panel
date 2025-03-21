@@ -21,26 +21,21 @@ const AdminNewPlantPage: React.FC = () => {
     presentationDetails: '',
     photos: [],
   }
-  const { showSuccessNotification, showErrorNotification } = useNotifications() // Use the custom hook
+  const { showSuccessNotification, showErrorNotification } = useNotifications()
 
   const { createPlant, loading } = useCreatePlant({
     onCompleted: (data) => {
-      console.log('Plant created successfully:', data)
-      showSuccessNotification(`Plant ${data.name} created successfully!`) // Show success notification
-      // Optionally redirect or show a success message
+      showSuccessNotification(`Plant ${data.name} created successfully!`)
       navigate(routes.adminPlants())
     },
     onError: (error) => {
       console.error('Error creating plant:', error)
-      showErrorNotification('Failed to create plant. Please try again.') // Show error notification
-      // Optionally show an error message
+      showErrorNotification('Failed to create plant. Please try again.')
     },
   })
 
   const handleSubmit = async (values: PlantFormValues) => {
     try {
-      console.log('handleSubmit', values)
-
       // Map form values to the input expected by the mutation
       const input = await mapPlantFormValuesToCreatePlantInput(values).then()
 
@@ -48,7 +43,6 @@ const AdminNewPlantPage: React.FC = () => {
       await createPlant(input)
 
       // Handle success (e.g., show a notification, redirect, etc.)
-      console.log('Plant created successfully')
     } catch (error) {
       // Handle error (e.g., show an error message)
       console.error('Error creating plant:', error)

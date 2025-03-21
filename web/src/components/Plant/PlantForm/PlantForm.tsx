@@ -124,7 +124,7 @@ export const PlantForm: React.FC<PlantFormProps> = ({
         />
         <Dropzone
           onDrop={handleDrop}
-          onReject={() => console.log('Rejected files')}
+          onReject={() => {}}
           maxSize={5 * 1024 ** 2} // 5 MB
           accept={IMAGE_MIME_TYPE}
           disabled={loading}

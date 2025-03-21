@@ -1,3 +1,4 @@
+// web/src/components/Plant/PlantTable/PlantTable.tsx
 import React, { useCallback } from 'react'
 
 import { Text } from '@mantine/core'
@@ -28,19 +29,19 @@ const PlantTable = () => {
   const { deletePlant } = useDeletePlant({
     onCompleted: (data) => {
       showSuccessNotification(
-        `Plant "${data.deletePlant.name}" deleted successfully!`
+        `¡Planta "${data.deletePlant.name}" eliminada correctamente!`
       )
       refetch({})
-      // Optionally redirect or perform other actions
     },
     onError: (error) => {
-      showErrorNotification('Failed to delete plant. Please try again.')
+      showErrorNotification(
+        'Error al eliminar la planta. Por favor, inténtelo de nuevo.'
+      )
       console.error('Error deleting plant:', error)
     },
   })
 
   const handleSeeDetails = useCallback((id: string) => {
-    // Use the route function and pass the `id` as an argument
     navigate(routes.adminPlantDetails({ id }))
   }, [])
 
@@ -58,18 +59,16 @@ const PlantTable = () => {
   const handleShowDeleteConfirm = useCallback(
     (id: string, name: string) => {
       openConfirmModal({
-        title: 'Delete Item',
+        title: 'Eliminar Elemento',
         message: (
           <>
             <Text>
-              {`Are you sure you want to "${name}". This action cannot be
-              undone.`}
+              {`¿Está seguro de que desea eliminar "${name}"? Esta acción no se puede deshacer.`}{' '}
             </Text>
           </>
         ),
-        confirmLabel: 'Delete',
-        cancelLabel: 'Cancel',
-        // eslint-disable-next-line prettier/prettier
+        confirmLabel: 'Eliminar',
+        cancelLabel: 'Cancelar',
         onConfirm: () => {
           handleDelete(id)
         },
@@ -79,7 +78,6 @@ const PlantTable = () => {
     [handleDelete, openConfirmModal]
   )
 
-  // Memoize the handleAction function
   const handleAction = useCallback(
     (event: TableActionEvent<PlantTableRow>) => {
       const { type, row } = event
@@ -102,10 +100,8 @@ const PlantTable = () => {
     [handleEdit, handleSeeDetails, handleShowDeleteConfirm]
   )
 
-  // Memoize the handleQueryChange function
   const handleQueryChange = useCallback(
     (query: TableQuery) => {
-      console.log('Refetching with query:', query) // Debug log
       refetch(query)
     },
     [refetch]
@@ -121,10 +117,10 @@ const PlantTable = () => {
         }}
         onAction={handleAction}
         onQueryChange={handleQueryChange}
-        loading={loading} // Pass loading state to the table
+        loading={loading}
       />
     </>
   )
 }
 
-export default React.memo(PlantTable) // Memoize the component
+export default React.memo(PlantTable)
