@@ -1,3 +1,4 @@
+// web/src/components/Plant/PlantForm/PlantForm.tsx
 import React, { useEffect, useState } from 'react'
 
 import {
@@ -81,51 +82,51 @@ export const PlantForm: React.FC<PlantFormProps> = ({
 
       <form onSubmit={form.onSubmit(onSubmit)}>
         <TextInput
-          label="Name"
+          label="Nombre"
           {...form.getInputProps('name')}
           disabled={loading}
         />
         <NumberInput
-          label="Price"
+          label="Precio"
           {...form.getInputProps('price')}
           disabled={loading}
         />
         <NumberInput
-          label="Stock"
+          label="Inventario"
           {...form.getInputProps('stock')}
           disabled={loading}
         />
         <Select
-          label="Category"
-          placeholder="Select a category"
+          label="Categoría"
+          placeholder="Seleccione una categoría"
           {...form.getInputProps('categoryId')}
           data={categories}
           searchable
           clearable
           onSearchChange={handleFilterCategories}
-          nothingFoundMessage="No categories found"
+          nothingFoundMessage="No se encontraron categorías"
           disabled={loading || loadingCategories}
         />
         <Select
-          label="Presentation"
-          placeholder="Select a presentation type"
+          label="Presentación"
+          placeholder="Seleccione un tipo de presentación"
           {...form.getInputProps('presentationType')}
           data={[
-            { value: 'BAG', label: 'BAG' },
-            { value: 'POT', label: 'POT' },
-            { value: 'HANGING', label: 'HANGING' },
+            { value: 'BAG', label: 'BOLSA' },
+            { value: 'POT', label: 'MACETA' },
+            { value: 'HANGING', label: 'COLGANTE' },
           ]}
           disabled={loading}
         />
         <Textarea
-          label="Presentation Details"
+          label="Detalles de la Presentación"
           {...form.getInputProps('presentationDetails')}
           disabled={loading}
         />
         <Dropzone
           onDrop={handleDrop}
           onReject={() => {}}
-          maxSize={5 * 1024 ** 2} // 5 MB
+          maxSize={5 * 1024 ** 2}
           accept={IMAGE_MIME_TYPE}
           disabled={loading}
         >
@@ -159,11 +160,11 @@ export const PlantForm: React.FC<PlantFormProps> = ({
 
             <div>
               <Text size="xl" inline>
-                Drag images here or click to select files
+                Arrastre imágenes aquí o haga clic para seleccionar archivos
               </Text>
               <Text size="sm" c="dimmed" inline mt={7}>
-                Attach as many files as you like, each file should not exceed
-                5mb
+                Adjunte tantos archivos como desee, cada archivo no debe exceder
+                5 MB
               </Text>
             </div>
           </Group>
@@ -178,7 +179,7 @@ export const PlantForm: React.FC<PlantFormProps> = ({
         {form.values.photos.length > 0 && (
           <Box mt="md">
             <Text size="md" mb="sm">
-              Selected files:
+              Archivos seleccionados:
             </Text>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
               {form.values.photos.map((photo, index) => (
@@ -186,7 +187,7 @@ export const PlantForm: React.FC<PlantFormProps> = ({
                   {'url' in photo ? (
                     <img
                       src={photo.url}
-                      alt={`Preview ${index}`}
+                      alt={`Vista previa ${index}`}
                       style={{
                         width: 100,
                         height: 100,
@@ -196,8 +197,8 @@ export const PlantForm: React.FC<PlantFormProps> = ({
                     />
                   ) : (
                     <img
-                      src={URL.createObjectURL(photo as File)} // photo is guaranteed to be a File here
-                      alt={`Preview ${index}`}
+                      src={URL.createObjectURL(photo as File)}
+                      alt={`Vista previa ${index}`}
                       style={{
                         width: 100,
                         height: 100,
@@ -223,7 +224,7 @@ export const PlantForm: React.FC<PlantFormProps> = ({
 
         <Group justify="flex-end" mt="md">
           <Button type="submit" disabled={loading}>
-            Submit
+            Enviar
           </Button>
         </Group>
       </form>

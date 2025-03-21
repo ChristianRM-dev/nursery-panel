@@ -13,30 +13,29 @@ import { useNotifications } from 'src/hooks/useNotifications'
 import { mapPlantFormValuesToUpdatePlantInput } from 'src/utils/Mappers'
 
 const AdminEditPlantPage: React.FC = () => {
-  const { id } = useParams() // Get the plant ID from the URL
+  const { id } = useParams()
   const { showSuccessNotification, showErrorNotification } = useNotifications()
 
-  // Fetch the plant data
   const {
     plant,
     loading: loadingPlant,
     error: errorPlant,
   } = useGetPlantById({ id })
 
-  // Mutation to update the plant
   const { updatePlant, loading: updatingPlant } = useUpdatePlant({
     onCompleted: (data) => {
-      showSuccessNotification(`Plant ${data.name} updated successfully!`)
-      // Optionally redirect or show a success message
+      showSuccessNotification(
+        `¡Planta "${data.name}" actualizada correctamente!`
+      )
       navigate(routes.adminPlants())
     },
     onError: (error) => {
-      showErrorNotification('Failed to update plant. Please try again.')
+      showErrorNotification(
+        'Error al actualizar la planta. Por favor, inténtelo de nuevo.'
+      )
       console.error('Error updating plant:', error)
     },
   })
-
-  // Map the fetched plant data to the form's default values
   const defaultValues: PlantFormValues = plant
     ? {
         name: plant.name,
@@ -48,7 +47,7 @@ const AdminEditPlantPage: React.FC = () => {
         photos: plant.photos.map((photo) => ({
           id: photo.id,
           url: photo.url,
-        })), // Map existing photos
+        })),
       }
     : {
         name: '',
@@ -62,7 +61,6 @@ const AdminEditPlantPage: React.FC = () => {
 
   const handleSubmit = async (values: PlantFormValues) => {
     try {
-
       // Map form values to the input expected by the mutation
       const input = await mapPlantFormValuesToUpdatePlantInput(values)
 
@@ -70,24 +68,27 @@ const AdminEditPlantPage: React.FC = () => {
       await updatePlant(id, input)
 
       // Handle success (e.g., show a notification, redirect, etc.)
-      console.log('Plant updated successfully')
+      console.log('Planta actualizada correctamente')
     } catch (error) {
       // Handle error (e.g., show an error message)
-      console.error('Error updating plant:', error)
+      console.error('Error al actualizar la planta:', error)
     }
   }
 
   if (loadingPlant) {
-    return <div>Loading...</div>
+    return <div>Cargando...</div>
   }
 
   if (errorPlant) {
-    return <div>Error loading plant: {errorPlant.message}</div>
+    return <div>Error al cargar la planta: {errorPlant.message}</div>
   }
 
   return (
     <>
-      <Metadata title="AdminEditPlant" description="AdminEditPlant page" />
+      <Metadata
+        title="AdminEditPlant"
+        description="Página de Edición de Plantas"
+      />{' '}
       <Container size="xl" py="xs">
         {/* Back and Edit Buttons */}
         <Group justify="space-between" mb="md">
@@ -95,19 +96,19 @@ const AdminEditPlantPage: React.FC = () => {
           <Button
             leftSection={<IconArrowLeft size={16} />}
             variant="subtle"
-            onClick={() => navigate(routes.adminPlants())} // Go back to the previous page
+            onClick={() => navigate(routes.adminPlants())}
           >
-            Back
+            Volver
           </Button>
         </Group>
         {/* Page Title */}
         <Title order={1} mb="xl">
-          Edit Plant
+          Editar Planta
         </Title>
         <PlantForm
           onSubmit={handleSubmit}
           loading={updatingPlant}
-          defaultValues={defaultValues} // Pass the mapped default values
+          defaultValues={defaultValues}
         />
       </Container>
     </>

@@ -1,4 +1,3 @@
-// web/src/pages/AdminPlantDetailsPage/AdminPlantDetailsPage.tsx
 import { Carousel } from '@mantine/carousel'
 import {
   Title,
@@ -10,7 +9,7 @@ import {
   Badge,
   Button,
 } from '@mantine/core'
-import { IconArrowLeft, IconEdit } from '@tabler/icons-react' // Import the edit icon
+import { IconArrowLeft, IconEdit } from '@tabler/icons-react'
 
 import { useParams, navigate, routes } from '@redwoodjs/router'
 import { Metadata } from '@redwoodjs/web'
@@ -18,26 +17,28 @@ import { Metadata } from '@redwoodjs/web'
 import { useGetPlantById } from 'src/hooks/Plants/useGetPlantById'
 
 const AdminPlantDetailsPage: React.FC = () => {
-  const { id } = useParams() // Get the plant ID from the URL
+  const { id } = useParams()
 
-  // Fetch the plant data
   const { plant, loading, error } = useGetPlantById({ id })
 
   if (loading) {
-    return <div>Loading...</div>
+    return <div>Cargando...</div>
   }
 
   if (error) {
-    return <div>Error loading plant: {error.message}</div>
+    return <div>Error al cargar la planta: {error.message}</div>
   }
 
   if (!plant) {
-    return <div>Plant not found</div>
+    return <div>Planta no encontrada</div>
   }
 
   return (
     <>
-      <Metadata title="Plant Details" description="Plant Details page" />
+      <Metadata
+        title="Detalles de la Planta"
+        description="Página de Detalles de la Planta"
+      />{' '}
       <Container size="xl" py="xs">
         {/* Back and Edit Buttons */}
         <Group justify="space-between" mb="md">
@@ -45,18 +46,18 @@ const AdminPlantDetailsPage: React.FC = () => {
           <Button
             leftSection={<IconArrowLeft size={16} />}
             variant="subtle"
-            onClick={() => navigate(routes.adminPlants())} // Go back to the previous page
+            onClick={() => navigate(routes.adminPlants())}
           >
-            Back
+            Volver
           </Button>
 
           {/* Edit Button */}
           <Button
             leftSection={<IconEdit size={16} />}
             variant="filled"
-            onClick={() => navigate(routes.adminEditPlant({ id: plant.id }))} // Navigate to the edit page
+            onClick={() => navigate(routes.adminEditPlant({ id: plant.id }))}
           >
-            Edit
+            Editar
           </Button>
         </Group>
 
@@ -68,35 +69,35 @@ const AdminPlantDetailsPage: React.FC = () => {
         {/* Plant Details */}
         <Card shadow="sm" padding="lg" radius="md" withBorder mb="xl">
           <Text size="lg" fw={500} mb="md">
-            Plant Details
+            Detalles de la Planta
           </Text>
 
           <Group mb="sm">
-            <Text fw={500}>Price:</Text>
+            <Text fw={500}>Precio:</Text>
             <Text>${plant.price}</Text>
           </Group>
 
           <Group mb="sm">
-            <Text fw={500}>Stock:</Text>
+            <Text fw={500}>Inventario:</Text>
             <Text>{plant.stock}</Text>
           </Group>
 
           <Group mb="sm">
-            <Text fw={500}>Category:</Text>
+            <Text fw={500}>Categoría:</Text>
             <Badge color="teal" variant="light">
               {plant.category.name}
             </Badge>
           </Group>
 
           <Group mb="sm">
-            <Text fw={500}>Presentation Type:</Text>
+            <Text fw={500}>Tipo de Presentación:</Text>{' '}
             <Badge color="blue" variant="light">
               {plant.presentationType}
             </Badge>
           </Group>
 
           <Group mb="sm">
-            <Text fw={500}>Presentation Details:</Text>
+            <Text fw={500}>Detalles de la Presentación:</Text>{' '}
             <Text>{plant.presentationDetails}</Text>
           </Group>
         </Card>
@@ -104,13 +105,13 @@ const AdminPlantDetailsPage: React.FC = () => {
         {/* Carousel Section */}
         <Card shadow="sm" padding="lg" radius="md" withBorder>
           <Text size="lg" fw={500} mb="md">
-            Photos
+            Fotos
           </Text>
 
           {/* Mantine Carousel */}
           <Carousel
             withIndicators
-            height={300} // Adjust height as needed
+            height={300}
             slideSize={{ base: '100%', sm: '50%', md: '33.333333%' }}
             slideGap={{ base: 0, sm: 'md' }}
             loop
@@ -122,10 +123,10 @@ const AdminPlantDetailsPage: React.FC = () => {
               <Carousel.Slide key={index}>
                 <Image
                   src={photo.url}
-                  alt={`Plant ${index + 1}`} // Improved alt text
-                  height={300} // Set a fixed height for consistency
-                  radius="md" // Rounded corners
-                  fit="cover" // Ensures the image covers the container
+                  alt={`Planta ${index + 1}`}
+                  height={300}
+                  radius="md"
+                  fit="cover"
                 />
               </Carousel.Slide>
             ))}

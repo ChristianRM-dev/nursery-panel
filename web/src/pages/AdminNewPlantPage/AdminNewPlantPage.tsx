@@ -8,7 +8,7 @@ import { Metadata } from '@redwoodjs/web'
 import { PlantForm } from 'src/components/Plant/PlantForm/PlantForm'
 import { PlantFormValues } from 'src/components/Plant/PlantForm/PlantForm.schema'
 import { useCreatePlant } from 'src/hooks/Plants/useCreatePlant'
-import { useNotifications } from 'src/hooks/useNotifications' // Import the custom hook
+import { useNotifications } from 'src/hooks/useNotifications'
 import { mapPlantFormValuesToCreatePlantInput } from 'src/utils/Mappers'
 
 const AdminNewPlantPage: React.FC = () => {
@@ -25,12 +25,14 @@ const AdminNewPlantPage: React.FC = () => {
 
   const { createPlant, loading } = useCreatePlant({
     onCompleted: (data) => {
-      showSuccessNotification(`Plant ${data.name} created successfully!`)
+      showSuccessNotification(`¡Planta "${data.name}" creada correctamente!`)
       navigate(routes.adminPlants())
     },
     onError: (error) => {
       console.error('Error creating plant:', error)
-      showErrorNotification('Failed to create plant. Please try again.')
+      showErrorNotification(
+        'Error al crear la planta. Por favor, inténtelo de nuevo.'
+      )
     },
   })
 
@@ -51,7 +53,10 @@ const AdminNewPlantPage: React.FC = () => {
 
   return (
     <>
-      <Metadata title="AdminPlantsNew" description="AdminPlantsNew page" />
+      <Metadata
+        title="AdminPlantsNew"
+        description="Página de Creación de Plantas"
+      />
       <Container size="xl" py="xs">
         {/* Back and Edit Buttons */}
         <Group justify="space-between" mb="md">
@@ -59,14 +64,14 @@ const AdminNewPlantPage: React.FC = () => {
           <Button
             leftSection={<IconArrowLeft size={16} />}
             variant="subtle"
-            onClick={() => navigate(routes.adminPlants())} // Go back to the previous page
+            onClick={() => navigate(routes.adminPlants())}
           >
-            Back
+            Volver
           </Button>
         </Group>
         {/* Page Title */}
         <Title order={1} mb="xl">
-          Create Plant
+          Crear Planta
         </Title>
         <PlantForm
           onSubmit={handleSubmit}

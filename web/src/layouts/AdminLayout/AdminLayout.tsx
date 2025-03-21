@@ -1,3 +1,4 @@
+// web/src/layouts/AdminLayout/AdminLayout.tsx
 import {
   AppShell,
   Burger,
@@ -6,15 +7,15 @@ import {
   ActionIcon,
   NavLink,
 } from '@mantine/core'
+import { useMantineColorScheme } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import {
   IconSun,
   IconMoonStars,
   IconDashboard,
-  IconSoup,
   IconFlower,
 } from '@tabler/icons-react'
-import { useMantineColorScheme } from '@mantine/core'
+
 import { Link, routes } from '@redwoodjs/router'
 
 const createIcon = (IconComponent: React.FC<any>) => (
@@ -28,12 +29,12 @@ const AdminLayout = ({ children }) => {
 
   const navbarOptions = [
     {
-      label: 'Dashboard',
+      label: 'Panel de Control',
       route: routes.adminDashboard(),
       icon: createIcon(IconDashboard),
     },
     {
-      label: 'Plants',
+      label: 'Plantas',
       route: routes.adminPlants(),
       icon: createIcon(IconFlower),
     },
@@ -60,14 +61,14 @@ const AdminLayout = ({ children }) => {
               size="sm"
             />
             <Text size="xl" fw="bold">
-              Admin Panel
+              Panel de Administración
             </Text>
           </Group>
           <ActionIcon
             variant="outline"
             color={dark ? 'yellow' : 'blue'}
             onClick={() => toggleColorScheme()}
-            title="Toggle color scheme"
+            title="Cambiar tema"
           >
             {dark ? <IconSun size={18} /> : <IconMoonStars size={18} />}
           </ActionIcon>
