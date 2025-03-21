@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react'
 
 import { useQuery, gql } from '@apollo/client'
+import { GetPlants, GetPlantsVariables } from 'types/graphql'
 
 const GET_PLANTS = gql`
   query GetPlants($pagination: PaginationInput!, $search: SearchInput) {
@@ -29,7 +30,10 @@ export const useFilterPlants = ({
     { id: string; name: string }[]
   >([])
 
-  const { data, loading, error, refetch } = useQuery(GET_PLANTS, {
+  const { data, loading, error, refetch } = useQuery<
+    GetPlants,
+    GetPlantsVariables
+  >(GET_PLANTS, {
     variables: {
       pagination: { page: 1, pageSize: 10 },
       search: { search: query },

@@ -1,4 +1,9 @@
 import { gql, useQuery } from '@apollo/client'
+import {
+  GetCategories,
+  GetPaginatedCategories,
+  GetPaginatedCategoriesVariables,
+} from 'types/graphql'
 
 const GET_PAGINATED_CATEGORIES = gql`
   query GetPaginatedCategories(
@@ -36,6 +41,8 @@ interface UseGetPaginatedCategoriesProps {
   search?: string
 }
 
+export type GetPaginatedCategoriesItem = GetCategories['categories']['data']
+
 export const useGetPaginatedCategories = ({
   page,
   pageSize,
@@ -43,7 +50,10 @@ export const useGetPaginatedCategories = ({
   sortOrder = 'desc',
   search = '',
 }: UseGetPaginatedCategoriesProps) => {
-  const { data, loading, error, refetch } = useQuery(GET_PAGINATED_CATEGORIES, {
+  const { data, loading, error, refetch } = useQuery<
+    GetPaginatedCategories,
+    GetPaginatedCategoriesVariables
+  >(GET_PAGINATED_CATEGORIES, {
     variables: {
       pagination: { page, pageSize },
       sort: sortField ? { sortField, sortOrder } : null,

@@ -1,3 +1,4 @@
+// web/src/components/Plant/PlantTable/PlantTable.types.ts
 import { TableRow } from 'src/components/Shared/PaginatedTable/PaginatedTable.types'
 
 export interface PlantTableRow extends TableRow {

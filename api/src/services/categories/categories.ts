@@ -1,10 +1,11 @@
-import { db } from 'src/lib/db'
-import { paginate } from 'src/lib/pagination'
 import type {
   QueryResolvers,
   MutationResolvers,
   CategoryRelationResolvers,
 } from 'types/graphql'
+
+import { db } from 'src/lib/db'
+import { paginate } from 'src/lib/pagination'
 
 export const categories: QueryResolvers['categories'] = async ({
   pagination,

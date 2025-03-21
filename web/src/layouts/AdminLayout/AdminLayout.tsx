@@ -13,7 +13,8 @@ import {
   IconSun,
   IconMoonStars,
   IconDashboard,
-  IconFlower,
+  IconCategory,
+  IconPlant,
 } from '@tabler/icons-react'
 
 import { Link, routes } from '@redwoodjs/router'
@@ -36,7 +37,12 @@ const AdminLayout = ({ children }) => {
     {
       label: 'Plantas',
       route: routes.adminPlants(),
-      icon: createIcon(IconFlower),
+      icon: createIcon(IconPlant),
+    },
+    {
+      label: 'Categorias (Plantas)',
+      route: routes.adminCategories(),
+      icon: createIcon(IconCategory),
     },
   ]
 

@@ -1,6 +1,8 @@
 // web/src/hooks/Categories/useFilterCategories.ts
 import { useEffect, useState } from 'react'
+
 import { useQuery } from '@apollo/client'
+import { GetCategories, GetCategoriesVariables } from 'types/graphql'
 
 const GET_CATEGORIES = gql`
   query GetCategories($pagination: PaginationInput!, $search: SearchInput) {
@@ -28,7 +30,10 @@ export const useFilterCategories = ({
     { id: string; name: string }[]
   >([])
 
-  const { data, loading, error, refetch } = useQuery(GET_CATEGORIES, {
+  const { data, loading, error, refetch } = useQuery<
+    GetCategories,
+    GetCategoriesVariables
+  >(GET_CATEGORIES, {
     variables: {
       pagination: { page: 1, pageSize: 10 },
       search: { search: query },

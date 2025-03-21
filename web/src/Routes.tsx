@@ -22,13 +22,16 @@ const Routes = () => {
         <Set wrap={AdminLayout}>
           <Route path="/admin/dashboard" page={AdminDashboardPage} name="adminDashboard" />
           {/* Plants routes */}
-          <Route path="/admin/plants" page={AdminPlantsPage} name="adminPlants" />
           <Route path="/admin/plant/new" page={AdminNewPlantPage} name="adminNewPlant" />
-          <Route path="/admin/plant/{id}" page={AdminPlantDetailsPage} name="adminPlantDetails" />
-          <Route path="/admin/plant/edit/{id}" page={AdminEditPlantPage} name="adminEditPlant" />
+          <Route path="/admin/plant/{id:String}/edit" page={AdminEditPlantPage} name="adminEditPlant" />
+          <Route path="/admin/plant/{id:String}" page={AdminPlantDetailsPage} name="adminPlantDetails" />
+          <Route path="/admin/plants" page={AdminPlantsPage} name="adminPlants" />
+          {/* Categories routes */}
+          <Route path="/admin/categories/new" page={AdminNewCategoryPage} name="adminNewCategory" />
+          <Route path="/admin/categories/{id:String}/edit" page={AdminEditCategoryPage} name="adminEditCategory" />
+          <Route path="/admin/categories/{id:String}" page={AdminCategoryDetailsPage} name="adminCategoryDetails" />
+          <Route path="/admin/categories" page={AdminCategoriesPage} name="adminCategories" />
         </Set>
-        {/* <Route path="/admin/users" page={AdminUsersPage} name="adminUsers" />
-        <Route path="/admin/settings" page={AdminSettingsPage} name="adminSettings" /> */}
       </PrivateSet>
 
       {/* Not Found Route */}
