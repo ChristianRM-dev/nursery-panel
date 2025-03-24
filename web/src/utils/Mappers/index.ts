@@ -15,3 +15,9 @@ export {
   mapNurseryFormValuesToCreateNurseryInput,
   mapNurseryFormValuesToUpdateNurseryInput,
 } from './NurseryMappers'
+
+export {
+  mapGetPaginatedCustomersItemToCustomerTableRow,
+  mapCustomerFormValuesToCreateCustomerInput,
+  mapCustomerFormValuesToUpdateCustomerInput,
+} from './CustomerMappers'

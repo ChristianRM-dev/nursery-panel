@@ -34,6 +34,11 @@ const Routes = () => {
           <Route path="/admin/nurseries/{id:String}/edit" page={AdminEditNurseryPage} name="adminEditNursery" />
           <Route path="/admin/nurseries/{id:String}" page={AdminNurseryDetailsPage} name="adminNurseryDetails" />
           <Route path="/admin/nurseries" page={AdminNurseriesPage} name="adminNurseries" />
+          {/* Customers routes */}
+          <Route path="/admin/customers/new" page={AdminNewCustomerPage} name="adminNewCustomer" />
+          <Route path="/admin/customers/{id:String}/edit" page={AdminEditCustomerPage} name="adminEditCustomer" />
+          <Route path="/admin/customers/{id:String}" page={AdminCustomerDetailsPage} name="adminCustomerDetails" />
+          <Route path="/admin/customers" page={AdminCustomersPage} name="adminCustomers" />
         </Set>
       </PrivateSet>
 

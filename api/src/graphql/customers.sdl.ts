@@ -1,3 +1,4 @@
+// api/src/graphql/customers.sdl.ts
 export const schema = gql`
   type Customer {
     id: String!
@@ -10,8 +11,17 @@ export const schema = gql`
     deletedAt: DateTime
   }
 
+  type CustomersResponse {
+    data: [Customer!]!
+    meta: PaginationMeta!
+  }
+
   type Query {
-    customers: [Customer!]! @requireAuth
+    customers(
+      pagination: PaginationInput!
+      sort: SortInput
+      search: SearchInput
+    ): CustomersResponse! @requireAuth
     customer(id: String!): Customer @requireAuth
   }
 
@@ -19,14 +29,12 @@ export const schema = gql`
     name: String!
     phone: String!
     email: String
-    deletedAt: DateTime
   }
 
   input UpdateCustomerInput {
     name: String
     phone: String
     email: String
-    deletedAt: DateTime
   }
 
   type Mutation {

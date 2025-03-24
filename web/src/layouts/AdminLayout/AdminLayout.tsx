@@ -16,6 +16,7 @@ import {
   IconCategory,
   IconPlant,
   IconHomeEco,
+  IconUsersGroup,
 } from '@tabler/icons-react'
 
 import { Link, routes } from '@redwoodjs/router'
@@ -49,6 +50,11 @@ const AdminLayout = ({ children }) => {
       label: 'Viveros',
       route: routes.adminNurseries(),
       icon: createIcon(IconHomeEco),
+    },
+    {
+      label: 'Clientes',
+      route: routes.adminCustomers(),
+      icon: createIcon(IconUsersGroup),
     },
   ]
 
