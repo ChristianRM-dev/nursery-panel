@@ -8,8 +8,6 @@ const Routes = () => {
     <Router useAuth={useAuth}>
       {/* Public Routes */}
       <Route path="/" page={HomePage} name="home" />
-      {/* <Route path="/about" page={AboutPage} name="about" />
-      <Route path="/contact" page={ContactPage} name="contact" /> */}
 
       {/* Authentication Routes */}
       <Route path="/login" page={LoginPage} name="login" />
@@ -31,6 +29,11 @@ const Routes = () => {
           <Route path="/admin/categories/{id:String}/edit" page={AdminEditCategoryPage} name="adminEditCategory" />
           <Route path="/admin/categories/{id:String}" page={AdminCategoryDetailsPage} name="adminCategoryDetails" />
           <Route path="/admin/categories" page={AdminCategoriesPage} name="adminCategories" />
+          {/* Nurseries routes */}
+          <Route path="/admin/nurseries/new" page={AdminNewNurseryPage} name="adminNewNursery" />
+          <Route path="/admin/nurseries/{id:String}/edit" page={AdminEditNurseryPage} name="adminEditNursery" />
+          <Route path="/admin/nurseries/{id:String}" page={AdminNurseryDetailsPage} name="adminNurseryDetails" />
+          <Route path="/admin/nurseries" page={AdminNurseriesPage} name="adminNurseries" />
         </Set>
       </PrivateSet>
 

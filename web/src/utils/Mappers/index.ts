@@ -9,3 +9,9 @@ export {
   mapCategoryFormValuesToCreateCategoryInput,
   mapCategoryFormValuesToUpdateCategoryInput,
 } from './CategoryMappers'
+
+export {
+  mapGetPaginatedNurseriesItemToNurseryTableRow,
+  mapNurseryFormValuesToCreateNurseryInput,
+  mapNurseryFormValuesToUpdateNurseryInput,
+} from './NurseryMappers'

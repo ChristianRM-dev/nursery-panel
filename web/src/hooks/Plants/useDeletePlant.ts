@@ -1,3 +1,4 @@
+// web/src/hooks/Plants/useDeletePlant.ts
 import { useMutation, gql, ApolloError } from '@apollo/client'
 import { DeletePlant, DeletePlantVariables } from 'types/graphql'
 

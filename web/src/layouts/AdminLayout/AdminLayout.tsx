@@ -15,6 +15,7 @@ import {
   IconDashboard,
   IconCategory,
   IconPlant,
+  IconHomeEco,
 } from '@tabler/icons-react'
 
 import { Link, routes } from '@redwoodjs/router'
@@ -43,6 +44,11 @@ const AdminLayout = ({ children }) => {
       label: 'Categorias (Plantas)',
       route: routes.adminCategories(),
       icon: createIcon(IconCategory),
+    },
+    {
+      label: 'Viveros',
+      route: routes.adminNurseries(),
+      icon: createIcon(IconHomeEco),
     },
   ]
 

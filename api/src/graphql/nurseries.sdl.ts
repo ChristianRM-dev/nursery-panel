@@ -1,3 +1,4 @@
+// api/src/graphql/nurseries.sdl.ts
 export const schema = gql`
   type Nursery {
     id: String!
@@ -12,8 +13,22 @@ export const schema = gql`
     deletedAt: DateTime
   }
 
+  input PhotoInput {
+    path: String!
+    content: String! # Base64-encoded file data
+  }
+
+  type NurseriesResponse {
+    data: [Nursery!]!
+    meta: PaginationMeta!
+  }
+
   type Query {
-    nurseries: [Nursery!]! @requireAuth
+    nurseries(
+      pagination: PaginationInput!
+      sort: SortInput
+      search: SearchInput
+    ): NurseriesResponse! @requireAuth
     nursery(id: String!): Nursery @requireAuth
   }
 
@@ -21,7 +36,7 @@ export const schema = gql`
     name: String!
     address: String!
     phone: String!
-    logo: String
+    logo: PhotoInput # Changed from String to PhotoInput
     rfc: String!
     deletedAt: DateTime
   }
@@ -30,7 +45,7 @@ export const schema = gql`
     name: String
     address: String
     phone: String
-    logo: String
+    logo: PhotoInput # Changed from String to PhotoInput
     rfc: String
     deletedAt: DateTime
   }

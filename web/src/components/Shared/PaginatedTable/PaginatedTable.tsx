@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import { useState } from 'react'
+
 import {
   Table,
   Pagination,
@@ -9,15 +10,16 @@ import {
   Flex,
   Loader,
   Text,
-} from '@mantine/core';
-import { IconArrowUp, IconArrowDown } from '@tabler/icons-react';
+} from '@mantine/core'
+import { IconArrowDown, IconArrowUp } from '@tabler/icons-react'
+
 import {
   TableActionEvent,
   TableConfig,
   TablePagination,
   TableQuery,
   TableRow,
-} from './PaginatedTable.types';
+} from './PaginatedTable.types'
 
 // PaginatedTable Component
 const PaginatedTable = <T extends TableRow>({
@@ -28,16 +30,16 @@ const PaginatedTable = <T extends TableRow>({
   onQueryChange,
   loading,
 }: {
-  data: T[];
-  config: TableConfig<T>;
-  pagination: TablePagination;
-  onAction: (event: TableActionEvent<T>) => void;
-  onQueryChange: (query: TableQuery) => void;
-  loading: boolean;
+  data: T[]
+  config: TableConfig<T>
+  pagination: TablePagination
+  onAction: (event: TableActionEvent<T>) => void
+  onQueryChange: (query: TableQuery) => void
+  loading: boolean
 }) => {
-  const [search, setSearch] = useState('');
-  const [sortField, setSortField] = useState<string>('createdAt');
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+  const [search, setSearch] = useState('')
+  const [sortField, setSortField] = useState<string>('createdAt')
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc')
 
   // Handle page change
   const handlePageChange = (page: number) => {
@@ -45,31 +47,31 @@ const PaginatedTable = <T extends TableRow>({
       pagination: { page, pageSize: pagination.pageSize }, // Only include page and pageSize
       sort: { sortField, sortOrder },
       search: search ? { search } : undefined,
-    });
-  };
+    })
+  }
 
   // Handle search change
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearch(event.target.value);
+    setSearch(event.target.value)
     onQueryChange({
       pagination: { page: 1, pageSize: pagination.pageSize }, // Reset to page 1 when searching
       sort: { sortField, sortOrder },
       search: { search: event.target.value },
-    });
-  };
+    })
+  }
 
   // Handle sorting
   const handleSort = (field: string) => {
     const newSortOrder =
-      sortField === field && sortOrder === 'desc' ? 'asc' : 'desc';
-    setSortField(field);
-    setSortOrder(newSortOrder);
+      sortField === field && sortOrder === 'desc' ? 'asc' : 'desc'
+    setSortField(field)
+    setSortOrder(newSortOrder)
     onQueryChange({
       pagination: { page: 1, pageSize: pagination.pageSize }, // Reset to page 1 when sorting
       sort: { sortField: field, sortOrder: newSortOrder },
       search: search ? { search } : undefined,
-    });
-  };
+    })
+  }
 
   return (
     <Box>
@@ -163,7 +165,7 @@ const PaginatedTable = <T extends TableRow>({
         </Flex>
       )}
     </Box>
-  );
-};
+  )
+}
 
-export default PaginatedTable;
+export default PaginatedTable
