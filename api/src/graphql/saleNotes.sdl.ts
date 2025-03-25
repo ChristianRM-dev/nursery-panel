@@ -47,14 +47,12 @@ export const schema = gql`
   input CreateSaleNoteInput {
     customerId: String!
     nurseryId: String!
-    folio: String!
     saleDetails: [SaleDetailInput!]!
   }
 
   input UpdateSaleNoteInput {
     customerId: String
     nurseryId: String
-    folio: String
     saleDetails: [UpdateSaleDetailInput!]
   }
 

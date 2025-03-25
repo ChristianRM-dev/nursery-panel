@@ -39,26 +39,24 @@ const AdminEditSaleNotePage: React.FC = () => {
 
   const defaultValues: SaleNoteFormValues = saleNote
     ? {
-      customerId: saleNote.customerId,
-      nurseryId: saleNote.nurseryId,
-      folio: saleNote.folio,
-      saleDetails: saleNote.saleDetails.map((detail) => ({
-        plantId: detail.plantId,
-        price: detail.price,
-        quantity: detail.quantity,
-      })),
-    }
+        customerId: saleNote.customer.id,
+        nurseryId: saleNote.nursery.id,
+        saleDetails: saleNote.saleDetails.map((detail) => ({
+          plantId: detail.plant.id,
+          price: detail.price,
+          quantity: detail.quantity,
+        })),
+      }
     : {
-      customerId: '',
-      nurseryId: '',
-      folio: '',
-      saleDetails: [],
-    }
+        customerId: '',
+        nurseryId: '',
+        saleDetails: [],
+      }
 
   const handleSubmit = async (values: SaleNoteFormValues) => {
     try {
       const input = mapSaleNoteFormValuesToUpdateSaleNoteInput(values)
-      await updateSaleNote({ id, input })
+      await updateSaleNote(id, input)
     } catch (error) {
       console.error('Error al actualizar la nota de venta:', error)
     }

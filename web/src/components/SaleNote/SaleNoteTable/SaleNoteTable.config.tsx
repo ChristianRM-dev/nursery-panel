@@ -1,5 +1,5 @@
 // web/src/components/SaleNote/SaleNoteTable/SaleNoteTable.config.tsx
-import { NumberFormatter } from '@mantine/core'
+import { Badge, NumberFormatter } from '@mantine/core'
 import { IconDetails, IconEdit, IconTrash } from '@tabler/icons-react'
 
 import { TableConfig } from 'src/components/Shared/PaginatedTable/PaginatedTable.types'
@@ -8,7 +8,17 @@ import { SaleNoteTableRow } from './SaleNoteTable.types'
 
 export const saleNoteTableConfig: TableConfig<SaleNoteTableRow> = {
   columns: [
-    { field: 'folio', header: 'Folio' },
+    {
+      field: 'folio',
+      header: 'Folio',
+      formatter: (value: string) => (
+        <>
+          <Badge color="indigo" variant="light">
+            {value}
+          </Badge>
+        </>
+      ),
+    },
     { field: 'customer', header: 'Cliente' },
     { field: 'nursery', header: 'Vivero' },
     {

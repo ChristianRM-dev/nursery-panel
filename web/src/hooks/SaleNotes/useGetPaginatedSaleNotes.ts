@@ -1,5 +1,8 @@
 import { gql, useQuery } from '@apollo/client'
-import { GetPaginatedSaleNotes, GetPaginatedSaleNotesVariables } from 'types/graphql'
+import {
+  GetPaginatedSaleNotes,
+  GetPaginatedSaleNotesVariables,
+} from 'types/graphql'
 
 const GET_PAGINATED_SALE_NOTES = gql`
   query GetPaginatedSaleNotes(
@@ -38,7 +41,8 @@ interface UseGetPaginatedSaleNotesProps {
   search?: string
 }
 
-export type GetPaginatedSaleNotesItem = GetPaginatedSaleNotes['saleNotes']['data']
+export type GetPaginatedSaleNotesItem =
+  GetPaginatedSaleNotes['saleNotes']['data']
 
 export const useGetPaginatedSaleNotes = ({
   page,

@@ -7,6 +7,7 @@ import {
   Badge,
   Button,
   Table,
+  NumberFormatter,
 } from '@mantine/core'
 import { IconArrowLeft, IconEdit } from '@tabler/icons-react'
 
@@ -92,7 +93,13 @@ const AdminSaleNoteDetailsPage: React.FC = () => {
 
           <Group mb="sm">
             <Text fw={500}>Total:</Text>
-            <Text fw={700}>${saleNote.total}</Text>
+            <NumberFormatter
+              prefix="$"
+              suffix=" MXN"
+              value={saleNote.total}
+              thousandSeparator
+              decimalScale={2}
+            />
           </Group>
         </Card>
 

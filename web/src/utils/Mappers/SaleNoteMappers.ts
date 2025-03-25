@@ -1,8 +1,5 @@
 // web/src/utils/Mappers/SaleNoteMappers.ts
-import {
-  CreateSaleNoteInput,
-  UpdateSaleNoteInput,
-} from 'types/graphql'
+import { CreateSaleNoteInput, UpdateSaleNoteInput } from 'types/graphql'
 
 import { SaleNoteFormValues } from 'src/components/SaleNote/SaleNoteForm/SaleNoteForm.schema'
 import { SaleNoteTableRow } from 'src/components/SaleNote/SaleNoteTable/SaleNoteTable.types'
@@ -33,8 +30,7 @@ export const mapSaleNoteFormValuesToCreateSaleNoteInput = (
   return {
     customerId: values.customerId,
     nurseryId: values.nurseryId,
-    folio: values.folio,
-    saleDetails: values.saleDetails.map(detail => ({
+    saleDetails: values.saleDetails.map((detail) => ({
       plantId: detail.plantId,
       price: detail.price,
       quantity: detail.quantity,
@@ -44,6 +40,8 @@ export const mapSaleNoteFormValuesToCreateSaleNoteInput = (
 
 /**
  * Maps `SaleNoteFormValues` to the `UpdateSaleNoteInput` expected by the mutation.
+ * Note: This assumes the frontend doesn't track existing sale detail IDs during edit.
+ * If you need to track existing IDs, you'll need to include them in the form values.
  */
 export const mapSaleNoteFormValuesToUpdateSaleNoteInput = (
   values: SaleNoteFormValues
@@ -51,15 +49,14 @@ export const mapSaleNoteFormValuesToUpdateSaleNoteInput = (
   return {
     customerId: values.customerId,
     nurseryId: values.nurseryId,
-    folio: values.folio,
-    saleDetails: {
-      // For update, we might need to handle existing vs new details differently
-      create: values.saleDetails.map(detail => ({
-        plantId: detail.plantId,
-        price: detail.price,
-        quantity: detail.quantity,
-      })),
-      // You might want to add update/delete operations for existing details
-    },
+    // For update, we provide the full list of sale details
+    // The backend service will handle updating/deleting existing records
+    saleDetails: values.saleDetails.map((detail) => ({
+      // If your form tracks existing IDs, include them here
+      // id: detail.id, // Uncomment if you add ID tracking to form values
+      plantId: detail.plantId,
+      price: detail.price,
+      quantity: detail.quantity,
+    })),
   }
 }

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+
 import { useQuery, gql } from '@apollo/client'
 import { GetSaleNotes, GetSaleNotesVariables } from 'types/graphql'
 
