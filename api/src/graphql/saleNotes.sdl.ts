@@ -1,3 +1,4 @@
+// api/src/graphql/saleNotes.sdl.ts
 export const schema = gql`
   type SaleNote {
     id: String!
@@ -5,7 +6,7 @@ export const schema = gql`
     customer: Customer!
     nurseryId: String!
     nursery: Nursery!
-    saleDetails: [SaleDetail]!
+    saleDetails: [SaleDetail!]!
     total: Float!
     folio: String!
     createdAt: DateTime!
@@ -13,25 +14,57 @@ export const schema = gql`
     deletedAt: DateTime
   }
 
-  type Query {
-    saleNotes: [SaleNote!]! @requireAuth
-    saleNote(id: String!): SaleNote @requireAuth
+  type SaleNotesResponse {
+    data: [SaleNote!]!
+    meta: PaginationMeta!
+  }
+
+  type SaleDetail {
+    id: String!
+    saleNoteId: String!
+    saleNote: SaleNote!
+    plantId: String!
+    plant: Plant!
+    price: Float!
+    quantity: Int!
+    createdAt: DateTime!
+    updatedAt: DateTime!
+  }
+
+  input SaleDetailInput {
+    plantId: String!
+    price: Float!
+    quantity: Int!
+  }
+
+  input UpdateSaleDetailInput {
+    id: String # For existing details
+    plantId: String
+    price: Float
+    quantity: Int
   }
 
   input CreateSaleNoteInput {
     customerId: String!
     nurseryId: String!
-    total: Float!
     folio: String!
-    deletedAt: DateTime
+    saleDetails: [SaleDetailInput!]!
   }
 
   input UpdateSaleNoteInput {
     customerId: String
     nurseryId: String
-    total: Float
     folio: String
-    deletedAt: DateTime
+    saleDetails: [UpdateSaleDetailInput!]
+  }
+
+  type Query {
+    saleNotes(
+      pagination: PaginationInput!
+      sort: SortInput
+      search: SearchInput
+    ): SaleNotesResponse! @requireAuth
+    saleNote(id: String!): SaleNote @requireAuth
   }
 
   type Mutation {

@@ -21,3 +21,9 @@ export {
   mapCustomerFormValuesToCreateCustomerInput,
   mapCustomerFormValuesToUpdateCustomerInput,
 } from './CustomerMappers'
+
+export {
+  mapGetPaginatedSaleNotesItemToSaleNoteTableRow,
+  mapSaleNoteFormValuesToCreateSaleNoteInput,
+  mapSaleNoteFormValuesToUpdateSaleNoteInput,
+} from './SaleNoteMappers'
