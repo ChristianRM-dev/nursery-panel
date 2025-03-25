@@ -16,6 +16,17 @@ export const schema = gql`
     deletedAt: DateTime
   }
 
+  type PublicPlant {
+    id: String!
+    name: String!
+    price: Float!
+    stock: Int!
+    presentationType: PresentationType!
+    presentationDetails: String
+    photos: [Photo!]!
+    category: Category!
+  }
+
   enum PresentationType {
     BAG
     POT
@@ -34,6 +45,7 @@ export const schema = gql`
       search: SearchInput
     ): PlantsResponse! @requireAuth
     plant(id: String!): Plant @requireAuth
+    publicPlant(id: String!): PublicPlant @skipAuth
   }
 
   input CreatePlantInput {

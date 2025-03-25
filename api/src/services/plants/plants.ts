@@ -215,3 +215,17 @@ export const deletePlant: MutationResolvers['deletePlant'] = async ({ id }) => {
     where: { id },
   })
 }
+
+export const publicPlant = ({ id }) => {
+  return db.plant.findUnique({
+    where: {
+      id,
+      deletedAt: null, // Only non-deleted plants
+      stock: { gt: 0 }, // Only plants with stock
+    },
+    include: {
+      category: true,
+      photos: true,
+    },
+  })
+}

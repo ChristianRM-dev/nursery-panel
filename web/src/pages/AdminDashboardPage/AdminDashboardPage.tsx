@@ -1,7 +1,7 @@
 // import { Link, routes } from '@redwoodjs/router'
 import { Metadata } from '@redwoodjs/web'
 
-const AdminDashboardPage = () => {
+const AdminDashboardPage: React.FC = () => {
   return (
     <>
       <Metadata title="AdminDashboard" description="AdminDashboard page" />

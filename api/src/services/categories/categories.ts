@@ -64,6 +64,73 @@ export const deleteCategory: MutationResolvers['deleteCategory'] = ({ id }) => {
   })
 }
 
+export const publicCategoriesWithPlants = () => {
+  return db.category.findMany({
+    where: {
+      plants: {
+        some: {
+          deletedAt: null,
+          stock: {
+            gt: 0, // Only show categories with available plants
+          },
+        },
+      },
+    },
+    include: {
+      plants: {
+        where: {
+          deletedAt: null,
+          stock: { gt: 0 },
+        },
+        take: 4, // Limit plants per category for preview
+        select: {
+          id: true,
+          name: true,
+          price: true,
+          presentationType: true,
+          photos: {
+            take: 1,
+            select: { url: true },
+          },
+        },
+      },
+    },
+  })
+}
+
+export const publicCategoryWithPlants = ({ id }) => {
+  return db.category.findUnique({
+    where: {
+      id,
+      plants: {
+        some: {
+          deletedAt: null,
+          stock: { gt: 0 },
+        },
+      },
+    },
+    include: {
+      plants: {
+        where: {
+          deletedAt: null,
+          stock: { gt: 0 },
+        },
+        include: {
+          photos: {
+            take: 1,
+            select: { url: true },
+          },
+          category: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      },
+    },
+  })
+}
+
 export const Category: CategoryRelationResolvers = {
   plants: (_obj, { root }) => {
     return db.category.findUnique({ where: { id: root?.id } }).plants()

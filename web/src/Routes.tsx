@@ -1,13 +1,22 @@
+// web/src/Routes.tsx
 import { Router, Route, PrivateSet, Set } from '@redwoodjs/router'
 
 import { useAuth } from './auth'
 import AdminLayout from './layouts/AdminLayout/AdminLayout'
+import PublicLayout from './layouts/PublicLayout/PublicLayout'
 
 const Routes = () => {
   return (
     <Router useAuth={useAuth}>
       {/* Public Routes */}
-      <Route path="/" page={HomePage} name="home" />
+      <Set wrap={PublicLayout}>
+        <Route path="/" page={HomePage} name="home" />
+        {/* <Route path="/about" page={AboutPage} name="about" />
+        <Route path="/contact" page={ContactPage} name="contact" /> */}
+        <Route path="/catalog" page={CatalogPage} name="catalog" />
+        <Route path="/catalog/category/{id:String}" page={CategoryPlantsPage} name="categoryPlants" />
+        <Route path="/plant/{id:String}" page={PlantDetailsPage} name="plantDetails" />
+      </Set>
 
       {/* Authentication Routes */}
       <Route path="/login" page={LoginPage} name="login" />
