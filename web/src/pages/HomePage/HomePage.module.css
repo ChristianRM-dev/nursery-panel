@@ -1,0 +1,39 @@
+.hero {
+  position: relative;
+  background-image: url('https://images.pexels.com/photos/15610794/pexels-photo-15610794/free-photo-of-gardeners-working-in-colorful-garden.jpeg');
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+  min-height: rem(600px);
+  display: flex;
+  align-items: center;
+}
+
+.container {
+  position: relative;
+  z-index: 1;
+}
+
+.title {
+  font-weight: 800;
+  font-size: rem(48px);
+  letter-spacing: rem(-1px);
+  color: var(--mantine-color-white);
+  margin-bottom: var(--mantine-spacing-md);
+}
+
+.highlight {
+  color: var(--mantine-color-green-5);
+}
+
+.description {
+  color: var(--mantine-color-white);
+  max-width: rem(600px);
+}
+
+.control {
+  background-color: var(--mantine-color-green-7);
+  &:hover {
+    background-color: var(--mantine-color-green-8);
+  }
+}

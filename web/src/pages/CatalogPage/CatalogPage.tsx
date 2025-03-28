@@ -7,34 +7,42 @@ import {
   Image,
   Text,
   Skeleton,
+  Badge,
+  Group,
+  Center,
 } from '@mantine/core'
+import { IconPlant } from '@tabler/icons-react'
 
 import { Link, routes } from '@redwoodjs/router'
 
 import { useGetCategoriesWithPlants } from 'src/hooks/Categories/useGetCategoriesWithPlants'
 
+import classes from './CatalogPage.module.css'
+
 const CatalogPage: React.FC = () => {
   const { categories, loading, error } = useGetCategoriesWithPlants()
 
-  if (error) return <div>Error loading categories</div>
+  if (error) return <div>Error al cargar las categorías</div>
+
+  const placeholderCategories = [...Array(6)].map((_, index) => (
+    <Card key={index} shadow="sm" padding="lg" radius="md" withBorder>
+      <Card.Section>
+        <Skeleton height={160} />
+      </Card.Section>
+      <Skeleton height={24} mt="md" width="70%" />
+      <Skeleton height={16} mt="sm" width="40%" />
+    </Card>
+  ))
 
   return (
-    <Container size="xl" py={50}>
-      <Title order={1} mb={50} ta="center">
-        Our Plant Catalog
+    <Container size="xl" py="xl">
+      <Title order={1} ta="center" mb="xl" mt="xl">
+        Nuestras Categorías de Plantas
       </Title>
 
       {loading ? (
         <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="xl">
-          {[...Array(6)].map((_, index) => (
-            <Card key={index} shadow="sm" p="lg">
-              <Card.Section>
-                <Skeleton h={200} />
-              </Card.Section>
-              <Skeleton h={28} mt="md" />
-              <Skeleton h={24} mt="sm" />
-            </Card>
-          ))}
+          {placeholderCategories}
         </SimpleGrid>
       ) : (
         <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="xl">
@@ -42,22 +50,40 @@ const CatalogPage: React.FC = () => {
             <Card
               key={category.id}
               shadow="sm"
-              p="lg"
+              padding="lg"
+              radius="md"
+              withBorder
               component={Link}
               to={routes.categoryPlants({ id: category.id })}
+              className={classes.card}
             >
               <Card.Section>
-                <Image
-                  src={category.image || '/plant-placeholder.jpg'}
-                  h={200}
-                  alt={category.name}
-                />
+                {category.image ? (
+                  <Image
+                    src={category.image}
+                    height={160}
+                    alt={category.name}
+                  />
+                ) : (
+                  <Center bg="gray.1" h={160}>
+                    <IconPlant
+                      size="3rem"
+                      color="var(--mantine-color-green-6)"
+                    />
+                  </Center>
+                )}
               </Card.Section>
-              <Title order={3} mt="md">
-                {category.name}
-              </Title>
-              <Text mt="sm" c="dimmed">
-                {category.plants.length} plants available
+
+              <Group justify="space-between" mt="md" mb="xs">
+                <Text fw={500}>{category.name}</Text>
+                <Badge color="green" variant="light">
+                  {category.plants.length} plantas
+                </Badge>
+              </Group>
+
+              <Text size="sm" c="dimmed" lineClamp={2}>
+                {category.description ||
+                  'Descubre nuestra selección de plantas en esta categoría'}
               </Text>
             </Card>
           ))}

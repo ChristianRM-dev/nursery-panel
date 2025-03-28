@@ -5,27 +5,49 @@ import { Link, routes } from '@redwoodjs/router'
 
 const PublicLayout = ({ children }) => {
   return (
-    <AppShell header={{ height: 70 }}>
-      <AppShell.Header p="md">
-        <Group justify="space-between">
+    <AppShell header={{ height: 80 }} padding="md">
+      <AppShell.Header px="md">
+        <Group justify="space-between" h="100%">
           <Link to={routes.home()}>
-            <Image src="/logo.png" alt="Nursery Logo" height={40} />
+            <Image
+              src="/logo.png"
+              alt="Logo de The Laurels"
+              height={50}
+              fit="contain"
+            />
           </Link>
-          <Group>
-            <Button component={Link} to={routes.catalog()} variant="subtle">
-              Catalog
+          <Group gap="lg">
+            <Button
+              component={Link}
+              to={routes.catalog()}
+              variant="subtle"
+              size="md"
+            >
+              Catálogo
             </Button>
-            {/* <Button component={Link} to={routes.about()} variant="subtle">
-              About Us
+            {/* <Button
+              component={Link}
+              to={routes.about()}
+              variant="subtle"
+              size="md"
+            >
+              Nosotros
             </Button>
-            <Button component={Link} to={routes.contact()} variant="subtle">
-              Contact
+            <Button
+              component={Link}
+              to={routes.contact()}
+              variant="subtle"
+              size="md"
+            >
+              Contacto
             </Button> */}
           </Group>
         </Group>
       </AppShell.Header>
       <AppShell.Main>
-        <Container size="xl">{children}</Container>
+        <Container size="xl" px={0}>
+          {children}
+        </Container>
       </AppShell.Main>
     </AppShell>
   )

@@ -1,88 +1,39 @@
 // web/src/pages/HomePage/HomePage.tsx
-import {
-  Button,
-  Container,
-  Title,
-  Text,
-  SimpleGrid,
-  Card,
-  Image,
-} from '@mantine/core'
+import { Button, Title, Text, Overlay, Container } from '@mantine/core'
 
 import { Link, routes } from '@redwoodjs/router'
 
+import classes from './HomePage.module.css'
+
 const HomePage: React.FC = () => {
   return (
-    <>
-      <Container
-        size="md"
-        h={500}
-        style={{
-          backgroundImage: 'url(/nursery-hero.jpg)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-        }}
-        p="md"
-      >
-        <Title order={1} c="white" mb="xl">
-          Welcome to Our Nursery
+    <div className={classes.hero}>
+      <Overlay
+        gradient="linear-gradient(180deg, rgba(0, 0, 0, 0.25) 0%, rgba(0, 0, 0, .65) 100%)"
+        opacity={1}
+        zIndex={0}
+      />
+      <Container className={classes.container} size="md">
+        <Title className={classes.title}>
+          Bienvenidos a <span className={classes.highlight}>The Laurels</span>
         </Title>
-        <Text c="white" size="xl" mb="xl">
-          Discover the perfect plants for your home and garden
+        <Text className={classes.description} size="xl" mt="xl">
+          Descubre la belleza natural en nuestro vivero. Plantas de calidad para
+          tu hogar y jardín.
         </Text>
         <Button
           component={Link}
           to={routes.catalog()}
-          size="lg"
-          variant="white"
+          size="xl"
+          radius="xl"
+          className={classes.control}
+          mt={40}
         >
-          Browse Our Catalog
+          Ver Catálogo
         </Button>
       </Container>
-
-      <Container py={50}>
-        <Title order={2} ta="center" mb={50}>
-          Featured Categories
-        </Title>
-
-        <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="xl">
-          {featuredCategories.map((category) => (
-            <Card
-              key={category.id}
-              shadow="sm"
-              p="lg"
-              component={Link}
-              to={routes.categoryPlants({ id: category.id })}
-            >
-              <Card.Section>
-                <Image src={category.image} h={200} alt={category.name} />
-              </Card.Section>
-              <Title order={3} mt="md">
-                {category.name}
-              </Title>
-              <Text mt="sm" c="dimmed">
-                {category.description}
-              </Text>
-            </Card>
-          ))}
-        </SimpleGrid>
-      </Container>
-    </>
+    </div>
   )
 }
-
-// Temporary data - replace with actual data from your API
-const featuredCategories = [
-  {
-    id: '1',
-    name: 'Indoor Plants',
-    description: 'Perfect for your home interior',
-    image: '/indoor-plants.jpg',
-  },
-  // Add more categories...
-]
 
 export default HomePage

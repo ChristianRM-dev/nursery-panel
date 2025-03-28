@@ -1,0 +1,75 @@
+/* PlantDetailsPage.module.css */
+
+.galleryContainer {
+  border-radius: var(--mantine-radius-md);
+  overflow: hidden;
+}
+
+/* Image gallery custom styles */
+.image-gallery {
+  border-radius: var(--mantine-radius-md);
+}
+
+.image-gallery-slide img {
+  border-radius: var(--mantine-radius-md);
+}
+
+.image-gallery-thumbnails-container {
+  padding-top: var(--mantine-spacing-xs);
+}
+
+.image-gallery-thumbnail {
+  border-radius: var(--mantine-radius-sm);
+  border: 2px solid transparent;
+  transition: border-color 0.2s ease;
+}
+
+.image-gallery-thumbnail.active,
+.image-gallery-thumbnail:hover {
+  border-color: var(--mantine-color-green-6);
+}
+
+/* Table styles */
+.detailsTable {
+  margin: var(--mantine-spacing-md) 0;
+}
+
+.detailsTable th {
+  white-space: nowrap;
+  width: 30%;
+}
+
+/* Button styles */
+.addToCartButton {
+  background-color: var(--mantine-color-green-6);
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: var(--mantine-color-green-7);
+  }
+
+  &:disabled {
+    background-color: var(--mantine-color-gray-5);
+    color: var(--mantine-color-gray-1);
+  }
+}
+
+.backButton {
+  color: var(--mantine-color-green-6);
+  padding-left: 0;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 48em) {
+  .galleryContainer {
+    margin-bottom: var(--mantine-spacing-xl);
+  }
+
+  .detailsTable th {
+    width: 40%;
+  }
+}

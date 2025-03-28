@@ -6,68 +6,95 @@ import {
   Card,
   Text,
   Skeleton,
+  Image,
+  Badge,
+  Group,
+  Stack,
+  Breadcrumbs,
+  Anchor,
 } from '@mantine/core'
 
 import { Link, routes, useParams } from '@redwoodjs/router'
 
 import { useGetCategoryWithPlants } from 'src/hooks/Categories/useGetCategoryWithPlants'
 
+import classes from './CategoryPlantsPage.module.css'
+
 const CategoryPlantsPage: React.FC = () => {
   const { id } = useParams()
-  const { category, loading, error } = useGetCategoryWithPlants({
-    id,
-  })
+  const { category, loading, error } = useGetCategoryWithPlants({ id })
 
-  if (error) return <div>Error loading category</div>
-  if (!category && !loading) return <div>Category not found</div>
+  if (error) return <div>Error al cargar la categoría</div>
+  if (!category && !loading) return <div>Categoría no encontrada</div>
+
+  const items = [
+    { title: 'Inicio', href: routes.home() },
+    { title: 'Catálogo', href: routes.catalog() },
+    { title: loading ? 'Cargando...' : category?.name, href: '#' },
+  ].map((item, index) => (
+    <Anchor component={Link} to={item.href} key={index}>
+      {item.title}
+    </Anchor>
+  ))
 
   return (
-    <Container size="xl" py={50}>
+    <Container size="xl" py="xl">
+      <Breadcrumbs mb="xl">{items}</Breadcrumbs>
+
       {loading ? (
         <>
-          <Skeleton h={42} mb={50} />
-          <Skeleton h={24} mb={50} />
+          <Skeleton height={42} mb="xl" width="60%" />
           <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="xl">
             {[...Array(6)].map((_, index) => (
-              <Card key={index} shadow="sm" p="lg">
+              <Card key={index} shadow="sm" padding="lg" radius="md" withBorder>
                 <Card.Section>
-                  <Skeleton h={200} />
+                  <Skeleton height={160} />
                 </Card.Section>
-                <Skeleton h={28} mt="md" />
-                <Skeleton h={24} mt="sm" />
+                <Skeleton height={24} mt="md" width="70%" />
+                <Skeleton height={20} mt="sm" width="40%" />
               </Card>
             ))}
           </SimpleGrid>
         </>
       ) : (
         <>
-          <Title order={1} mb={50}>
-            {category.name}
-          </Title>
-          <Text mb={50}>{category.description}</Text>
+          <Stack gap="xs" mb="xl">
+            <Title order={1}>{category.name}</Title>
+            <Text c="dimmed">{category.description}</Text>
+          </Stack>
 
           <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="xl">
             {category.plants.map((plant) => (
               <Card
                 key={plant.id}
                 shadow="sm"
-                p="lg"
+                padding="lg"
+                radius="md"
+                withBorder
                 component={Link}
                 to={routes.plantDetails({ id: plant.id })}
+                className={classes.card}
               >
                 <Card.Section>
-                  {/* <Image
-                    src={plant.photos[0]?.url || '/plant-placeholder.jpg'}
-                    h={200}
-                    alt={plant.name}
-                  /> */}
+                  {plant.mainPhoto ? (
+                    <Image
+                      src={plant.mainPhoto}
+                      height={160}
+                      alt={plant.name}
+                    />
+                  ) : (
+                    <Image
+                      src="/plant-placeholder.jpg"
+                      height={160}
+                      alt="Placeholder"
+                    />
+                  )}
                 </Card.Section>
-                <Title order={3} mt="md">
-                  {plant.name}
-                </Title>
-                <Text mt="sm" fw={500}>
-                  ${plant.price.toFixed(2)}
-                </Text>
+
+                <Group justify="space-between" mt="md" mb="xs">
+                  <Text fw={500}>{plant.name}</Text>
+                  <Badge color="green">${plant.price.toFixed(2)}</Badge>
+                </Group>
               </Card>
             ))}
           </SimpleGrid>
