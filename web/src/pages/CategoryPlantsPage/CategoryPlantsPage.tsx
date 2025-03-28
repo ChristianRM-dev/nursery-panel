@@ -7,8 +7,6 @@ import {
   Text,
   Skeleton,
   Image,
-  Badge,
-  Group,
   Stack,
   Breadcrumbs,
   Anchor,
@@ -68,7 +66,7 @@ const CategoryPlantsPage: React.FC = () => {
               <Card
                 key={plant.id}
                 shadow="sm"
-                padding="lg"
+                padding={0} // Remove padding to allow image to go edge-to-edge
                 radius="md"
                 withBorder
                 component={Link}
@@ -79,22 +77,25 @@ const CategoryPlantsPage: React.FC = () => {
                   {plant.mainPhoto ? (
                     <Image
                       src={plant.mainPhoto}
-                      height={160}
+                      height={180} // Slightly taller for better proportions
                       alt={plant.name}
+                      className={classes.cardImage}
                     />
                   ) : (
                     <Image
                       src="/plant-placeholder.jpg"
-                      height={160}
+                      height={180}
                       alt="Placeholder"
+                      className={classes.cardImage}
                     />
                   )}
                 </Card.Section>
 
-                <Group justify="space-between" mt="md" mb="xs">
-                  <Text fw={500}>{plant.name}</Text>
-                  <Badge color="green">${plant.price.toFixed(2)}</Badge>
-                </Group>
+                <div className={classes.textOverlay}>
+                  <Text fw={700} size="lg" className={classes.plantName}>
+                    {plant.name}
+                  </Text>
+                </div>
               </Card>
             ))}
           </SimpleGrid>

@@ -7,12 +7,12 @@
 }
 
 /* Card styles */
+/* CategoryPlantsPage.module.css */
+
 .card {
+  position: relative;
+  overflow: hidden;
   transition: transform 150ms ease, box-shadow 150ms ease;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  background-color: var(--mantine-color-white);
 }
 
 .card:hover {
@@ -20,37 +20,35 @@
   box-shadow: var(--mantine-shadow-md);
 }
 
-.cardSection {
-  position: relative;
-  height: 160px;
-  overflow: hidden;
-  background-color: var(--mantine-color-gray-1);
-}
-
 .cardImage {
+  width: 100%;
+  object-fit: cover;
   transition: transform 300ms ease;
 }
 
 .card:hover .cardImage {
-  transform: scale(1.05);
+  transform: scale(1.03);
 }
 
-.cardBody {
+.textOverlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
   padding: var(--mantine-spacing-md);
-  flex: 1;
-  display: flex;
-  flex-direction: column;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.8) 0%,
+    rgba(0, 0, 0, 0.5) 50%,
+    transparent 100%
+  );
+  backdrop-filter: blur(1px);
 }
 
-.cardTitle {
-  margin-bottom: var(--mantine-spacing-xs);
-  color: var(--mantine-color-gray-8);
-}
-
-.cardPrice {
-  margin-top: auto;
-  color: var(--mantine-color-green-7);
-  font-weight: 600;
+.plantName {
+  color: white;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  line-height: 1.2;
 }
 
 /* Empty state styles */

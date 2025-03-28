@@ -2,6 +2,7 @@
 import {
   Title,
   Container,
+  Image, // Added Image component
   Card,
   Text,
   Group,
@@ -82,6 +83,29 @@ const AdminCategoryDetailsPage: React.FC = () => {
             <Text fw={500}>Descripción:</Text>
             <Text>{category.description || 'Sin descripción'}</Text>
           </Group>
+        </Card>
+
+        {/* Image Section */}
+        <Card shadow="sm" padding="lg" radius="md" withBorder mb="xl">
+          <Text size="lg" fw={500} mb="md">
+            Imagen de la Categoría
+          </Text>
+
+          {/* Display the image if available */}
+          {category.image ? (
+            <Image
+              src={category.image}
+              alt={`Imagen de la categoría ${category.name}`}
+              height={160}
+              width="auto"
+              radius="md"
+              fit="contain"
+              style={{ maxWidth: '100%' }}
+              loading="lazy"
+            />
+          ) : (
+            <Text>No hay imagen disponible para esta categoría</Text>
+          )}
         </Card>
 
         {/* Plants Section */}

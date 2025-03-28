@@ -59,6 +59,7 @@ model Category {
   id          String    @id @default(uuid())
   name        String    @unique
   description String?
+  image       String
   plants      Plant[]
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt

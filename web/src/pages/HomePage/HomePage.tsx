@@ -15,7 +15,7 @@ const HomePage: React.FC = () => {
       />
       <Container className={classes.container} size="md">
         <Title className={classes.title}>
-          Bienvenidos a <span className={classes.highlight}>The Laurels</span>
+          Bienvenidos a <span className={classes.highlight}>Los Laureles</span>
         </Title>
         <Text className={classes.description} size="xl" mt="xl">
           Descubre la belleza natural en nuestro vivero. Plantas de calidad para

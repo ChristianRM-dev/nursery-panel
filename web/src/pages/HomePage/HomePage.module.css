@@ -1,3 +1,5 @@
+/* HomePage.module.css */
+
 .hero {
   position: relative;
   background-image: url('https://images.pexels.com/photos/15610794/pexels-photo-15610794/free-photo-of-gardeners-working-in-colorful-garden.jpeg');
@@ -7,33 +9,54 @@
   min-height: rem(600px);
   display: flex;
   align-items: center;
+  padding: 0;
+  margin: 0;
 }
 
+/* Remove any default margins from the container */
 .container {
-  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 0 var(--mantine-spacing-md);
   z-index: 1;
+  margin: 0 auto;
 }
 
 .title {
   font-weight: 800;
-  font-size: rem(48px);
+  font-size: clamp(rem(32px), 5vw, rem(48px));
   letter-spacing: rem(-1px);
   color: var(--mantine-color-white);
   margin-bottom: var(--mantine-spacing-md);
+  line-height: 1.2;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
 }
 
 .highlight {
   color: var(--mantine-color-green-5);
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
 }
 
 .description {
   color: var(--mantine-color-white);
   max-width: rem(600px);
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
 }
 
 .control {
   background-color: var(--mantine-color-green-7);
+  padding-left: rem(40px);
+  padding-right: rem(40px);
+
   &:hover {
     background-color: var(--mantine-color-green-8);
+    transform: translateY(-2px);
+  }
+
+  &:active {
+    transform: translateY(0);
   }
 }

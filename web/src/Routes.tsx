@@ -24,6 +24,9 @@ const Routes = () => {
       <Route path="/forgot-password" page={ForgotPasswordPage} name="forgotPassword" />
       <Route path="/reset-password" page={ResetPasswordPage} name="resetPassword" />
 
+      {/* Redirect to Admin main page */}
+      <Route path="/admin" redirect="adminDashboard" />
+
       {/* Admin Routes */}
       <PrivateSet unauthenticated="login" role="admin">
         <Set wrap={AdminLayout}>

@@ -1,5 +1,5 @@
 // web/src/layouts/PublicLayout/PublicLayout.tsx
-import { Container, AppShell, Group, Button, Image } from '@mantine/core'
+import { Container, AppShell, Group, Button, Text } from '@mantine/core'
 
 import { Link, routes } from '@redwoodjs/router'
 
@@ -8,13 +8,19 @@ const PublicLayout = ({ children }) => {
     <AppShell header={{ height: 80 }} padding="md">
       <AppShell.Header px="md">
         <Group justify="space-between" h="100%">
-          <Link to={routes.home()}>
-            <Image
-              src="/logo.png"
-              alt="Logo de The Laurels"
-              height={50}
-              fit="contain"
-            />
+          <Link to={routes.home()} style={{ textDecoration: 'none' }}>
+            <Text
+              size="xl"
+              fw={700}
+              style={{
+                fontFamily: 'Georgia, serif',
+                color: '#2b8a3e', // A deep green color
+                fontSize: '1.8rem',
+                letterSpacing: '1px',
+              }}
+            >
+              Los Laureles
+            </Text>
           </Link>
           <Group gap="lg">
             <Button
@@ -25,6 +31,7 @@ const PublicLayout = ({ children }) => {
             >
               Catálogo
             </Button>
+            {/* Uncomment these when ready */}
             {/* <Button
               component={Link}
               to={routes.about()}

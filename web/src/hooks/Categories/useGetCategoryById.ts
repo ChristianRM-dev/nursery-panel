@@ -8,6 +8,7 @@ const GET_CATEGORY_BY_ID = gql`
       id
       name
       description
+      image
       plants {
         id
         name

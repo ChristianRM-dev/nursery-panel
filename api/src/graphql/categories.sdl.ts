@@ -32,6 +32,11 @@ export const schema = gql`
     presentationType: PresentationType!
   }
 
+  input PhotoInput {
+    path: String!
+    content: String! # Base64-encoded file data
+  }
+
   type Query {
     # Admin queries (require authentication)
     categories(
@@ -49,21 +54,21 @@ export const schema = gql`
   input CreateCategoryInput {
     name: String!
     description: String
-    image: String
+    image: PhotoInput! # Changed from String to required PhotoInput
     deletedAt: DateTime
   }
 
   input UpdateCategoryInput {
     name: String
     description: String
-    image: String
+    image: PhotoInput # Changed from String to PhotoInput (optional for updates)
     deletedAt: DateTime
   }
 
   type Mutation {
     createCategory(input: CreateCategoryInput!): Category! @requireAuth
     updateCategory(id: String!, input: UpdateCategoryInput!): Category!
-      @skipAuth
+      @requireAuth # Changed from @skipAuth to @requireAuth for consistency
     deleteCategory(id: String!): Category! @requireAuth
   }
 `
