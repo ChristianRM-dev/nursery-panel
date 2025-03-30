@@ -25,7 +25,7 @@ const SignupPage = () => {
   // Redirect if already authenticated
   useEffect(() => {
     if (isAuthenticated) {
-      navigate(routes.home())
+      navigate(routes.admin())
     }
   }, [isAuthenticated])
 

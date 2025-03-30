@@ -1,10 +1,11 @@
-import { put, del } from '@vercel/blob'
+// api/src/services/categories/categories.ts
 import type {
   QueryResolvers,
   MutationResolvers,
   CategoryRelationResolvers,
 } from 'types/graphql'
 
+import { safeDeleteFromBlob, uploadToBlob } from 'src/lib/blob'
 import { db } from 'src/lib/db'
 import { paginate } from 'src/lib/pagination'
 
@@ -46,39 +47,22 @@ export const createCategory: MutationResolvers['createCategory'] = async ({
 }) => {
   const { image, ...rest } = input
 
-  // First, create the category in the database to get its ID
   const category = await db.category.create({
     data: {
       ...rest,
-      image: null, // Temporarily set image to null
+      image: null,
     },
   })
 
   let imageUrl: string | null = null
 
-  // Upload image to Vercel Blob (required for categories)
   if (image) {
-    const binaryData = Buffer.from(image.content, 'base64')
-    const file = new File([binaryData], image.path, { type: 'image/jpeg' })
-
-    // Use the folder path in the Blob path
-    const blob = await put(
-      `categories/${category.id}/image/${image.path}`,
-      file,
-      {
-        access: 'public',
-      }
-    )
-
-    imageUrl = blob.url
+    imageUrl = await uploadToBlob('categories', category.id, image)
   }
 
-  // Update the category with the image URL
   return db.category.update({
     where: { id: category.id },
-    data: {
-      image: imageUrl, // Save the image URL
-    },
+    data: { image: imageUrl },
   })
 }
 
@@ -88,7 +72,6 @@ export const updateCategory: MutationResolvers['updateCategory'] = async ({
 }) => {
   const { image, ...rest } = input
 
-  // Fetch the existing category to check for an existing image
   const existingCategory = await db.category.findUnique({
     where: { id },
   })
@@ -99,31 +82,16 @@ export const updateCategory: MutationResolvers['updateCategory'] = async ({
 
   let imageUrl: string | null = existingCategory.image
 
-  // If a new image is provided, upload it to Vercel Blob
   if (image) {
-    // Delete the old image if it exists
-    if (existingCategory.image) {
-      await del(existingCategory.image) // Delete the old image from Vercel Blob
-    }
-
-    // Upload the new image
-    const binaryData = Buffer.from(image.content, 'base64')
-    const file = new File([binaryData], image.path, { type: 'image/jpeg' })
-
-    // Use the folder path in the Blob path
-    const blob = await put(`categories/${id}/image/${image.path}`, file, {
-      access: 'public',
-    })
-
-    imageUrl = blob.url
+    await safeDeleteFromBlob(existingCategory.image)
+    imageUrl = await uploadToBlob('categories', id, image)
   }
 
-  // Update the category with the new data and image URL
   return db.category.update({
     where: { id },
     data: {
       ...rest,
-      image: imageUrl, // Save the new image URL
+      image: imageUrl,
     },
   })
 }
@@ -152,7 +120,6 @@ export const publicCategoriesWithPlants = () => {
           deletedAt: null,
           stock: { gt: 0 },
         },
-        take: 4, // Limit plants per category for preview
         select: {
           id: true,
           name: true,

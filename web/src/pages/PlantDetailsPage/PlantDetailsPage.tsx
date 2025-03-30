@@ -16,11 +16,11 @@ import {
   Button,
   Image, // Import Image from Mantine
 } from '@mantine/core'
-import { IconArrowLeft, IconShoppingCart } from '@tabler/icons-react'
-// import ReactImageGallery from 'react-image-gallery' // Changed import name
+import { IconArrowLeft } from '@tabler/icons-react'
 
 import { Link, routes, useParams } from '@redwoodjs/router'
 
+import ImageGallery from 'src/components/Shared/ImageGallery/ImageGallery'
 import { useGetPlantDetails } from 'src/hooks/Plants/useGetPlantDetails'
 
 import 'react-image-gallery/styles/css/image-gallery.css'
@@ -90,13 +90,7 @@ const PlantDetailsPage: React.FC = () => {
           <div className={classes.galleryContainer}>
             {galleryImages.length > 0 ? (
               <>
-                {/* <ReactImageGallery
-                  items={galleryImages}
-                  showPlayButton={false}
-                  showFullscreenButton={false}
-                  showNav={galleryImages.length > 1}
-                  showThumbnails={galleryImages.length > 1}
-                  lazyLoad /> */}
+                <ImageGallery images={galleryImages} />
               </>
             ) : (
               <Image
@@ -112,9 +106,9 @@ const PlantDetailsPage: React.FC = () => {
           <Stack>
             <Group justify="space-between">
               <Title order={1}>{plant.name}</Title>
-              <Badge color="green" size="xl" variant="light">
+              {/* <Badge color="green" size="xl" variant="light">
                 ${plant.price.toFixed(2)}
-              </Badge>
+              </Badge> */}
             </Group>
 
             <Group>
@@ -140,14 +134,14 @@ const PlantDetailsPage: React.FC = () => {
             >
               <Table.Tbody>
                 <Table.Tr>
-                  <Table.Th>Disponibilidad</Table.Th>
+                  {/* <Table.Th>Disponibilidad</Table.Th>
                   <Table.Td>
                     {plant.stock > 0 ? (
                       <Badge color="green">En stock ({plant.stock})</Badge>
                     ) : (
                       <Badge color="red">Agotado</Badge>
                     )}
-                  </Table.Td>
+                  </Table.Td> */}
                 </Table.Tr>
                 <Table.Tr>
                   <Table.Th>Tipo de Presentación</Table.Th>
@@ -166,7 +160,7 @@ const PlantDetailsPage: React.FC = () => {
               </Table.Tbody>
             </Table>
 
-            <Button
+            {/* <Button
               leftSection={<IconShoppingCart size={20} />}
               size="lg"
               radius="xl"
@@ -175,7 +169,7 @@ const PlantDetailsPage: React.FC = () => {
               className={classes.addToCartButton}
             >
               {plant.stock > 0 ? 'Añadir al carrito' : 'No disponible'}
-            </Button>
+            </Button> */}
           </Stack>
         </SimpleGrid>
       </Card>
