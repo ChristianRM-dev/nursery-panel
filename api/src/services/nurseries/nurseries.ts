@@ -1,3 +1,4 @@
+// api/src/services/nurseries/nurseries.ts
 import type { QueryResolvers, MutationResolvers } from 'types/graphql'
 
 import { uploadToBlob, safeDeleteFromBlob } from 'src/lib/blob'
@@ -25,7 +26,7 @@ export const nurseries: QueryResolvers['nurseries'] = async ({
       sortField,
       sortOrder: validatedSortOrder,
       search: searchTerm,
-      searchFields: ['name', 'address', 'phone', 'rfc'],
+      searchFields: ['name', 'address', 'phone', 'rfc', 'email', 'ownerName'],
     }
   )
 }
@@ -44,23 +45,17 @@ export const createNursery: MutationResolvers['createNursery'] = async ({
 }) => {
   const { logo, ...rest } = input
 
-  const nursery = await db.nursery.create({
-    data: {
-      ...rest,
-      logo: null,
-    },
-  })
-
+  // First upload the logo if it exists
   let logoUrl: string | null = null
-
   if (logo) {
-    logoUrl = await uploadToBlob('nurseries', nursery.id, logo)
+    logoUrl = await uploadToBlob('nurseries', rest.name, logo)
   }
 
-  return db.nursery.update({
-    where: { id: nursery.id },
+  // Then create the nursery with the logo URL (or null if no logo)
+  return db.nursery.create({
     data: {
-      logo: logoUrl,
+      ...rest,
+      logo: logoUrl, // This can now be null
     },
   })
 }
@@ -82,7 +77,9 @@ export const updateNursery: MutationResolvers['updateNursery'] = async ({
   let logoUrl: string | null = existingNursery.logo
 
   if (logo) {
-    await safeDeleteFromBlob(existingNursery.logo)
+    if (existingNursery.logo) {
+      await safeDeleteFromBlob(existingNursery.logo)
+    }
     logoUrl = await uploadToBlob('nurseries', id, logo)
   }
 
@@ -94,7 +91,6 @@ export const updateNursery: MutationResolvers['updateNursery'] = async ({
     },
   })
 }
-
 export const deleteNursery: MutationResolvers['deleteNursery'] = async ({
   id,
 }) => {

@@ -57,6 +57,8 @@ const Routes = () => {
           <Route path="/admin/sale-note/{id:String}" page={AdminSaleNoteDetailsPage} name="adminSaleNoteDetails" />
           <Route path="/admin/sale-notes" page={AdminSaleNotesPage} name="adminSaleNotes" />
         </Set>
+        {/* PDF Pages */}
+        <Route path="/admin/sale-note-pdf/{id:String}" page={AdminSaleNotePDFPage} name="adminSaleNotePdf" />
       </PrivateSet>
 
       {/* Not Found Route */}

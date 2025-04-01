@@ -1,4 +1,3 @@
-// web/src/components/Nursery/NurseryForm/NurseryForm.tsx
 import React from 'react'
 
 import { TextInput, Button, Group, Text, Box, ActionIcon } from '@mantine/core'
@@ -26,6 +25,8 @@ export const NurseryForm: React.FC<NurseryFormProps> = ({
       name: defaultValues?.name || '',
       address: defaultValues?.address || '',
       phone: defaultValues?.phone || '',
+      email: defaultValues?.email || '',
+      ownerName: defaultValues?.ownerName || '',
       rfc: defaultValues?.rfc || '',
       logo: defaultValues?.logo || null,
     },
@@ -73,6 +74,22 @@ export const NurseryForm: React.FC<NurseryFormProps> = ({
           label="Teléfono"
           placeholder="Teléfono del vivero"
           {...form.getInputProps('phone')}
+          disabled={loading}
+          required
+          mb="md"
+        />
+        <TextInput
+          label="Email"
+          placeholder="Email del vivero"
+          {...form.getInputProps('email')}
+          disabled={loading}
+          required
+          mb="md"
+        />
+        <TextInput
+          label="Nombre del propietario"
+          placeholder="Nombre del propietario"
+          {...form.getInputProps('ownerName')}
           disabled={loading}
           required
           mb="md"

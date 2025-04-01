@@ -1,6 +1,6 @@
 // web/src/components/SaleNote/SaleNoteTable/SaleNoteTable.config.tsx
 import { Badge, NumberFormatter } from '@mantine/core'
-import { IconDetails, IconEdit, IconTrash } from '@tabler/icons-react'
+import { IconDetails, IconEdit, IconPdf, IconTrash } from '@tabler/icons-react'
 
 import { TableConfig } from 'src/components/Shared/PaginatedTable/PaginatedTable.types'
 
@@ -48,6 +48,7 @@ export const saleNoteTableConfig: TableConfig<SaleNoteTableRow> = {
     },
     { type: 'Edit', icon: <IconEdit />, tooltip: 'Editar Nota' },
     { type: 'Delete', icon: <IconTrash />, tooltip: 'Eliminar Nota' },
+    { type: 'DownloadFile', icon: <IconPdf />, tooltip: 'Descargar Nota' },
   ],
   searchPlaceholder: 'Buscar notas de venta...',
 }

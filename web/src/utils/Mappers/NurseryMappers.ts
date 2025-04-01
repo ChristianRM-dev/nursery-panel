@@ -40,6 +40,8 @@ export const mapNurseryFormValuesToCreateNurseryInput = async (
     name: values.name,
     address: values.address,
     phone: values.phone,
+    email: values.email,
+    ownerName: values.ownerName,
     rfc: values.rfc,
     logo: logoInput,
   }
@@ -69,6 +71,8 @@ export const mapNurseryFormValuesToUpdateNurseryInput = async (
     name: values.name,
     address: values.address,
     phone: values.phone,
+    email: values.email,
+    ownerName: values.ownerName,
     rfc: values.rfc,
     logo: logoInput,
   }

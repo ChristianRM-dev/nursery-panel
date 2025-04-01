@@ -1,10 +1,11 @@
-// api/src/graphql/nurseries.sdl.ts
 export const schema = gql`
   type Nursery {
     id: String!
     name: String!
     address: String!
     phone: String!
+    email: String!
+    ownerName: String!
     logo: String
     rfc: String!
     saleNotes: [SaleNote]!
@@ -36,6 +37,8 @@ export const schema = gql`
     name: String!
     address: String!
     phone: String!
+    email: String!
+    ownerName: String!
     logo: PhotoInput # Changed from String to PhotoInput
     rfc: String!
     deletedAt: DateTime
@@ -45,6 +48,8 @@ export const schema = gql`
     name: String
     address: String
     phone: String
+    email: String
+    ownerName: String
     logo: PhotoInput # Changed from String to PhotoInput
     rfc: String
     deletedAt: DateTime

@@ -78,6 +78,11 @@ const SaleNoteTable = () => {
     [handleDelete, openConfirmModal]
   )
 
+  const handleDownloadSaleNotePDF = useCallback((id: string) => {
+    const url = routes.adminSaleNotePdf({ id })
+    window.open(url, '_blank')
+  }, [])
+
   const handleAction = useCallback(
     (event: TableActionEvent<SaleNoteTableRow>) => {
       const { type, row } = event
@@ -92,12 +97,20 @@ const SaleNoteTable = () => {
         case 'Delete':
           handleShowDeleteConfirm(id, folio)
           break
+        case 'DownloadFile':
+          handleDownloadSaleNotePDF(id)
+          break
         default:
           console.log('Action:', type, 'on row:', row)
           break
       }
     },
-    [handleEdit, handleSeeDetails, handleShowDeleteConfirm]
+    [
+      handleDownloadSaleNotePDF,
+      handleEdit,
+      handleSeeDetails,
+      handleShowDeleteConfirm,
+    ]
   )
 
   const handleQueryChange = useCallback(

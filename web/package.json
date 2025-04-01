@@ -16,6 +16,7 @@
     "@mantine/form": "^7.17.2",
     "@mantine/modals": "^7.17.2",
     "@mantine/notifications": "^7.17.2",
+    "@react-pdf/renderer": "^4.3.0",
     "@redwoodjs/auth-dbauth-web": "8.6.0",
     "@redwoodjs/forms": "8.6.0",
     "@redwoodjs/router": "8.6.0",

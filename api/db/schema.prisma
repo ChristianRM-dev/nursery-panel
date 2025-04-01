@@ -108,7 +108,9 @@ model Nursery {
   name      String
   address   String
   phone     String
-  logo      String?
+  email     String
+  ownerName String
+  logo      String
   rfc       String
   saleNotes SaleNote[]
   createdAt DateTime   @default(now())

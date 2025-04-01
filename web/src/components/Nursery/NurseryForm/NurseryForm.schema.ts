@@ -1,4 +1,3 @@
-// web/src/components/Nursery/NurseryForm/NurseryForm.schema.ts
 import { z } from 'zod'
 
 // Schema for existing logo
@@ -16,6 +15,13 @@ export const nurserySchema = z.object({
   name: z.string().min(1, { message: 'El nombre es requerido' }),
   address: z.string().min(1, { message: 'La dirección es requerida' }),
   phone: z.string().min(1, { message: 'El teléfono es requerido' }),
+  email: z
+    .string()
+    .min(1, { message: 'El email es requerido' })
+    .email({ message: 'Email inválido' }),
+  ownerName: z
+    .string()
+    .min(1, { message: 'El nombre del propietario es requerido' }),
   rfc: z.string().min(1, { message: 'El RFC es requerido' }),
   logo: logoSchema.optional(), // Optional logo field
 })

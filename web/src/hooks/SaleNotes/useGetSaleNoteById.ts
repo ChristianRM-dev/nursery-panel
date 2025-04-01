@@ -1,3 +1,4 @@
+// web/src/hooks/SaleNotes/useGetSaleNoteById.ts
 import { useQuery, gql } from '@apollo/client'
 import { GetSaleNoteById, GetSaleNoteByIdVariables } from 'types/graphql'
 
@@ -10,10 +11,16 @@ const GET_SALE_NOTE_BY_ID = gql`
       customer {
         id
         name
+        phone
       }
       nursery {
         id
         name
+        phone
+        logo
+        rfc
+        address
+        ownerName
       }
       saleDetails {
         id
