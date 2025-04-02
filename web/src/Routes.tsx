@@ -56,6 +56,8 @@ const Routes = () => {
           <Route path="/admin/sale-note/{id:String}/edit" page={AdminEditSaleNotePage} name="adminEditSaleNote" />
           <Route path="/admin/sale-note/{id:String}" page={AdminSaleNoteDetailsPage} name="adminSaleNoteDetails" />
           <Route path="/admin/sale-notes" page={AdminSaleNotesPage} name="adminSaleNotes" />
+          {/* Reports routes */}
+          <Route path="/admin/sale-note-reports" page={AdminSaleNoteReportsPage} name="adminSaleNoteReports" />
         </Set>
         {/* PDF Pages */}
         <Route path="/admin/sale-note-pdf/{id:String}" page={AdminSaleNotePDFPage} name="adminSaleNotePdf" />

@@ -198,3 +198,52 @@ export const deleteSaleNote: MutationResolvers['deleteSaleNote'] = async ({
     })
   })
 }
+
+export const saleNotesReport: QueryResolvers['saleNotesReport'] = async ({
+  startDate,
+  endDate,
+}) => {
+  const notes = await db.saleNote.findMany({
+    where: {
+      createdAt: {
+        gte: new Date(startDate),
+        lte: new Date(endDate),
+      },
+      deletedAt: null, // Only include non-deleted notes
+    },
+    include: {
+      customer: true,
+      nursery: true,
+      saleDetails: {
+        include: {
+          plant: {
+            include: {
+              category: true,
+            },
+          },
+        },
+      },
+    },
+    orderBy: {
+      createdAt: 'desc',
+    },
+  })
+
+  return notes.map((note) => ({
+    folio: note.folio,
+    createdAt: note.createdAt,
+    customer: note.customer,
+    nursery: note.nursery,
+    total: note.total,
+    saleDetails: note.saleDetails.map((detail) => ({
+      plant: {
+        ...detail.plant,
+        // Include the calculated total for each plant in the sale
+        total: detail.price * detail.quantity,
+      },
+      quantity: detail.quantity,
+      price: detail.price,
+      total: detail.price * detail.quantity,
+    })),
+  }))
+}

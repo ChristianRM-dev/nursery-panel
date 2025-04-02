@@ -17,7 +17,8 @@ import {
   IconPlant,
   IconHomeEco,
   IconUsersGroup,
-  IconReportMoney,
+  IconReportAnalytics,
+  IconReceipt,
 } from '@tabler/icons-react'
 
 import { Link, routes } from '@redwoodjs/router'
@@ -60,7 +61,12 @@ const AdminLayout = ({ children }) => {
     {
       label: 'Notas de Venta',
       route: routes.adminSaleNotes(),
-      icon: createIcon(IconReportMoney),
+      icon: createIcon(IconReceipt),
+    },
+    {
+      label: 'Reportes (Notas de Venta)',
+      route: routes.adminSaleNoteReports(),
+      icon: createIcon(IconReportAnalytics),
     },
   ]
 

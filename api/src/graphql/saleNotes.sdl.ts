@@ -14,6 +14,22 @@ export const schema = gql`
     deletedAt: DateTime
   }
 
+  type SaleNotesReportResponse {
+    folio: String!
+    createdAt: DateTime!
+    customer: Customer!
+    nursery: Nursery!
+    total: Float!
+    saleDetails: [SaleDetailReport!]!
+  }
+
+  type SaleDetailReport {
+    plant: Plant!
+    quantity: Int!
+    price: Float!
+    total: Float!
+  }
+
   type SaleNotesResponse {
     data: [SaleNote!]!
     meta: PaginationMeta!
@@ -63,6 +79,10 @@ export const schema = gql`
       search: SearchInput
     ): SaleNotesResponse! @requireAuth
     saleNote(id: String!): SaleNote @requireAuth
+    saleNotesReport(
+      startDate: DateTime!
+      endDate: DateTime!
+    ): [SaleNotesReportResponse!]! @requireAuth
   }
 
   type Mutation {
