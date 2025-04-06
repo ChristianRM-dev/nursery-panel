@@ -8,6 +8,7 @@ export const plants: QueryResolvers['plants'] = async ({
   pagination,
   sort,
   search,
+  excludeIds,
 }) => {
   const { page, pageSize } = pagination
   const { sortField, sortOrder = 'desc' } = sort || {}
@@ -15,9 +16,31 @@ export const plants: QueryResolvers['plants'] = async ({
 
   const validatedSortOrder = sortOrder === 'asc' ? 'asc' : 'desc'
 
+  // Create base where conditions using the generated Plant type
+  const where: {
+    OR?: Array<{
+      name?: { contains: string; mode: 'insensitive' }
+      presentationDetails?: { contains: string; mode: 'insensitive' }
+    }>
+    id?: { notIn?: string[] }
+  } = {}
+
+  // Add search conditions if search term exists
+  if (searchTerm) {
+    where.OR = [
+      { name: { contains: searchTerm, mode: 'insensitive' } },
+      { presentationDetails: { contains: searchTerm, mode: 'insensitive' } },
+    ]
+  }
+
+  // Add excludeIds condition if provided
+  if (excludeIds && excludeIds.length > 0) {
+    where.id = { notIn: excludeIds }
+  }
+
   return paginate(
     db.plant,
-    {},
+    where,
     { category: true, photos: true, saleDetails: true },
     {
       page,

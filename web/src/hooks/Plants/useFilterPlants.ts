@@ -5,11 +5,16 @@ import { useQuery, gql } from '@apollo/client'
 import { GetPlants, GetPlantsVariables } from 'types/graphql'
 
 const GET_PLANTS = gql`
-  query GetPlants($pagination: PaginationInput!, $search: SearchInput) {
-    plants(pagination: $pagination, search: $search) {
+  query GetPlants(
+    $pagination: PaginationInput!
+    $search: SearchInput
+    $excludeIds: [String!]
+  ) {
+    plants(pagination: $pagination, search: $search, excludeIds: $excludeIds) {
       data {
         id
         name
+        price
       }
       meta {
         total
@@ -20,14 +25,16 @@ const GET_PLANTS = gql`
 
 interface UseFilterPlantsProps {
   initialQuery?: string
+  excludeIds?: string[]
 }
 
 export const useFilterPlants = ({
   initialQuery = '',
+  excludeIds = [],
 }: UseFilterPlantsProps) => {
   const [query, setQuery] = useState(initialQuery)
   const [filteredPlants, setFilteredPlants] = useState<
-    { id: string; name: string }[]
+    GetPlants['plants']['data']
   >([])
 
   const { data, loading, error, refetch } = useQuery<
@@ -37,6 +44,7 @@ export const useFilterPlants = ({
     variables: {
       pagination: { page: 1, pageSize: 10 },
       search: { search: query },
+      excludeIds: excludeIds.length > 0 ? excludeIds : null,
     },
     fetchPolicy: 'network-only',
   })

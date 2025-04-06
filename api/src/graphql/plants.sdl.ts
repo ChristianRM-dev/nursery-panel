@@ -43,6 +43,7 @@ export const schema = gql`
       pagination: PaginationInput!
       sort: SortInput
       search: SearchInput
+      excludeIds: [String!]
     ): PlantsResponse! @requireAuth
     plant(id: String!): Plant @requireAuth
     publicPlant(id: String!): PublicPlant @skipAuth
