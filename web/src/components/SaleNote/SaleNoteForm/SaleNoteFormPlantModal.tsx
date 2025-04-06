@@ -1,5 +1,5 @@
 // web/src/components/SaleNote/SaleNoteForm/SaleNoteFormPlantModal.tsx
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import {
   Modal,
@@ -12,9 +12,9 @@ import {
   Stack,
 } from '@mantine/core'
 import { useForm } from '@mantine/form'
+import { useDebouncedValue } from '@mantine/hooks'
 
 import { useFilterPlants } from 'src/hooks/Plants/useFilterPlants'
-import { debounce } from 'src/utils/debounce'
 
 interface PlantFormValues {
   plantId: string
@@ -49,13 +49,20 @@ export const SaleNoteFormPlantModal: React.FC<SaleNoteFormPlantModalProps> = ({
   registeredPlantsAdded,
 }) => {
   const [activeTab, setActiveTab] = useState<'registered' | 'external'>(tab)
+  const [searchValue, setSearchValue] = useState('')
+  const [debouncedSearch] = useDebouncedValue(searchValue, 300)
+  const [resetKey, setResetKey] = useState(0)
 
-  // Plant filter
   const {
     filteredPlants,
     loading: loadingPlants,
     handleFilter: handleFilterPlants,
-  } = useFilterPlants({ initialQuery: '', excludeIds: registeredPlantsAdded })
+  } = useFilterPlants({
+    initialQuery: '',
+    excludeIds: registeredPlantsAdded.length
+      ? registeredPlantsAdded
+      : undefined,
+  })
 
   const registeredPlantForm = useForm<PlantFormValues>({
     initialValues: {
@@ -90,6 +97,24 @@ export const SaleNoteFormPlantModal: React.FC<SaleNoteFormPlantModalProps> = ({
     },
   })
 
+  // Reset form and search when modal opens
+  useEffect(() => {
+    if (opened) {
+      handleFilterPlants('')
+      setSearchValue('')
+      registeredPlantForm.reset()
+      externalPlantForm.reset()
+      setResetKey((prev) => prev + 1)
+    }
+  }, [opened])
+
+  // Handle search when debounced value changes
+  useEffect(() => {
+    if (opened) {
+      handleFilterPlants(debouncedSearch)
+    }
+  }, [debouncedSearch, opened])
+
   const handleSubmitRegisteredPlant = (values: PlantFormValues) => {
     onAddRegisteredPlant({
       ...values,
@@ -97,13 +122,11 @@ export const SaleNoteFormPlantModal: React.FC<SaleNoteFormPlantModalProps> = ({
         filteredPlants.find((p) => p.id === values.plantId)?.name ||
         'Planta no encontrada',
     })
-    registeredPlantForm.reset()
     onClose()
   }
 
   const handleSubmitExternalPlant = (values: ExternalPlantFormValues) => {
     onAddExternalPlant(values)
-    externalPlantForm.reset()
     onClose()
   }
 
@@ -113,23 +136,17 @@ export const SaleNoteFormPlantModal: React.FC<SaleNoteFormPlantModalProps> = ({
       registeredPlantForm.setValues({
         ...registeredPlantForm.values,
         plantId,
-        price: selectedPlant.price, // Set the plant's price as initial value
+        price: selectedPlant.price,
         name: selectedPlant.name,
       })
     }
   }
 
-  const debouncedFilterPlants = useMemo(() => {
-    return debounce((query: string) => {
-      handleFilterPlants(query)
-    }, 500)
-  }, [handleFilterPlants]) // Still only depends on handleFilterPlants
-
-  const plants = filteredPlants.map((p) => ({ value: p.id, label: p.name }))
-
-  useEffect(() => {
-    setActiveTab(tab)
-  }, [opened, tab])
+  const plants = filteredPlants.map((p) => ({
+    value: p.id,
+    label: p.name,
+    price: p.price,
+  }))
 
   return (
     <Modal
@@ -141,7 +158,7 @@ export const SaleNoteFormPlantModal: React.FC<SaleNoteFormPlantModalProps> = ({
     >
       <Tabs
         value={activeTab}
-        onChange={(tab: 'registered' | 'external') => setActiveTab(tab)}
+        onChange={(value: 'registered' | 'external') => setActiveTab(value)}
       >
         <Tabs.List>
           <Tabs.Tab value="registered">Planta Registrada</Tabs.Tab>
@@ -154,6 +171,7 @@ export const SaleNoteFormPlantModal: React.FC<SaleNoteFormPlantModalProps> = ({
           >
             <Stack gap="md">
               <Select
+                key={`registered-plant-select-${resetKey}`}
                 label="Planta"
                 // eslint-disable-next-line jsx-a11y/no-autofocus
                 autoFocus
@@ -166,7 +184,8 @@ export const SaleNoteFormPlantModal: React.FC<SaleNoteFormPlantModalProps> = ({
                 data={plants}
                 searchable
                 clearable
-                onSearchChange={debouncedFilterPlants}
+                searchValue={searchValue}
+                onSearchChange={setSearchValue}
                 nothingFoundMessage="No se encontraron plantas"
                 disabled={loadingPlants}
                 required
@@ -226,10 +245,15 @@ export const SaleNoteFormPlantModal: React.FC<SaleNoteFormPlantModalProps> = ({
                 required
               />
 
-              <TextInput
-                label="Tipo de Presentación"
-                placeholder="Ej: Maceta, Bolsa, etc."
+              <Select
+                label="Presentación"
+                placeholder="Seleccione un tipo de presentación"
                 {...externalPlantForm.getInputProps('presentationType')}
+                data={[
+                  { value: 'BAG', label: 'BOLSA' },
+                  { value: 'POT', label: 'MACETA' },
+                  { value: 'HANGING', label: 'COLGANTE' },
+                ]}
               />
 
               <TextInput
