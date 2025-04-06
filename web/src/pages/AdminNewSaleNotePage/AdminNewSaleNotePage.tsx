@@ -16,6 +16,7 @@ const AdminNewSaleNotePage: React.FC = () => {
     customerId: '',
     nurseryId: '',
     saleDetails: [],
+    externalPlants: [],
   }
 
   const { showSuccessNotification, showErrorNotification } = useNotifications()

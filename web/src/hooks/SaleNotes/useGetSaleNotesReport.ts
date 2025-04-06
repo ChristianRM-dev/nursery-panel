@@ -15,17 +15,20 @@ const GET_SALE_NOTES_REPORT = gql`
         name
         phone
       }
+      nursery {
+        name
+      }
       total
-      saleDetails {
-        plant {
-          name
-          category {
-            name
-          }
-        }
-        quantity
+      plantDetails {
+        id
+        name
         price
+        quantity
         total
+        category
+        presentationType
+        presentationDetails
+        isExternal
       }
     }
   }

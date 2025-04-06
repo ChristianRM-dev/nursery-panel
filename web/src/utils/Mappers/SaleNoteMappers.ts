@@ -35,6 +35,7 @@ export const mapSaleNoteFormValuesToCreateSaleNoteInput = (
       price: detail.price,
       quantity: detail.quantity,
     })),
+    externalPlants: values.externalPlants,
   }
 }
 
@@ -58,5 +59,6 @@ export const mapSaleNoteFormValuesToUpdateSaleNoteInput = (
       price: detail.price,
       quantity: detail.quantity,
     })),
+    externalPlants: values.externalPlants,
   }
 }

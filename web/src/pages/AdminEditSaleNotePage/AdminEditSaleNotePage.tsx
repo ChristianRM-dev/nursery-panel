@@ -46,11 +46,15 @@ const AdminEditSaleNotePage: React.FC = () => {
           price: detail.price,
           quantity: detail.quantity,
         })),
+        externalPlants:
+          (saleNote.externalPlants as SaleNoteFormValues['externalPlants']) ||
+          [],
       }
     : {
         customerId: '',
         nurseryId: '',
         saleDetails: [],
+        externalPlants: [],
       }
 
   const handleSubmit = async (values: SaleNoteFormValues) => {

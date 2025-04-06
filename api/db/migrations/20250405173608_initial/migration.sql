@@ -74,6 +74,7 @@ CREATE TABLE "SaleNote" (
     "id" TEXT NOT NULL,
     "customerId" TEXT NOT NULL,
     "nurseryId" TEXT NOT NULL,
+    "externalPlants" JSONB[],
     "total" DECIMAL(65,30) NOT NULL,
     "folio" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,

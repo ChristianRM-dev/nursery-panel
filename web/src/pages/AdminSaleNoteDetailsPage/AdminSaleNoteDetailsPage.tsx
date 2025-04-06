@@ -9,7 +9,12 @@ import {
   Table,
   NumberFormatter,
 } from '@mantine/core'
-import { IconArrowLeft, IconEdit } from '@tabler/icons-react'
+import {
+  IconArrowLeft,
+  IconEdit,
+  IconPlant,
+  IconLeaf,
+} from '@tabler/icons-react'
 
 import { useParams, navigate, routes } from '@redwoodjs/router'
 import { Metadata } from '@redwoodjs/web'
@@ -32,6 +37,30 @@ const AdminSaleNoteDetailsPage: React.FC = () => {
   if (!saleNote) {
     return <div>Nota de venta no encontrada</div>
   }
+
+  // Combine registered and external plants with only essential fields
+  const plantDetails = [
+    ...(saleNote.saleDetails?.map((detail) => ({
+      name: detail.plant.name,
+      price: detail.price,
+      quantity: detail.quantity,
+      total: detail.price * detail.quantity,
+      isExternal: false,
+    })) || []),
+    ...((
+      saleNote.externalPlants as Array<{
+        name: string
+        price: number
+        quantity: number
+      }>
+    )?.map((plant) => ({
+      name: plant.name,
+      price: plant.price,
+      quantity: plant.quantity,
+      total: plant.price * plant.quantity,
+      isExternal: true,
+    })) || []),
+  ]
 
   return (
     <>
@@ -95,7 +124,6 @@ const AdminSaleNoteDetailsPage: React.FC = () => {
             <Text fw={500}>Total:</Text>
             <NumberFormatter
               prefix="$"
-              suffix=" MXN"
               value={saleNote.total}
               thousandSeparator
               decimalScale={2}
@@ -103,10 +131,10 @@ const AdminSaleNoteDetailsPage: React.FC = () => {
           </Group>
         </Card>
 
-        {/* Sale Details Table */}
+        {/* Plant Details Table */}
         <Card shadow="sm" padding="lg" radius="md" withBorder>
           <Text size="lg" fw={500} mb="md">
-            Detalles de la Venta
+            Plantas Vendidas
           </Text>
 
           <Table striped highlightOnHover>
@@ -119,19 +147,54 @@ const AdminSaleNoteDetailsPage: React.FC = () => {
               </Table.Tr>
             </Table.Thead>
             <Table.Tbody>
-              {saleNote.saleDetails.map((detail, index) => (
+              {plantDetails.map((plant, index) => (
                 <Table.Tr key={index}>
-                  <Table.Td>{detail.plant.name}</Table.Td>
-                  <Table.Td>${detail.price}</Table.Td>
-                  <Table.Td>{detail.quantity}</Table.Td>
-                  <Table.Td>${detail.price * detail.quantity}</Table.Td>
+                  <Table.Td>
+                    <Group gap="sm">
+                      {plant.isExternal ? (
+                        <IconLeaf size={14} />
+                      ) : (
+                        <IconPlant size={14} />
+                      )}
+                      {plant.name}
+                      {plant.isExternal && (
+                        <Badge size="xs" color="blue" variant="light">
+                          Externa
+                        </Badge>
+                      )}
+                    </Group>
+                  </Table.Td>
+                  <Table.Td>
+                    <NumberFormatter
+                      prefix="$"
+                      value={plant.price}
+                      thousandSeparator
+                      decimalScale={2}
+                    />
+                  </Table.Td>
+                  <Table.Td>{plant.quantity}</Table.Td>
+                  <Table.Td>
+                    <NumberFormatter
+                      prefix="$"
+                      value={plant.total}
+                      thousandSeparator
+                      decimalScale={2}
+                    />
+                  </Table.Td>
                 </Table.Tr>
               ))}
             </Table.Tbody>
             <Table.Tfoot>
               <Table.Tr>
                 <Table.Th colSpan={3}>Total</Table.Th>
-                <Table.Th>${saleNote.total}</Table.Th>
+                <Table.Th>
+                  <NumberFormatter
+                    prefix="$"
+                    value={saleNote.total}
+                    thousandSeparator
+                    decimalScale={2}
+                  />
+                </Table.Th>
               </Table.Tr>
             </Table.Tfoot>
           </Table>

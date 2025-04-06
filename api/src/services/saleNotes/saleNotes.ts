@@ -4,6 +4,15 @@ import type { QueryResolvers, MutationResolvers } from 'types/graphql'
 import { db } from 'src/lib/db'
 import { paginate } from 'src/lib/pagination'
 
+// Define the ExternalPlant type that matches your SDL
+interface ExternalPlant {
+  name: string
+  price: number
+  quantity: number
+  presentationType?: string | null
+  presentationDetails?: string | null
+}
+
 export const saleNotes: QueryResolvers['saleNotes'] = async ({
   pagination,
   sort,
@@ -52,18 +61,27 @@ export const saleNote: QueryResolvers['saleNote'] = ({ id }) => {
 export const createSaleNote: MutationResolvers['createSaleNote'] = async ({
   input,
 }) => {
-  const { saleDetails, ...rest } = input
+  const { saleDetails, externalPlants = [], ...rest } = input
 
-  // Calculate total from sale details
-  const total = saleDetails.reduce(
+  // Type cast externalPlants to ensure correct structure
+  const typedExternalPlants = (externalPlants || []) as ExternalPlant[]
+
+  // Calculate total from both sale details and external plants
+  const detailsTotal = saleDetails.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
   )
 
-  // Generate folio (YYYY-MM-XXX) where XXX is the count of sales this month
+  const externalTotal = typedExternalPlants.reduce(
+    (sum, plant) => sum + plant.price * plant.quantity,
+    0
+  )
+
+  const total = detailsTotal + externalTotal
+
+  // Generate folio (YYYY-MM-XXX)
   const now = new Date()
   const yearMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
-
   const countThisMonth = await db.saleNote.count({
     where: {
       createdAt: {
@@ -72,7 +90,6 @@ export const createSaleNote: MutationResolvers['createSaleNote'] = async ({
       },
     },
   })
-
   const folio = `${yearMonth}-${String(countThisMonth + 1).padStart(3, '0')}`
 
   return db.saleNote.create({
@@ -80,6 +97,8 @@ export const createSaleNote: MutationResolvers['createSaleNote'] = async ({
       ...rest,
       total,
       folio,
+      externalPlants:
+        typedExternalPlants.length > 0 ? typedExternalPlants : undefined,
       saleDetails: {
         create: saleDetails.map((detail) => ({
           plantId: detail.plantId,
@@ -104,15 +123,30 @@ export const updateSaleNote: MutationResolvers['updateSaleNote'] = async ({
   id,
   input,
 }) => {
-  const { saleDetails, ...rest } = input
+  const { saleDetails, externalPlants, ...rest } = input
 
-  // Calculate new total if sale details are provided
-  const total = saleDetails
-    ? saleDetails.reduce(
-        (sum, item) => sum + (item.price || 0) * (item.quantity || 0),
-        0
-      )
-    : undefined
+  // Type cast externalPlants to ensure correct structure
+  const typedExternalPlants = (externalPlants || []) as ExternalPlant[]
+
+  // Calculate new total considering both sale details and external plants
+  let total: number | undefined
+  if (saleDetails || typedExternalPlants) {
+    const detailsTotal = saleDetails
+      ? saleDetails.reduce(
+          (sum, item) => sum + (item.price || 0) * (item.quantity || 0),
+          0
+        )
+      : 0
+
+    const externalTotal = typedExternalPlants
+      ? typedExternalPlants.reduce(
+          (sum, plant) => sum + plant.price * plant.quantity,
+          0
+        )
+      : 0
+
+    total = detailsTotal + externalTotal
+  }
 
   return db.$transaction(async (tx) => {
     // First update the sale note
@@ -121,6 +155,10 @@ export const updateSaleNote: MutationResolvers['updateSaleNote'] = async ({
       data: {
         ...rest,
         ...(total !== undefined && { total }),
+        ...(typedExternalPlants !== undefined && {
+          externalPlants:
+            typedExternalPlants.length > 0 ? typedExternalPlants : null,
+        }),
       },
     })
 
@@ -144,7 +182,6 @@ export const updateSaleNote: MutationResolvers['updateSaleNote'] = async ({
       await Promise.all(
         saleDetails.map(async (detail) => {
           if (detail.id) {
-            // Update existing detail
             return tx.saleDetail.update({
               where: { id: detail.id },
               data: {
@@ -154,7 +191,6 @@ export const updateSaleNote: MutationResolvers['updateSaleNote'] = async ({
               },
             })
           } else {
-            // Create new detail
             return tx.saleDetail.create({
               data: {
                 saleNoteId: id,
@@ -209,7 +245,7 @@ export const saleNotesReport: QueryResolvers['saleNotesReport'] = async ({
         gte: new Date(startDate),
         lte: new Date(endDate),
       },
-      deletedAt: null, // Only include non-deleted notes
+      deletedAt: null,
     },
     include: {
       customer: true,
@@ -229,21 +265,42 @@ export const saleNotesReport: QueryResolvers['saleNotesReport'] = async ({
     },
   })
 
-  return notes.map((note) => ({
-    folio: note.folio,
-    createdAt: note.createdAt,
-    customer: note.customer,
-    nursery: note.nursery,
-    total: note.total,
-    saleDetails: note.saleDetails.map((detail) => ({
-      plant: {
-        ...detail.plant,
-        // Include the calculated total for each plant in the sale
-        total: detail.price * detail.quantity,
-      },
-      quantity: detail.quantity,
+  return notes.map((note) => {
+    // Map registered plants
+    const registeredPlants = note.saleDetails.map((detail) => ({
+      id: detail.plant.id,
+      name: detail.plant.name,
       price: detail.price,
+      quantity: detail.quantity,
       total: detail.price * detail.quantity,
-    })),
-  }))
+      category: detail.plant.category.name,
+      presentationType: detail.plant.presentationType,
+      presentationDetails: detail.plant.presentationDetails,
+      isExternal: false,
+    }))
+
+    // Safely type cast external plants
+    const externalPlants = ((note.externalPlants as ExternalPlant[]) || []).map(
+      (plant) => ({
+        id: null,
+        name: plant.name,
+        price: plant.price,
+        quantity: plant.quantity,
+        total: plant.price * plant.quantity,
+        category: 'Externa',
+        presentationType: plant.presentationType || null,
+        presentationDetails: plant.presentationDetails || null,
+        isExternal: true,
+      })
+    )
+
+    return {
+      folio: note.folio,
+      createdAt: note.createdAt,
+      customer: note.customer,
+      nursery: note.nursery,
+      total: note.total,
+      plantDetails: [...registeredPlants, ...externalPlants],
+    }
+  })
 }

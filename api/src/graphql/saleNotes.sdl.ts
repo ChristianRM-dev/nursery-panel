@@ -1,5 +1,12 @@
 // api/src/graphql/saleNotes.sdl.ts
 export const schema = gql`
+  type ExternalPlant {
+    name: String!
+    price: Float!
+    quantity: Int!
+    presentationType: String
+    presentationDetails: String
+  }
   type SaleNote {
     id: String!
     customerId: String!
@@ -7,6 +14,7 @@ export const schema = gql`
     nurseryId: String!
     nursery: Nursery!
     saleDetails: [SaleDetail!]!
+    externalPlants: [ExternalPlant!]
     total: Float!
     folio: String!
     createdAt: DateTime!
@@ -20,14 +28,19 @@ export const schema = gql`
     customer: Customer!
     nursery: Nursery!
     total: Float!
-    saleDetails: [SaleDetailReport!]!
+    plantDetails: [SaleDetailReport!]!
   }
 
   type SaleDetailReport {
-    plant: Plant!
-    quantity: Int!
+    id: String
+    name: String!
     price: Float!
+    quantity: Int!
     total: Float!
+    category: String
+    presentationType: String
+    presentationDetails: String
+    isExternal: Boolean!
   }
 
   type SaleNotesResponse {
@@ -60,15 +73,25 @@ export const schema = gql`
     quantity: Int
   }
 
+  input ExternalPlantInput {
+    name: String!
+    price: Float!
+    quantity: Int!
+    presentationType: String
+    presentationDetails: String
+  }
+
   input CreateSaleNoteInput {
     customerId: String!
     nurseryId: String!
+    externalPlants: [ExternalPlantInput!]
     saleDetails: [SaleDetailInput!]!
   }
 
   input UpdateSaleNoteInput {
     customerId: String
     nurseryId: String
+    externalPlants: [ExternalPlantInput!]
     saleDetails: [UpdateSaleDetailInput!]
   }
 

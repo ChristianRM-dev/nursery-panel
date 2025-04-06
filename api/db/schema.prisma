@@ -78,17 +78,18 @@ model Customer {
 }
 
 model SaleNote {
-  id          String       @id @default(uuid())
-  customerId  String
-  customer    Customer     @relation(fields: [customerId], references: [id])
-  nurseryId   String
-  nursery     Nursery      @relation(fields: [nurseryId], references: [id])
-  saleDetails SaleDetail[]
-  total       Decimal
-  folio       String       @unique
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  deletedAt   DateTime?
+  id             String       @id @default(uuid())
+  customerId     String
+  customer       Customer     @relation(fields: [customerId], references: [id])
+  nurseryId      String
+  nursery        Nursery      @relation(fields: [nurseryId], references: [id])
+  saleDetails    SaleDetail[]
+  externalPlants Json[]
+  total          Decimal
+  folio          String       @unique
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  deletedAt      DateTime?
 }
 
 model SaleDetail {

@@ -32,6 +32,11 @@ const GET_SALE_NOTE_BY_ID = gql`
         price
         quantity
       }
+      externalPlants {
+        name
+        price
+        quantity
+      }
       createdAt
     }
   }

@@ -14,7 +14,13 @@ import {
   Badge,
 } from '@mantine/core'
 import { DatePickerInput } from '@mantine/dates'
-import { IconCalendar, IconReport, IconPlant, IconX } from '@tabler/icons-react'
+import {
+  IconCalendar,
+  IconReport,
+  IconPlant,
+  IconX,
+  IconLeaf,
+} from '@tabler/icons-react'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
 
@@ -128,11 +134,13 @@ const AdminSaleNoteReportsPage: React.FC = () => {
                 <Accordion.Item key={note.folio} value={note.folio}>
                   <Accordion.Control>
                     <Group justify="space-between">
-                      <Text fw={500}>{note.folio}</Text>
                       <Group>
+                        <Text fw={500}>{note.folio}</Text>
                         <Text>{note.customer.name}</Text>
+                      </Group>
+                      <Group>
                         <Badge variant="light" color="green">
-                          {formatCurrency(note.total)}
+                          Total: {formatCurrency(note.total)}
                         </Badge>
                         <Text c="dimmed" size="sm">
                           {formatDate(note.createdAt)}
@@ -141,32 +149,60 @@ const AdminSaleNoteReportsPage: React.FC = () => {
                     </Group>
                   </Accordion.Control>
                   <Accordion.Panel>
-                    <Table>
+                    <Table striped highlightOnHover>
                       <Table.Thead>
                         <Table.Tr>
-                          <Table.Th>Planta</Table.Th>
+                          <Table.Th>Tipo</Table.Th>
+                          <Table.Th>Nombre</Table.Th>
                           <Table.Th>Categoría</Table.Th>
+                          <Table.Th>Presentación</Table.Th>
                           <Table.Th>Cantidad</Table.Th>
                           <Table.Th>Precio unitario</Table.Th>
                           <Table.Th>Total</Table.Th>
                         </Table.Tr>
                       </Table.Thead>
                       <Table.Tbody>
-                        {note.saleDetails.map((detail, index) => (
+                        {note.plantDetails.map((plant, index) => (
                           <Table.Tr key={index}>
                             <Table.Td>
+                              {plant.isExternal ? (
+                                <Badge color="blue" variant="light">
+                                  Externa
+                                </Badge>
+                              ) : (
+                                <Badge color="green" variant="light">
+                                  Registrada
+                                </Badge>
+                              )}
+                            </Table.Td>
+                            <Table.Td>
                               <Group gap="sm">
-                                <IconPlant size={14} />
-                                {detail.plant.name}
+                                {plant.isExternal ? (
+                                  <IconLeaf size={14} />
+                                ) : (
+                                  <IconPlant size={14} />
+                                )}
+                                {plant.name}
                               </Group>
                             </Table.Td>
-                            <Table.Td>{detail.plant.category.name}</Table.Td>
-                            <Table.Td>{detail.quantity}</Table.Td>
-                            <Table.Td>{formatCurrency(detail.price)}</Table.Td>
-                            <Table.Td>{formatCurrency(detail.total)}</Table.Td>
+                            <Table.Td>{plant.category}</Table.Td>
+                            <Table.Td>
+                              {plant.presentationType}
+                              {plant.presentationDetails &&
+                                ` (${plant.presentationDetails})`}
+                            </Table.Td>
+                            <Table.Td>{plant.quantity}</Table.Td>
+                            <Table.Td>{formatCurrency(plant.price)}</Table.Td>
+                            <Table.Td>{formatCurrency(plant.total)}</Table.Td>
                           </Table.Tr>
                         ))}
                       </Table.Tbody>
+                      <Table.Tfoot>
+                        <Table.Tr>
+                          <Table.Th colSpan={6}>Total general</Table.Th>
+                          <Table.Th>{formatCurrency(note.total)}</Table.Th>
+                        </Table.Tr>
+                      </Table.Tfoot>
                     </Table>
                   </Accordion.Panel>
                 </Accordion.Item>
