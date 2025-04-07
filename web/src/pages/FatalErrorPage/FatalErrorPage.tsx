@@ -1,4 +1,4 @@
-import { Flex, Card, Title, Text } from '@mantine/core';
+import { Flex, Card, Title, Text } from '@mantine/core'
 
 // This page will be rendered when an error makes it all the way to the top of the
 // application without being handled by a Javascript catch statement or React error
@@ -10,7 +10,7 @@ import { Flex, Card, Title, Text } from '@mantine/core';
 // thoughtful :)
 
 // This import will be automatically removed when building for production
-import { DevFatalErrorPage as RedwoodDevFatalErrorPage } from '@redwoodjs/web/dist/components/DevFatalErrorPage';
+import { DevFatalErrorPage as RedwoodDevFatalErrorPage } from '@redwoodjs/web/dist/components/DevFatalErrorPage'
 
 const CustomDevFatalErrorPage = () => (
   <Flex justify="center" align="center" h="100vh" bg="gray.1">
@@ -19,10 +19,11 @@ const CustomDevFatalErrorPage = () => (
         Algo salió mal {/* Translated to Spanish */}
       </Title>
       <Text ta="center" c="dimmed">
-        Ocurrió un error inesperado. Por favor, inténtelo de nuevo más tarde. {/* Translated to Spanish */}
+        Ocurrió un error inesperado. Por favor, inténtelo de nuevo más tarde.{' '}
+        {/* Translated to Spanish */}
       </Text>
     </Card>
   </Flex>
-);
+)
 
-export default RedwoodDevFatalErrorPage || CustomDevFatalErrorPage;
+export default RedwoodDevFatalErrorPage || CustomDevFatalErrorPage
