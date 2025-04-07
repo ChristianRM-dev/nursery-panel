@@ -10,7 +10,6 @@ import { Flex, Card, Title, Text } from '@mantine/core'
 // thoughtful :)
 
 // This import will be automatically removed when building for production
-import { DevFatalErrorPage as RedwoodDevFatalErrorPage } from '@redwoodjs/web/dist/components/DevFatalErrorPage'
 
 const CustomDevFatalErrorPage = () => (
   <Flex justify="center" align="center" h="100vh" bg="gray.1">
@@ -26,4 +25,4 @@ const CustomDevFatalErrorPage = () => (
   </Flex>
 )
 
-export default RedwoodDevFatalErrorPage || CustomDevFatalErrorPage
+export default CustomDevFatalErrorPage
