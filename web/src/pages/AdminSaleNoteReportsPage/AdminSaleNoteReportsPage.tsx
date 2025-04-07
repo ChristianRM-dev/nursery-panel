@@ -1,5 +1,5 @@
 // web/src/pages/AdminSaleNoteReportsPage/AdminSaleNoteReportsPage.tsx
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 
 import {
   Card,
@@ -29,7 +29,12 @@ import { Metadata } from '@redwoodjs/web'
 import { useGetSaleNotesReport } from 'src/hooks/SaleNotes/useGetSaleNotesReport'
 
 const AdminSaleNoteReportsPage: React.FC = () => {
-  const [startDate, setStartDate] = useState<Date | null>(new Date())
+  const defaultStartDate = useMemo(() => {
+    const currentDate = new Date()
+    currentDate.setMonth(currentDate.getMonth() - 1)
+    return currentDate
+  }, [])
+  const [startDate, setStartDate] = useState<Date | null>(defaultStartDate)
   const [endDate, setEndDate] = useState<Date | null>(new Date())
 
   const { reportData, loading, refetch } = useGetSaleNotesReport({

@@ -92,31 +92,65 @@ export const createSaleNote: MutationResolvers['createSaleNote'] = async ({
   })
   const folio = `${yearMonth}-${String(countThisMonth + 1).padStart(3, '0')}`
 
-  return db.saleNote.create({
-    data: {
-      ...rest,
-      total,
-      folio,
-      externalPlants:
-        typedExternalPlants.length > 0 ? typedExternalPlants : undefined,
-      saleDetails: {
-        create: saleDetails.map((detail) => ({
-          plantId: detail.plantId,
-          price: detail.price,
-          quantity: detail.quantity,
-        })),
-      },
-    },
-    include: {
-      customer: true,
-      nursery: true,
-      saleDetails: {
-        include: {
-          plant: true,
+  // Start a transaction to ensure data consistency
+  const result = await db.$transaction(async (prisma) => {
+    // First update plant stocks
+    for (const detail of saleDetails) {
+      await prisma.plant.update({
+        where: { id: detail.plantId },
+        data: {
+          stock: {
+            // Using GREATEST to ensure stock never goes below 0
+            decrement: detail.quantity,
+          },
+        },
+      })
+
+      // Additional check to prevent negative stock
+      const updatedPlant = await prisma.plant.findUnique({
+        where: { id: detail.plantId },
+        select: { stock: true },
+      })
+
+      if (updatedPlant && updatedPlant.stock < 0) {
+        await prisma.plant.update({
+          where: { id: detail.plantId },
+          data: {
+            stock: 0, // Set to 0 if it went negative
+          },
+        })
+      }
+    }
+
+    // Then create the sale note
+    return prisma.saleNote.create({
+      data: {
+        ...rest,
+        total,
+        folio,
+        externalPlants:
+          typedExternalPlants.length > 0 ? typedExternalPlants : undefined,
+        saleDetails: {
+          create: saleDetails.map((detail) => ({
+            plantId: detail.plantId,
+            price: detail.quantity * detail.price, // Store total price for the quantity
+            quantity: detail.quantity,
+          })),
         },
       },
-    },
+      include: {
+        customer: true,
+        nursery: true,
+        saleDetails: {
+          include: {
+            plant: true,
+          },
+        },
+      },
+    })
   })
+
+  return result
 }
 
 export const updateSaleNote: MutationResolvers['updateSaleNote'] = async ({
