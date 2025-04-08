@@ -83,6 +83,10 @@ const SaleNoteTable = () => {
     window.open(url, '_blank')
   }, [])
 
+  const handleAddPayment = useCallback((id: string) => {
+    navigate(routes.adminAddPaymentToSaleNote({ id }))
+  }, [])
+
   const handleAction = useCallback(
     (event: TableActionEvent<SaleNoteTableRow>) => {
       const { type, row } = event
@@ -99,6 +103,9 @@ const SaleNoteTable = () => {
           break
         case 'DownloadFile':
           handleDownloadSaleNotePDF(id)
+          break
+        case 'AddPayment':
+          handleAddPayment(id)
           break
         default:
           console.log('Action:', type, 'on row:', row)

@@ -1,5 +1,11 @@
 -- CreateEnum
+CREATE TYPE "PaymentMethod" AS ENUM ('CASH', 'CREDIT_CARD', 'DEBIT_CARD', 'BANK_TRANSFER', 'DIGITAL_WALLET', 'CHECK', 'OTHER');
+
+-- CreateEnum
 CREATE TYPE "PresentationType" AS ENUM ('BAG', 'POT', 'HANGING');
+
+-- CreateEnum
+CREATE TYPE "SaleStatus" AS ENUM ('PENDING', 'PARTIALLY_PAID', 'PAID', 'CANCELLED');
 
 -- CreateTable
 CREATE TABLE "User" (
@@ -76,6 +82,8 @@ CREATE TABLE "SaleNote" (
     "nurseryId" TEXT NOT NULL,
     "externalPlants" JSONB[],
     "total" DECIMAL(65,30) NOT NULL,
+    "paidAmount" DECIMAL(65,30) NOT NULL DEFAULT 0,
+    "status" "SaleStatus" NOT NULL DEFAULT 'PENDING',
     "folio" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -124,6 +132,20 @@ CREATE TABLE "Photo" (
     CONSTRAINT "Photo_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "Payment" (
+    "id" TEXT NOT NULL,
+    "saleNoteId" TEXT NOT NULL,
+    "amount" DECIMAL(65,30) NOT NULL,
+    "method" "PaymentMethod" NOT NULL,
+    "reference" TEXT,
+    "notes" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Payment_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
@@ -159,3 +181,6 @@ ALTER TABLE "SaleDetail" ADD CONSTRAINT "SaleDetail_plantId_fkey" FOREIGN KEY ("
 
 -- AddForeignKey
 ALTER TABLE "Photo" ADD CONSTRAINT "Photo_plantId_fkey" FOREIGN KEY ("plantId") REFERENCES "Plant"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Payment" ADD CONSTRAINT "Payment_saleNoteId_fkey" FOREIGN KEY ("saleNoteId") REFERENCES "SaleNote"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

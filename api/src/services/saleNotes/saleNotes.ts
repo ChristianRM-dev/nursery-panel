@@ -338,3 +338,16 @@ export const saleNotesReport: QueryResolvers['saleNotesReport'] = async ({
     }
   })
 }
+
+export const paymentsBySaleNoteId: QueryResolvers['paymentsBySaleNoteId'] =
+  async ({ saleNoteId }) => {
+    return db.payment.findMany({
+      where: { saleNoteId },
+      include: {
+        saleNote: true, // Include related sale note if needed
+      },
+      orderBy: {
+        createdAt: 'desc', // Newest payments first
+      },
+    })
+  }

@@ -8,6 +8,8 @@ const GET_SALE_NOTE_BY_ID = gql`
       id
       folio
       total
+      paidAmount
+      status
       customer {
         id
         name

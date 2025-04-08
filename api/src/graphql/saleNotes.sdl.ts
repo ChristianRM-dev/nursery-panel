@@ -7,6 +7,7 @@ export const schema = gql`
     presentationType: String
     presentationDetails: String
   }
+
   type SaleNote {
     id: String!
     customerId: String!
@@ -16,7 +17,10 @@ export const schema = gql`
     saleDetails: [SaleDetail!]!
     externalPlants: [ExternalPlant!]
     total: Float!
+    paidAmount: Float!
+    status: SaleStatus!
     folio: String!
+    payments: [Payment!]!
     createdAt: DateTime!
     updatedAt: DateTime!
     deletedAt: DateTime
@@ -58,6 +62,13 @@ export const schema = gql`
     quantity: Int!
     createdAt: DateTime!
     updatedAt: DateTime!
+  }
+
+  enum SaleStatus {
+    PENDING
+    PARTIALLY_PAID
+    PAID
+    CANCELLED
   }
 
   input SaleDetailInput {
@@ -106,6 +117,7 @@ export const schema = gql`
       startDate: DateTime!
       endDate: DateTime!
     ): [SaleNotesReportResponse!]! @requireAuth
+    paymentsBySaleNoteId(saleNoteId: String!): [Payment!]! @requireAuth
   }
 
   type Mutation {

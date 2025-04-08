@@ -86,7 +86,10 @@ model SaleNote {
   saleDetails    SaleDetail[]
   externalPlants Json[]
   total          Decimal
+  paidAmount     Decimal      @default(0)
+  status         SaleStatus   @default(PENDING)
   folio          String       @unique
+  payments       Payment[]
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
   deletedAt      DateTime?
@@ -127,8 +130,37 @@ model Photo {
   createdAt DateTime @default(now())
 }
 
+model Payment {
+  id         String        @id @default(uuid())
+  saleNoteId String
+  saleNote   SaleNote      @relation(fields: [saleNoteId], references: [id])
+  amount     Decimal
+  method     PaymentMethod // 🔹 Changed to use the enum
+  reference  String? // Número de referencia/transacción
+  notes      String?
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+}
+
+enum PaymentMethod {
+  CASH
+  CREDIT_CARD
+  DEBIT_CARD
+  BANK_TRANSFER
+  DIGITAL_WALLET
+  CHECK
+  OTHER
+}
+
 enum PresentationType {
   BAG
   POT
   HANGING
+}
+
+enum SaleStatus {
+  PENDING
+  PARTIALLY_PAID
+  PAID
+  CANCELLED
 }

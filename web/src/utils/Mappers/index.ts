@@ -27,3 +27,8 @@ export {
   mapSaleNoteFormValuesToCreateSaleNoteInput,
   mapSaleNoteFormValuesToUpdateSaleNoteInput,
 } from './SaleNoteMappers'
+
+export {
+  mapPaymentFormValuesToCreatePaymentInput,
+  mapPaymentFormValuesToUpdatePaymentInput,
+} from './PaymentMappers'

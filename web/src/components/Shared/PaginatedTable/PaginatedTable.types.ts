@@ -6,7 +6,12 @@ export interface TableColumn<T> {
   formatter?: (value: T[keyof T], row: T) => ReactNode
 }
 
-type TableActionType = 'Edit' | 'Delete' | 'Details' | 'DownloadFile'
+type TableActionType =
+  | 'Edit'
+  | 'Delete'
+  | 'Details'
+  | 'DownloadFile'
+  | 'AddPayment'
 export interface TableAction {
   type: TableActionType
   icon: ReactNode
