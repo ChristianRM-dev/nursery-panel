@@ -113,6 +113,7 @@ const SaleNoteTable = () => {
       }
     },
     [
+      handleAddPayment,
       handleDownloadSaleNotePDF,
       handleEdit,
       handleSeeDetails,

@@ -132,6 +132,9 @@ const PaginatedTable = <T extends TableRow>({
                       <Tooltip label={action.tooltip} key={action.type}>
                         <ActionIcon
                           variant="subtle"
+                          disabled={
+                            action.disabled ? action.disabled(row) : false
+                          }
                           onClick={() => onAction({ type: action.type, row })}
                         >
                           {action.icon}

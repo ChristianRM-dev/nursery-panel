@@ -17,6 +17,7 @@ export const mapGetPaginatedSaleNotesItemToSaleNoteTableRow = (
     nursery: saleNote.nursery.name,
     total: saleNote.total,
     folio: saleNote.folio,
+    status: saleNote.status,
     createdAt: saleNote.createdAt,
   }))
 }
@@ -35,7 +36,13 @@ export const mapSaleNoteFormValuesToCreateSaleNoteInput = (
       price: detail.price,
       quantity: detail.quantity,
     })),
-    externalPlants: values.externalPlants,
+    externalPlants: values.externalPlants.map((x) => ({
+      name: x.name,
+      presentationType: x.presentationType,
+      presentationDetails: x.presentationDetails,
+      price: x.price,
+      quantity: x.quantity,
+    })),
   }
 }
 
@@ -59,6 +66,12 @@ export const mapSaleNoteFormValuesToUpdateSaleNoteInput = (
       price: detail.price,
       quantity: detail.quantity,
     })),
-    externalPlants: values.externalPlants,
+    externalPlants: values.externalPlants.map((x) => ({
+      name: x.name,
+      presentationType: x.presentationType,
+      presentationDetails: x.presentationDetails,
+      price: x.price,
+      quantity: x.quantity,
+    })),
   }
 }

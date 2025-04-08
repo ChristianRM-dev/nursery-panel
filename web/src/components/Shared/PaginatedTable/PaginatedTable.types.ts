@@ -12,10 +12,11 @@ type TableActionType =
   | 'Details'
   | 'DownloadFile'
   | 'AddPayment'
-export interface TableAction {
+export interface TableAction<T> {
   type: TableActionType
   icon: ReactNode
   tooltip?: string
+  disabled?: (row: T) => boolean
 }
 
 export interface TablePagination {
@@ -27,7 +28,7 @@ export interface TablePagination {
 
 export interface TableConfig<T> {
   columns: TableColumn<T>[]
-  actions: TableAction[]
+  actions: TableAction<T>[]
   searchPlaceholder?: string
 }
 

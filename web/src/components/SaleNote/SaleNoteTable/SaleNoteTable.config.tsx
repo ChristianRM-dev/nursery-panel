@@ -55,7 +55,12 @@ export const saleNoteTableConfig: TableConfig<SaleNoteTableRow> = {
     { type: 'Edit', icon: <IconEdit />, tooltip: 'Editar Nota' },
     { type: 'Delete', icon: <IconTrash />, tooltip: 'Eliminar Nota' },
     { type: 'DownloadFile', icon: <IconPdf />, tooltip: 'Descargar Nota' },
-    { type: 'AddPayment', icon: <IconCash />, tooltip: 'Agregar pago' },
+    {
+      type: 'AddPayment',
+      icon: <IconCash />,
+      tooltip: 'Agregar pago',
+      disabled: (row) => row.status != 'PARTIALLY_PAID',
+    },
   ],
   searchPlaceholder: 'Buscar notas de venta...',
 }

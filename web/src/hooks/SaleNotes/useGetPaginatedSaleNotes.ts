@@ -14,6 +14,7 @@ const GET_PAGINATED_SALE_NOTES = gql`
       data {
         id
         folio
+        status
         total
         customer {
           name

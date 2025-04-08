@@ -1,8 +1,10 @@
 // web/src/components/Plant/PlantTable/PlantTable.config.tsx
 import { Badge, NumberFormatter } from '@mantine/core'
 import { IconDetails, IconEdit, IconTrash } from '@tabler/icons-react'
+import { PresentationType } from 'types/graphql'
 
 import { TableConfig } from 'src/components/Shared/PaginatedTable/PaginatedTable.types'
+import { formatPlantPresentationType } from 'src/utils/Formatters'
 
 import { PlantTableRow } from './PlantTable.types'
 
@@ -37,10 +39,10 @@ export const plantTableConfig: TableConfig<PlantTableRow> = {
     {
       field: 'presentationType',
       header: 'Tipo de Presentación',
-      formatter: (value: string) => (
+      formatter: (value: PresentationType) => (
         <>
           <Badge color="blue" variant="light">
-            {value}
+            {formatPlantPresentationType(value)}
           </Badge>
         </>
       ),

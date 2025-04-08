@@ -90,6 +90,22 @@ const SaleNotePDF = ({ saleNote }: SaleNotePDFProps) => {
               </Text>
             </View>
           ))}
+          {saleNote.externalPlants.map((externalPlant, index) => (
+            <View key={index} style={SaleNotePDFStyles.tableRow}>
+              <Text style={SaleNotePDFStyles.colDescription}>
+                {externalPlant.name}
+              </Text>
+              <Text style={SaleNotePDFStyles.colPrice}>
+                ${externalPlant.price.toFixed(2)}
+              </Text>
+              <Text style={SaleNotePDFStyles.colQuantity}>
+                {externalPlant.quantity}
+              </Text>
+              <Text style={SaleNotePDFStyles.colTotal}>
+                ${(externalPlant.price * externalPlant.quantity).toFixed(2)}
+              </Text>
+            </View>
+          ))}
         </View>
 
         {/* Total */}

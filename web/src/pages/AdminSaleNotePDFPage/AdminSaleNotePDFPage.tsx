@@ -33,7 +33,12 @@ const AdminSaleNotePdfPage: React.FC = () => {
       <Metadata title="AdminSaleNotePdf" description="AdminSaleNotePdf page" />
 
       <div style={{ height: '100vh', overflow: 'hidden' }}>
-        <PDFViewer width="100%" height="100%" showToolbar>
+        <PDFViewer
+          width="100%"
+          height="100%"
+          showToolbar
+          style={{ border: '0px' }}
+        >
           <SaleNotePDF saleNote={saleNote} />
         </PDFViewer>
       </div>

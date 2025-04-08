@@ -25,6 +25,7 @@ import { Metadata } from '@redwoodjs/web'
 
 import { useGetPaymentsBySaleNoteId } from 'src/hooks/Payments/useGetPaymentsBySaleNoteId'
 import { useGetSaleNoteById } from 'src/hooks/SaleNotes/useGetSaleNoteById'
+import { formatPaymentMethod, formatSaleNoreStatus } from 'src/utils/Formatters'
 
 const AdminSaleNoteDetailsPage: React.FC = () => {
   const { id } = useParams()
@@ -104,6 +105,7 @@ const AdminSaleNoteDetailsPage: React.FC = () => {
             <Button
               leftSection={<IconPlus size={16} />}
               variant="light"
+              disabled={saleNote.status != 'PARTIALLY_PAID'}
               onClick={() =>
                 navigate(routes.adminAddPaymentToSaleNote({ id: saleNote.id }))
               }
@@ -163,11 +165,7 @@ const AdminSaleNoteDetailsPage: React.FC = () => {
                     : 'red'
               }
             >
-              {saleNote.status === 'PAID'
-                ? 'PAGADO'
-                : saleNote.status === 'PARTIALLY_PAID'
-                  ? 'PAGO PARCIAL'
-                  : 'PENDIENTE'}
+              {formatSaleNoreStatus(saleNote.status)}
             </Badge>
           </Group>
 
@@ -211,6 +209,7 @@ const AdminSaleNoteDetailsPage: React.FC = () => {
             <Button
               leftSection={<IconPlus size={16} />}
               variant="light"
+              disabled={saleNote.status != 'PARTIALLY_PAID'}
               size="sm"
               onClick={() =>
                 navigate(routes.adminAddPaymentToSaleNote({ id: saleNote.id }))
@@ -242,21 +241,7 @@ const AdminSaleNoteDetailsPage: React.FC = () => {
                     <Table.Td>
                       <Group gap="xs">
                         {getPaymentMethodIcon(payment.method)}
-                        <Text>
-                          {payment.method === 'CASH'
-                            ? 'Efectivo'
-                            : payment.method === 'CREDIT_CARD'
-                              ? 'Tarjeta Crédito'
-                              : payment.method === 'DEBIT_CARD'
-                                ? 'Tarjeta Débito'
-                                : payment.method === 'BANK_TRANSFER'
-                                  ? 'Transferencia'
-                                  : payment.method === 'DIGITAL_WALLET'
-                                    ? 'Billetera Digital'
-                                    : payment.method === 'CHECK'
-                                      ? 'Cheque'
-                                      : 'Otro'}
-                        </Text>
+                        <Text>{formatPaymentMethod(payment.method)}</Text>
                       </Group>
                     </Table.Td>
                     <Table.Td>

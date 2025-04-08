@@ -15,6 +15,7 @@ import { useParams, navigate, routes } from '@redwoodjs/router'
 import { Metadata } from '@redwoodjs/web'
 
 import { useGetPlantById } from 'src/hooks/Plants/useGetPlantById'
+import { formatPlantPresentationType } from 'src/utils/Formatters'
 
 const AdminPlantDetailsPage: React.FC = () => {
   const { id } = useParams()
@@ -92,7 +93,7 @@ const AdminPlantDetailsPage: React.FC = () => {
           <Group mb="sm">
             <Text fw={500}>Tipo de Presentación:</Text>{' '}
             <Badge color="blue" variant="light">
-              {plant.presentationType}
+              {formatPlantPresentationType(plant.presentationType)}
             </Badge>
           </Group>
 
