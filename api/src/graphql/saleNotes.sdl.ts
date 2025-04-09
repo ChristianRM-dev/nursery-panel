@@ -111,6 +111,7 @@ export const schema = gql`
       pagination: PaginationInput!
       sort: SortInput
       search: SearchInput
+      customerId: String
     ): SaleNotesResponse! @requireAuth
     saleNote(id: String!): SaleNote @requireAuth
     saleNotesReport(

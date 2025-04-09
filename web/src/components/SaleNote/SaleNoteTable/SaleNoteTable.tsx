@@ -19,10 +19,15 @@ import { mapGetPaginatedSaleNotesItemToSaleNoteTableRow } from 'src/utils/Mapper
 import { saleNoteTableConfig } from './SaleNoteTable.config'
 import { SaleNoteTableRow } from './SaleNoteTable.types'
 
-const SaleNoteTable = () => {
+interface SaleNoteTableProps {
+  customerId?: string
+}
+
+const SaleNoteTable: React.FC<SaleNoteTableProps> = ({ customerId }) => {
   const { saleNotes, meta, refetch, loading } = useGetPaginatedSaleNotes({
     page: 1,
     pageSize: 10,
+    customerId,
   })
   const { showSuccessNotification, showErrorNotification } = useNotifications()
   const { openConfirmModal } = useConfirmModal()

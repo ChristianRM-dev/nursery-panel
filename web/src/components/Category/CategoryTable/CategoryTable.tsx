@@ -19,7 +19,7 @@ import { mapGetPaginatedCategoriesItemToCategoryTableRow } from 'src/utils/Mappe
 import { categoryTableConfig } from './CategoryTable.config'
 import { CategoryTableRow } from './CategoryTable.types'
 
-const CategoryTable = () => {
+const CategoryTable: React.FC = () => {
   const { categories, meta, refetch, loading } = useGetPaginatedCategories({
     page: 1,
     pageSize: 10,

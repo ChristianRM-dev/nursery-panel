@@ -31,6 +31,14 @@ const PublicLayout = ({ children }) => {
             >
               Catálogo
             </Button>
+            <Button
+              component={Link}
+              to={routes.admin()}
+              variant="subtle"
+              size="md"
+            >
+              Admin
+            </Button>
             {/* Uncomment these when ready */}
             {/* <Button
               component={Link}

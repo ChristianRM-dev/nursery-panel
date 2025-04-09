@@ -13,6 +13,7 @@ import { IconArrowLeft, IconEdit } from '@tabler/icons-react'
 import { useParams, navigate, routes } from '@redwoodjs/router'
 import { Metadata } from '@redwoodjs/web'
 
+import SaleNoteTable from 'src/components/SaleNote/SaleNoteTable/SaleNoteTable'
 import { useGetCustomerById } from 'src/hooks/Customers/useGetCustomerById'
 
 const AdminCustomerDetailsPage: React.FC = () => {
@@ -68,7 +69,7 @@ const AdminCustomerDetailsPage: React.FC = () => {
         </Title>
 
         {/* Customer Details */}
-        <Card shadow="sm" padding="lg" radius="md" withBorder>
+        <Card shadow="sm" padding="lg" radius="md" mb="xl" withBorder>
           <Text size="lg" fw={500} mb="md">
             Detalles del Cliente
           </Text>
@@ -89,6 +90,9 @@ const AdminCustomerDetailsPage: React.FC = () => {
               {customer.saleNotes.length} ventas
             </Badge>
           </Group>
+        </Card>
+        <Card shadow="sm" padding="lg" radius="md" mb="xl" withBorder>
+          <SaleNoteTable customerId={id} />
         </Card>
       </Container>
     </>

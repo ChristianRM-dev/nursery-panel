@@ -13,7 +13,14 @@ export const paginate = async <T>(
   model: any, // Prisma model (e.g., db.plant, db.category)
   where: Prisma.Args<T, 'findMany'>['where'],
   include: Prisma.Args<T, 'findMany'>['include'],
-  { page, pageSize, sortField = 'createdAt', sortOrder = 'desc', search, searchFields }: PaginationOptions
+  {
+    page,
+    pageSize,
+    sortField = 'createdAt',
+    sortOrder = 'desc',
+    search,
+    searchFields,
+  }: PaginationOptions
 ) => {
   const offset = (page - 1) * pageSize
 

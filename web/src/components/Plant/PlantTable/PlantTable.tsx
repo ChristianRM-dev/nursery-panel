@@ -19,7 +19,7 @@ import { mapGetPaginatedPlantsItemToPlantTableRow } from 'src/utils/Mappers'
 import { plantTableConfig } from './PlantTable.config'
 import { PlantTableRow } from './PlantTable.types'
 
-const PlantTable = () => {
+const PlantTable: React.FC = () => {
   const { plants, meta, refetch, loading } = useGetPaginatedPlants({
     page: 1,
     pageSize: 10,

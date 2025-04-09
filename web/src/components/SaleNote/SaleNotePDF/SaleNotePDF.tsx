@@ -11,7 +11,7 @@ interface SaleNotePDFProps {
   saleNote: GetSaleNoteById['saleNote']
 }
 
-const SaleNotePDF = ({ saleNote }: SaleNotePDFProps) => {
+const SaleNotePDF: React.FC<SaleNotePDFProps> = ({ saleNote }) => {
   const formattedDate = format(new Date(saleNote.createdAt), 'PPP', {
     locale: es,
   })

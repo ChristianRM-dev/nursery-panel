@@ -19,7 +19,7 @@ import { mapGetPaginatedNurseriesItemToNurseryTableRow } from 'src/utils/Mappers
 import { nurseryTableConfig } from './NurseryTable.config'
 import { NurseryTableRow } from './NurseryTable.types'
 
-const NurseryTable = () => {
+const NurseryTable: React.FC = () => {
   const { nurseries, meta, refetch, loading } = useGetPaginatedNurseries({
     page: 1,
     pageSize: 10,

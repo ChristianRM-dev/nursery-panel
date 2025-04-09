@@ -1,4 +1,5 @@
 // api/src/services/saleNotes/saleNotes.ts
+import type { Prisma } from '@prisma/client'
 import type { QueryResolvers, MutationResolvers } from 'types/graphql'
 
 import { db } from 'src/lib/db'
@@ -17,6 +18,7 @@ export const saleNotes: QueryResolvers['saleNotes'] = async ({
   pagination,
   sort,
   search,
+  customerId, // Add this parameter
 }) => {
   const { page, pageSize } = pagination
   const { sortField, sortOrder = 'desc' } = sort || {}
@@ -24,9 +26,17 @@ export const saleNotes: QueryResolvers['saleNotes'] = async ({
 
   const validatedSortOrder = sortOrder === 'asc' ? 'asc' : 'desc'
 
+  // Create base where clause
+  const where: Prisma.SaleNoteWhereInput = {}
+
+  // Add customer filter if provided
+  if (customerId) {
+    where.customerId = customerId
+  }
+
   return paginate(
     db.saleNote,
-    {},
+    where,
     {
       customer: true,
       nursery: true,
@@ -42,7 +52,6 @@ export const saleNotes: QueryResolvers['saleNotes'] = async ({
     }
   )
 }
-
 export const saleNote: QueryResolvers['saleNote'] = ({ id }) => {
   return db.saleNote.findUnique({
     where: { id },

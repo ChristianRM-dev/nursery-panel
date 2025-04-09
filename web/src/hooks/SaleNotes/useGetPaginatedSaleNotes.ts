@@ -9,14 +9,21 @@ const GET_PAGINATED_SALE_NOTES = gql`
     $pagination: PaginationInput!
     $sort: SortInput
     $search: SearchInput
+    $customerId: String
   ) {
-    saleNotes(pagination: $pagination, sort: $sort, search: $search) {
+    saleNotes(
+      pagination: $pagination
+      sort: $sort
+      search: $search
+      customerId: $customerId
+    ) {
       data {
         id
         folio
         status
         total
         customer {
+          id
           name
         }
         nursery {
@@ -40,6 +47,7 @@ interface UseGetPaginatedSaleNotesProps {
   sortField?: string
   sortOrder?: 'asc' | 'desc'
   search?: string
+  customerId?: string | null
 }
 
 export type GetPaginatedSaleNotesItem =
@@ -51,6 +59,7 @@ export const useGetPaginatedSaleNotes = ({
   sortField = 'createdAt',
   sortOrder = 'desc',
   search = '',
+  customerId = null,
 }: UseGetPaginatedSaleNotesProps) => {
   const { data, loading, error, refetch } = useQuery<
     GetPaginatedSaleNotes,
@@ -60,6 +69,7 @@ export const useGetPaginatedSaleNotes = ({
       pagination: { page, pageSize },
       sort: sortField ? { sortField, sortOrder } : null,
       search: search ? { search } : null,
+      customerId: customerId || undefined,
     },
     fetchPolicy: 'network-only',
   })

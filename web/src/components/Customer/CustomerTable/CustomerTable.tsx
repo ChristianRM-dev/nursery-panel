@@ -19,7 +19,7 @@ import { mapGetPaginatedCustomersItemToCustomerTableRow } from 'src/utils/Mapper
 import { customerTableConfig } from './CustomerTable.config'
 import { CustomerTableRow } from './CustomerTable.types'
 
-const CustomerTable = () => {
+const CustomerTable: React.FC = () => {
   const { customers, meta, refetch, loading } = useGetPaginatedCustomers({
     page: 1,
     pageSize: 10,

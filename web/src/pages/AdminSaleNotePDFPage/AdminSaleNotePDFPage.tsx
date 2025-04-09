@@ -42,19 +42,6 @@ const AdminSaleNotePdfPage: React.FC = () => {
           <SaleNotePDF saleNote={saleNote} />
         </PDFViewer>
       </div>
-
-      {/* <div style={{ textAlign: 'center' }}>
-        <PDFDownloadLink
-          document={<SaleNotePDF saleNote={saleNote} />}
-          fileName={`nota-venta-${saleNote.folio}.pdf`}
-        >
-          {({ loading }) => (
-            <Button color="blue" loading={loading}>
-              {loading ? 'Preparando PDF...' : 'Descargar PDF'}
-            </Button>
-          )}
-        </PDFDownloadLink>
-      </div> */}
     </>
   )
 }
