@@ -22,41 +22,7 @@ const PublicLayout = ({ children }) => {
               Los Laureles
             </Text>
           </Link>
-          <Group gap="lg">
-            <Button
-              component={Link}
-              to={routes.catalog()}
-              variant="subtle"
-              size="md"
-            >
-              Catálogo
-            </Button>
-            <Button
-              component={Link}
-              to={routes.admin()}
-              variant="subtle"
-              size="md"
-            >
-              Admin
-            </Button>
-            {/* Uncomment these when ready */}
-            {/* <Button
-              component={Link}
-              to={routes.about()}
-              variant="subtle"
-              size="md"
-            >
-              Nosotros
-            </Button>
-            <Button
-              component={Link}
-              to={routes.contact()}
-              variant="subtle"
-              size="md"
-            >
-              Contacto
-            </Button> */}
-          </Group>
+          <Group gap="lg"></Group>
         </Group>
       </AppShell.Header>
       <AppShell.Main>
