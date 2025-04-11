@@ -1,4 +1,3 @@
-// web/src/pages/PlantDetailsPage/PlantDetailsPage.tsx
 import {
   Container,
   Title,
@@ -14,7 +13,7 @@ import {
   Divider,
   Table,
   Button,
-  Image, // Import Image from Mantine
+  Image,
 } from '@mantine/core'
 import { IconArrowLeft } from '@tabler/icons-react'
 
@@ -24,6 +23,8 @@ import ImageGallery from 'src/components/Shared/ImageGallery/ImageGallery'
 import { useGetPlantDetails } from 'src/hooks/Plants/useGetPlantDetails'
 
 import 'react-image-gallery/styles/css/image-gallery.css'
+import { formatPlantPresentationType } from 'src/utils/Formatters'
+
 import classes from './PlantDetailsPage.module.css'
 
 const PlantDetailsPage: React.FC = () => {
@@ -85,46 +86,35 @@ const PlantDetailsPage: React.FC = () => {
         Volver a {plant.category.name}
       </Button>
 
-      <Card shadow="sm" padding="lg" radius="md" withBorder>
-        <SimpleGrid cols={{ base: 1, md: 2 }} spacing="xl">
-          <div className={classes.galleryContainer}>
-            {galleryImages.length > 0 ? (
-              <>
-                <ImageGallery images={galleryImages} />
-              </>
-            ) : (
-              <Image
-                src="/plant-placeholder.jpg"
-                alt={plant.name}
-                radius="md"
-                height={400}
-                fit="cover"
-              />
-            )}
-          </div>
-
+      {/* Main plant info card */}
+      <Card shadow="sm" padding="lg" radius="md" withBorder mb="xl">
+        <SimpleGrid cols={{ base: 1 }} spacing="xl">
           <Stack>
-            <Group justify="space-between">
-              <Title order={1}>{plant.name}</Title>
+            <Group justify="space-between" align="flex-start">
+              <div>
+                <Title order={1}>{plant.name}</Title>
+                <Group mt="sm">
+                  <Badge color="blue" variant="light">
+                    {formatPlantPresentationType(plant.presentationType)}
+                  </Badge>
+                  <Badge color="teal" variant="light">
+                    {plant.category.name}
+                  </Badge>
+                </Group>
+              </div>
+              {/* Uncomment if you want to show price */}
               {/* <Badge color="green" size="xl" variant="light">
                 ${plant.price.toFixed(2)}
               </Badge> */}
             </Group>
 
-            <Group>
-              <Badge color="blue" variant="light">
-                {plant.presentationType}
-              </Badge>
-              <Badge color="teal" variant="light">
-                {plant.category.name}
-              </Badge>
-            </Group>
-
             {plant.presentationDetails && (
-              <Text size="lg">{plant.presentationDetails}</Text>
+              <Text size="lg" mt="sm">
+                {plant.presentationDetails}
+              </Text>
             )}
 
-            <Divider my="sm" />
+            <Divider my="md" />
 
             <Table
               striped
@@ -134,21 +124,9 @@ const PlantDetailsPage: React.FC = () => {
             >
               <Table.Tbody>
                 <Table.Tr>
-                  {/* <Table.Th>Disponibilidad</Table.Th>
-                  <Table.Td>
-                    {plant.stock > 0 ? (
-                      <Badge color="green">En stock ({plant.stock})</Badge>
-                    ) : (
-                      <Badge color="red">Agotado</Badge>
-                    )}
-                  </Table.Td> */}
-                </Table.Tr>
-                <Table.Tr>
                   <Table.Th>Tipo de Presentación</Table.Th>
                   <Table.Td>
-                    {plant.presentationType === 'BAG' && 'Bolsa'}
-                    {plant.presentationType === 'POT' && 'Maceta'}
-                    {plant.presentationType === 'HANGING' && 'Colgante'}
+                    {formatPlantPresentationType(plant.presentationType)}
                   </Table.Td>
                 </Table.Tr>
                 {plant.presentationDetails && (
@@ -159,19 +137,27 @@ const PlantDetailsPage: React.FC = () => {
                 )}
               </Table.Tbody>
             </Table>
-
-            {/* <Button
-              leftSection={<IconShoppingCart size={20} />}
-              size="lg"
-              radius="xl"
-              mt="xl"
-              disabled={plant.stock <= 0}
-              className={classes.addToCartButton}
-            >
-              {plant.stock > 0 ? 'Añadir al carrito' : 'No disponible'}
-            </Button> */}
           </Stack>
         </SimpleGrid>
+      </Card>
+
+      {/* Full-width gallery section */}
+      <Card shadow="sm" padding="lg" radius="md" withBorder>
+        <Title order={2} mb="md">
+          Galería de imágenes
+        </Title>
+        {galleryImages.length > 0 ? (
+          <ImageGallery images={galleryImages} />
+        ) : (
+          <Image
+            src="/plant-placeholder.jpg"
+            alt={plant.name}
+            radius="md"
+            height={400}
+            fit="cover"
+            w="100%"
+          />
+        )}
       </Card>
     </Container>
   )
