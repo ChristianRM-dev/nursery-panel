@@ -59,7 +59,6 @@ export const saleNoteTableConfig: TableConfig<SaleNoteTableRow> = {
       type: 'AddPayment',
       icon: <IconCash />,
       tooltip: 'Agregar pago',
-      disabled: (row) => row.status != 'PARTIALLY_PAID',
     },
   ],
   searchPlaceholder: 'Buscar notas de venta...',
