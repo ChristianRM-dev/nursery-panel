@@ -1,5 +1,5 @@
 // web/src/layouts/PublicLayout/PublicLayout.tsx
-import { Container, AppShell, Group, Button, Text } from '@mantine/core'
+import { Container, AppShell, Group, Text } from '@mantine/core'
 
 import { Link, routes } from '@redwoodjs/router'
 

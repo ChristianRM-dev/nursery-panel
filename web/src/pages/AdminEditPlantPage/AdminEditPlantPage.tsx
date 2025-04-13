@@ -1,5 +1,5 @@
 // web/src/pages/AdminEditPlantPage/AdminEditPlantPage.tsx
-import { Title, Container, Group, Button } from '@mantine/core'
+import { Title, Container, Group, Button, LoadingOverlay } from '@mantine/core'
 import { IconArrowLeft } from '@tabler/icons-react'
 
 import { navigate, routes, useParams } from '@redwoodjs/router'
@@ -76,7 +76,7 @@ const AdminEditPlantPage: React.FC = () => {
   }
 
   if (loadingPlant) {
-    return <div>Cargando...</div>
+    return <LoadingOverlay visible />
   }
 
   if (errorPlant) {

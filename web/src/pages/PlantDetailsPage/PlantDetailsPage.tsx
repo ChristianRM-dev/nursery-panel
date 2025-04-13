@@ -6,7 +6,6 @@ import {
   Badge,
   Card,
   SimpleGrid,
-  Skeleton,
   Stack,
   Breadcrumbs,
   Anchor,
@@ -14,15 +13,17 @@ import {
   Table,
   Button,
   Image,
+  LoadingOverlay,
 } from '@mantine/core'
 import { IconArrowLeft } from '@tabler/icons-react'
 
 import { Link, routes, useParams } from '@redwoodjs/router'
+import { Metadata } from '@redwoodjs/web'
+
+import 'react-image-gallery/styles/css/image-gallery.css'
 
 import ImageGallery from 'src/components/Shared/ImageGallery/ImageGallery'
 import { useGetPlantDetails } from 'src/hooks/Plants/useGetPlantDetails'
-
-import 'react-image-gallery/styles/css/image-gallery.css'
 import { formatPlantPresentationType } from 'src/utils/Formatters'
 
 import classes from './PlantDetailsPage.module.css'
@@ -45,21 +46,9 @@ const PlantDetailsPage: React.FC = () => {
     </Anchor>
   ))
 
-  if (loading)
-    return (
-      <Container size="lg" py="xl">
-        <Skeleton height={30} mb="xl" width="60%" />
-        <SimpleGrid cols={{ base: 1, md: 2 }} spacing="xl">
-          <Skeleton height={400} />
-          <Stack>
-            <Skeleton height={40} width="80%" />
-            <Skeleton height={30} width="60%" />
-            <Skeleton height={100} />
-            <Skeleton height={200} />
-          </Stack>
-        </SimpleGrid>
-      </Container>
-    )
+  if (loading) {
+    return <LoadingOverlay visible />
+  }
 
   if (error) return <div>Error al cargar la planta: {error.message}</div>
   if (!plant) return <div>Planta no encontrada</div>
@@ -72,94 +61,100 @@ const PlantDetailsPage: React.FC = () => {
   }))
 
   return (
-    <Container size="lg" py="xl">
-      <Breadcrumbs mb="xl">{items}</Breadcrumbs>
+    <>
+      <Metadata
+        title={`Los Laureles - ${plant.name}`}
+        description={`Vivero los laureles - ${plant.name}`}
+      />
+      <Container size="lg" py="xl">
+        <Breadcrumbs mb="xl">{items}</Breadcrumbs>
 
-      <Button
-        component={Link}
-        to={routes.categoryPlants({ id: plant.category.id })}
-        leftSection={<IconArrowLeft size={14} />}
-        variant="subtle"
-        mb="xl"
-        className={classes.backButton}
-      >
-        Volver a {plant.category.name}
-      </Button>
+        <Button
+          component={Link}
+          to={routes.categoryPlants({ id: plant.category.id })}
+          leftSection={<IconArrowLeft size={14} />}
+          variant="subtle"
+          mb="xl"
+          className={classes.backButton}
+        >
+          Volver a {plant.category.name}
+        </Button>
 
-      {/* Main plant info card */}
-      <Card shadow="sm" padding="lg" radius="md" withBorder mb="xl">
-        <SimpleGrid cols={{ base: 1 }} spacing="xl">
-          <Stack>
-            <Group justify="space-between" align="flex-start">
-              <div>
-                <Title order={1}>{plant.name}</Title>
-                <Group mt="sm">
-                  <Badge color="blue" variant="light">
-                    {formatPlantPresentationType(plant.presentationType)}
-                  </Badge>
-                  <Badge color="teal" variant="light">
-                    {plant.category.name}
-                  </Badge>
-                </Group>
-              </div>
-              {/* Uncomment if you want to show price */}
-              {/* <Badge color="green" size="xl" variant="light">
+        {/* Main plant info card */}
+        <Card shadow="sm" padding="lg" radius="md" withBorder mb="xl">
+          <SimpleGrid cols={{ base: 1 }} spacing="xl">
+            <Stack>
+              <Group justify="space-between" align="flex-start">
+                <div>
+                  <Title order={1}>{plant.name}</Title>
+                  <Group mt="sm">
+                    <Badge color="blue" variant="light">
+                      {formatPlantPresentationType(plant.presentationType)}
+                    </Badge>
+                    <Badge color="teal" variant="light">
+                      {plant.category.name}
+                    </Badge>
+                  </Group>
+                </div>
+                {/* Uncomment if you want to show price */}
+                {/* <Badge color="green" size="xl" variant="light">
                 ${plant.price.toFixed(2)}
               </Badge> */}
-            </Group>
+              </Group>
 
-            {plant.presentationDetails && (
-              <Text size="lg" mt="sm">
-                {plant.presentationDetails}
-              </Text>
-            )}
+              {plant.presentationDetails && (
+                <Text size="lg" mt="sm">
+                  {plant.presentationDetails}
+                </Text>
+              )}
 
-            <Divider my="md" />
+              <Divider my="md" />
 
-            <Table
-              striped
-              highlightOnHover
-              withTableBorder
-              className={classes.detailsTable}
-            >
-              <Table.Tbody>
-                <Table.Tr>
-                  <Table.Th>Tipo de Presentación</Table.Th>
-                  <Table.Td>
-                    {formatPlantPresentationType(plant.presentationType)}
-                  </Table.Td>
-                </Table.Tr>
-                {plant.presentationDetails && (
+              <Table
+                striped
+                highlightOnHover
+                withTableBorder
+                className={classes.detailsTable}
+              >
+                <Table.Tbody>
                   <Table.Tr>
-                    <Table.Th>Detalles de Presentación</Table.Th>
-                    <Table.Td>{plant.presentationDetails}</Table.Td>
+                    <Table.Th>Tipo de Presentación</Table.Th>
+                    <Table.Td>
+                      {formatPlantPresentationType(plant.presentationType)}
+                    </Table.Td>
                   </Table.Tr>
-                )}
-              </Table.Tbody>
-            </Table>
-          </Stack>
-        </SimpleGrid>
-      </Card>
+                  {plant.presentationDetails && (
+                    <Table.Tr>
+                      <Table.Th>Detalles de Presentación</Table.Th>
+                      <Table.Td>{plant.presentationDetails}</Table.Td>
+                    </Table.Tr>
+                  )}
+                </Table.Tbody>
+              </Table>
+            </Stack>
+          </SimpleGrid>
+        </Card>
 
-      {/* Full-width gallery section */}
-      <Card shadow="sm" padding="lg" radius="md" withBorder>
-        <Title order={2} mb="md">
-          Galería de imágenes
-        </Title>
-        {galleryImages.length > 0 ? (
-          <ImageGallery images={galleryImages} />
-        ) : (
-          <Image
-            src="/plant-placeholder.jpg"
-            alt={plant.name}
-            radius="md"
-            height={400}
-            fit="cover"
-            w="100%"
-          />
-        )}
-      </Card>
-    </Container>
+        {/* Full-width gallery section */}
+        <Card shadow="sm" padding="lg" radius="md" withBorder>
+          <Title order={2} mb="md">
+            Galería de imágenes
+          </Title>
+          {galleryImages.length > 0 ? (
+            <ImageGallery images={galleryImages} />
+          ) : (
+            <Image
+              src="/plant-placeholder.jpg"
+              alt={plant.name}
+              radius="md"
+              height={400}
+              fit="cover"
+              w="100%"
+            />
+          )}
+        </Card>
+      </Container>
+    </>
   )
 }
 

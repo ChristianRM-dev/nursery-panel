@@ -8,6 +8,7 @@ import {
   Group,
   Badge,
   Button,
+  LoadingOverlay,
 } from '@mantine/core'
 import { IconArrowLeft, IconEdit } from '@tabler/icons-react'
 
@@ -22,7 +23,7 @@ const AdminNurseryDetailsPage: React.FC = () => {
   const { nursery, loading, error } = useGetNurseryById({ id })
 
   if (loading) {
-    return <div>Cargando...</div>
+    return <LoadingOverlay visible />
   }
 
   if (error) {

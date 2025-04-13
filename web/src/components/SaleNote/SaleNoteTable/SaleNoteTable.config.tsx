@@ -1,12 +1,6 @@
 // web/src/components/SaleNote/SaleNoteTable/SaleNoteTable.config.tsx
 import { Badge, NumberFormatter } from '@mantine/core'
-import {
-  IconCash,
-  IconDetails,
-  IconEdit,
-  IconPdf,
-  IconTrash,
-} from '@tabler/icons-react'
+import { IconCash, IconDetails, IconEdit, IconPdf } from '@tabler/icons-react'
 
 import { TableConfig } from 'src/components/Shared/PaginatedTable/PaginatedTable.types'
 
@@ -53,12 +47,12 @@ export const saleNoteTableConfig: TableConfig<SaleNoteTableRow> = {
       tooltip: 'Ver Detalles de la Nota',
     },
     { type: 'Edit', icon: <IconEdit />, tooltip: 'Editar Nota' },
-    { type: 'Delete', icon: <IconTrash />, tooltip: 'Eliminar Nota' },
     { type: 'DownloadFile', icon: <IconPdf />, tooltip: 'Descargar Nota' },
     {
       type: 'AddPayment',
       icon: <IconCash />,
       tooltip: 'Agregar pago',
+      disabled: (row) => row.status == 'PAID',
     },
   ],
   searchPlaceholder: 'Buscar notas de venta...',

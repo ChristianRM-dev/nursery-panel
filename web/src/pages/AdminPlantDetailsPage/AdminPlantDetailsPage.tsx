@@ -8,6 +8,7 @@ import {
   Group,
   Badge,
   Button,
+  LoadingOverlay,
 } from '@mantine/core'
 import { IconArrowLeft, IconEdit } from '@tabler/icons-react'
 
@@ -23,7 +24,7 @@ const AdminPlantDetailsPage: React.FC = () => {
   const { plant, loading, error } = useGetPlantById({ id })
 
   if (loading) {
-    return <div>Cargando...</div>
+    return <LoadingOverlay visible />
   }
 
   if (error) {

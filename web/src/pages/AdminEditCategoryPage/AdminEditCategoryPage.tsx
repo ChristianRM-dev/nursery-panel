@@ -1,5 +1,5 @@
 // web/src/pages/AdminEditCategoryPage/AdminEditCategoryPage.tsx
-import { Title, Container, Group, Button } from '@mantine/core'
+import { Title, Container, Group, Button, LoadingOverlay } from '@mantine/core'
 import { IconArrowLeft } from '@tabler/icons-react'
 
 import { navigate, routes, useParams } from '@redwoodjs/router'
@@ -41,10 +41,12 @@ const AdminEditCategoryPage: React.FC = () => {
     ? {
         name: category.name,
         description: category.description || '',
+        image: category.image ? { url: category.image } : null,
       }
     : {
         name: '',
         description: '',
+        image: null,
       }
 
   const handleSubmit = async (values: CategoryFormValues) => {
@@ -64,7 +66,7 @@ const AdminEditCategoryPage: React.FC = () => {
   }
 
   if (loadingCategory) {
-    return <div>Cargando...</div>
+    return <LoadingOverlay visible />
   }
 
   if (errorCategory) {

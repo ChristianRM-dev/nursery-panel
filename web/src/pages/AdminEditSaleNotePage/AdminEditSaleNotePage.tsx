@@ -43,6 +43,7 @@ const AdminEditSaleNotePage: React.FC = () => {
         nurseryId: saleNote.nursery.id,
         saleDetails: saleNote.saleDetails.map((detail) => ({
           plantId: detail.plant.id,
+          name: detail.plant.name,
           price: detail.price,
           quantity: detail.quantity,
         })),

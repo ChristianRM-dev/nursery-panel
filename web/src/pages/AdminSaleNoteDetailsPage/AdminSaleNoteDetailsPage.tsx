@@ -8,6 +8,7 @@ import {
   Button,
   Table,
   NumberFormatter,
+  LoadingOverlay,
 } from '@mantine/core'
 import {
   IconArrowLeft,
@@ -36,7 +37,7 @@ const AdminSaleNoteDetailsPage: React.FC = () => {
   })
 
   if (loading) {
-    return <div>Cargando...</div>
+    return <LoadingOverlay visible />
   }
 
   if (error) {

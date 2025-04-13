@@ -1,5 +1,5 @@
 // web/src/pages/AdminEditNurseryPage/AdminEditNurseryPage.tsx
-import { Title, Container, Group, Button } from '@mantine/core'
+import { Title, Container, Group, Button, LoadingOverlay } from '@mantine/core'
 import { IconArrowLeft } from '@tabler/icons-react'
 
 import { navigate, routes, useParams } from '@redwoodjs/router'
@@ -44,6 +44,8 @@ const AdminEditNurseryPage: React.FC = () => {
         phone: nursery.phone,
         rfc: nursery.rfc,
         logo: nursery.logo ? { url: nursery.logo } : null,
+        email: nursery.email,
+        ownerName: nursery.ownerName,
       }
     : {
         name: '',
@@ -51,6 +53,8 @@ const AdminEditNurseryPage: React.FC = () => {
         phone: '',
         rfc: '',
         logo: null,
+        email: '',
+        ownerName: '',
       }
 
   const handleSubmit = async (values: NurseryFormValues) => {
@@ -70,7 +74,7 @@ const AdminEditNurseryPage: React.FC = () => {
   }
 
   if (loadingNursery) {
-    return <div>Cargando...</div>
+    return <LoadingOverlay visible />
   }
 
   if (errorNursery) {

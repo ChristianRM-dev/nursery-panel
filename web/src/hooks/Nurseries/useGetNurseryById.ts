@@ -9,6 +9,8 @@ const GET_NURSERY_BY_ID = gql`
       name
       address
       phone
+      email
+      ownerName
       logo
       rfc
       createdAt

@@ -1,19 +1,13 @@
 // web/src/components/Category/CategoryForm/CategoryForm.tsx
-import React from 'react'
+import React, { useState } from 'react'
 
-import {
-  TextInput,
-  Textarea,
-  Button,
-  Group,
-  Box,
-  Text,
-  ActionIcon,
-} from '@mantine/core'
+import { TextInput, Textarea, Button, Group, Box, Text } from '@mantine/core'
 import { Dropzone, IMAGE_MIME_TYPE } from '@mantine/dropzone'
 import { useForm } from '@mantine/form'
-import { IconUpload, IconPhoto, IconX, IconTrash } from '@tabler/icons-react'
+import { IconUpload, IconPhoto, IconX } from '@tabler/icons-react'
 
+import { FormImagePreview } from 'src/components/Shared/Form/FormImagePreview/FormImagePreview'
+import { FormImagesThumbnail } from 'src/components/Shared/Form/FormImagesThumbnail/FormImagesThumbnail'
 import FormOverlay from 'src/components/Shared/Form/Overlay/FormOverlay'
 
 import { CategoryFormValues, categorySchema } from './CategoryForm.schema'
@@ -29,6 +23,7 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
   loading,
   defaultValues,
 }) => {
+  const [openedIndex, setOpenedIndex] = useState<number | null>(null)
   const form = useForm<CategoryFormValues>({
     initialValues: {
       name: defaultValues?.name || '',
@@ -55,118 +50,104 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
   }
 
   return (
-    <Box style={{ position: 'relative' }}>
-      {loading && <FormOverlay />}
+    <>
+      <FormImagePreview
+        openedIndex={openedIndex}
+        onClose={() => setOpenedIndex(null)}
+        onChangeIndex={(newIndex) => setOpenedIndex(newIndex)}
+        photos={[form.values.image]}
+      />
+      <Box style={{ position: 'relative' }}>
+        {loading && <FormOverlay />}
 
-      <form onSubmit={form.onSubmit(onSubmit)}>
-        <TextInput
-          label="Nombre"
-          placeholder="Nombre de la categoría"
-          {...form.getInputProps('name')}
-          disabled={loading}
-          required
-          mb="md"
-        />
-        <Textarea
-          label="Descripción"
-          placeholder="Descripción de la categoría"
-          {...form.getInputProps('description')}
-          disabled={loading}
-          mb="md"
-        />
+        <form onSubmit={form.onSubmit(onSubmit)}>
+          <TextInput
+            label="Nombre"
+            placeholder="Nombre de la categoría"
+            {...form.getInputProps('name')}
+            disabled={loading}
+            required
+            mb="md"
+          />
+          <Textarea
+            label="Descripción"
+            placeholder="Descripción de la categoría"
+            {...form.getInputProps('description')}
+            disabled={loading}
+            mb="md"
+          />
 
-        {/* Image Upload */}
-        <Dropzone
-          onDrop={handleDrop}
-          onReject={() => {}}
-          maxSize={5 * 1024 ** 2}
-          accept={IMAGE_MIME_TYPE}
-          disabled={loading}
-        >
-          <Group
-            justify="center"
-            gap="xl"
-            mih={220}
-            style={{ pointerEvents: 'none' }}
+          {/* Image Upload */}
+          <Dropzone
+            onDrop={handleDrop}
+            onReject={() => {}}
+            maxSize={5 * 1024 ** 2}
+            accept={IMAGE_MIME_TYPE}
+            disabled={loading}
           >
-            <Dropzone.Accept>
-              <IconUpload
-                size={52}
-                color="var(--mantine-color-blue-6)"
-                stroke={1.5}
-              />
-            </Dropzone.Accept>
-            <Dropzone.Reject>
-              <IconX
-                size={52}
-                color="var(--mantine-color-red-6)"
-                stroke={1.5}
-              />
-            </Dropzone.Reject>
-            <Dropzone.Idle>
-              <IconPhoto
-                size={52}
-                color="var(--mantine-color-dimmed)"
-                stroke={1.5}
-              />
-            </Dropzone.Idle>
+            <Group
+              justify="center"
+              gap="xl"
+              mih={220}
+              style={{ pointerEvents: 'none' }}
+            >
+              <Dropzone.Accept>
+                <IconUpload
+                  size={52}
+                  color="var(--mantine-color-blue-6)"
+                  stroke={1.5}
+                />
+              </Dropzone.Accept>
+              <Dropzone.Reject>
+                <IconX
+                  size={52}
+                  color="var(--mantine-color-red-6)"
+                  stroke={1.5}
+                />
+              </Dropzone.Reject>
+              <Dropzone.Idle>
+                <IconPhoto
+                  size={52}
+                  color="var(--mantine-color-dimmed)"
+                  stroke={1.5}
+                />
+              </Dropzone.Idle>
 
-            <div>
-              <Text size="xl" inline>
-                Arrastre la imagen aquí o haga clic para seleccionar un archivo
-              </Text>
-              <Text size="sm" c="dimmed" inline mt={7}>
-                El archivo no debe exceder 5 MB
-              </Text>
-            </div>
-          </Group>
-        </Dropzone>
+              <div>
+                <Text size="xl" inline>
+                  Arrastre la imagen aquí o haga clic para seleccionar un
+                  archivo
+                </Text>
+                <Text size="sm" c="dimmed" inline mt={7}>
+                  El archivo no debe exceder 5 MB
+                </Text>
+              </div>
+            </Group>
+          </Dropzone>
 
-        {form.errors.image && (
-          <Text color="red" size="sm" mt="xs">
-            {form.errors.image}
-          </Text>
-        )}
-
-        {form.values.image && (
-          <Box mt="md">
-            <Text size="md" mb="sm">
-              Imagen seleccionada:
+          {form.errors.image && (
+            <Text color="red" size="sm" mt="xs">
+              {form.errors.image}
             </Text>
-            <div style={{ position: 'relative', display: 'inline-block' }}>
-              <img
-                src={
-                  form.values.image instanceof File
-                    ? URL.createObjectURL(form.values.image)
-                    : form.values.image.url
-                }
-                alt="Imagen de la categoría"
-                style={{
-                  width: 100,
-                  height: 100,
-                  objectFit: 'cover',
-                  borderRadius: '4px',
-                }}
-              />
-              <ActionIcon
-                style={{ position: 'absolute', top: 5, right: 5 }}
-                color="red"
-                variant="filled"
-                onClick={handleRemoveImage}
-                disabled={loading}
-              >
-                <IconTrash size={16} />
-              </ActionIcon>
-            </div>
-          </Box>
-        )}
+          )}
 
-        <Group justify="flex-end" mt="md">
-          <Button type="submit" disabled={loading}>
-            Enviar
-          </Button>
-        </Group>
-      </form>
-    </Box>
+          {form.values.image && (
+            <FormImagesThumbnail
+              photos={[form.values.image]}
+              loading={loading}
+              description="Imagen de la categoría"
+              onRemove={handleRemoveImage}
+              onPreview={setOpenedIndex}
+            />
+          )}
+
+          <Group justify="flex-end" mt="md">
+            <Button type="submit" disabled={loading}>
+              Enviar
+            </Button>
+          </Group>
+        </form>
+      </Box>
+    </>
   )
 }

@@ -1,5 +1,5 @@
 // web/src/pages/AdminEditCustomerPage/AdminEditCustomerPage.tsx
-import { Title, Container, Group, Button } from '@mantine/core'
+import { Title, Container, Group, Button, LoadingOverlay } from '@mantine/core'
 import { IconArrowLeft } from '@tabler/icons-react'
 
 import { navigate, routes, useParams } from '@redwoodjs/router'
@@ -59,7 +59,7 @@ const AdminEditCustomerPage: React.FC = () => {
   }
 
   if (loadingCustomer) {
-    return <div>Cargando...</div>
+    return <LoadingOverlay visible />
   }
 
   if (errorCustomer) {

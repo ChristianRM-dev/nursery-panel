@@ -47,22 +47,17 @@ export const createCategory: MutationResolvers['createCategory'] = async ({
 }) => {
   const { image, ...rest } = input
 
-  const category = await db.category.create({
-    data: {
-      ...rest,
-      image: null,
-    },
-  })
-
-  let imageUrl: string | null = null
-
-  if (image) {
-    imageUrl = await uploadToBlob('categories', category.id, image)
+  if (!image) {
+    throw new Error('Image is required for creating a category')
   }
 
-  return db.category.update({
-    where: { id: category.id },
-    data: { image: imageUrl },
+  const imageUrl = await uploadToBlob('categories', rest.name, image)
+
+  return db.category.create({
+    data: {
+      ...rest,
+      image: imageUrl,
+    },
   })
 }
 

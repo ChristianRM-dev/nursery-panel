@@ -7,6 +7,7 @@ import {
   Group,
   Badge,
   Button,
+  LoadingOverlay,
 } from '@mantine/core'
 import { IconArrowLeft, IconEdit } from '@tabler/icons-react'
 
@@ -22,7 +23,7 @@ const AdminCustomerDetailsPage: React.FC = () => {
   const { customer, loading, error } = useGetCustomerById({ id })
 
   if (loading) {
-    return <div>Cargando...</div>
+    return <LoadingOverlay visible />
   }
 
   if (error) {

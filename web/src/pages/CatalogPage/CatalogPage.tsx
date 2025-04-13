@@ -14,6 +14,7 @@ import {
 import { IconPlant } from '@tabler/icons-react'
 
 import { Link, routes } from '@redwoodjs/router'
+import { Metadata } from '@redwoodjs/web'
 
 import { useGetCategoriesWithPlants } from 'src/hooks/Categories/useGetCategoriesWithPlants'
 
@@ -35,61 +36,67 @@ const CatalogPage: React.FC = () => {
   ))
 
   return (
-    <Container size="xl" py="xl">
-      <Title order={1} ta="center" mb="xl" mt="xl">
-        Nuestras Categorías de Plantas
-      </Title>
+    <>
+      <Metadata
+        title="Los Laureles - Catalogo"
+        description="Vivero los laureles catalogo"
+      />
+      <Container size="xl" py="xl">
+        <Title order={1} ta="center" mb="xl" mt="xl">
+          Nuestras Categorías de Plantas
+        </Title>
 
-      {loading ? (
-        <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="xl">
-          {placeholderCategories}
-        </SimpleGrid>
-      ) : (
-        <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="xl">
-          {categories.map((category) => (
-            <Card
-              key={category.id}
-              shadow="sm"
-              padding="lg"
-              radius="md"
-              withBorder
-              component={Link}
-              to={routes.categoryPlants({ id: category.id })}
-              className={classes.card}
-            >
-              <Card.Section>
-                {category.image ? (
-                  <Image
-                    src={category.image}
-                    height={160}
-                    alt={category.name}
-                  />
-                ) : (
-                  <Center bg="gray.1" h={160}>
-                    <IconPlant
-                      size="3rem"
-                      color="var(--mantine-color-green-6)"
+        {loading ? (
+          <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="xl">
+            {placeholderCategories}
+          </SimpleGrid>
+        ) : (
+          <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="xl">
+            {categories.map((category) => (
+              <Card
+                key={category.id}
+                shadow="sm"
+                padding="lg"
+                radius="md"
+                withBorder
+                component={Link}
+                to={routes.categoryPlants({ id: category.id })}
+                className={classes.card}
+              >
+                <Card.Section>
+                  {category.image ? (
+                    <Image
+                      src={category.image}
+                      height={160}
+                      alt={category.name}
                     />
-                  </Center>
-                )}
-              </Card.Section>
+                  ) : (
+                    <Center bg="gray.1" h={160}>
+                      <IconPlant
+                        size="3rem"
+                        color="var(--mantine-color-green-6)"
+                      />
+                    </Center>
+                  )}
+                </Card.Section>
 
-              <Group justify="space-between" mt="md" mb="xs">
-                <Text fw={500}>{category.name}</Text>
-                <Badge color="green" variant="light">
-                  {category.plants.length} plantas
-                </Badge>
-              </Group>
+                <Group justify="space-between" mt="md" mb="xs">
+                  <Text fw={500}>{category.name}</Text>
+                  <Badge color="green" variant="light">
+                    {category.plants.length} plantas
+                  </Badge>
+                </Group>
 
-              <Text size="sm" c="dimmed" lineClamp={2}>
-                {category.description ||
-                  'Descubre nuestra selección de plantas en esta categoría'}
-              </Text>
-            </Card>
-          ))}
-        </SimpleGrid>
-      )}
-    </Container>
+                <Text size="sm" c="dimmed" lineClamp={2}>
+                  {category.description ||
+                    'Descubre nuestra selección de plantas en esta categoría'}
+                </Text>
+              </Card>
+            ))}
+          </SimpleGrid>
+        )}
+      </Container>
+    </>
   )
 }
 
