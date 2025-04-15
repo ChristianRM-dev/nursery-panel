@@ -15,8 +15,14 @@ import {
   ActionIcon,
 } from '@mantine/core'
 import { useForm } from '@mantine/form'
-import { IconAlertCircle, IconPlus, IconTrash } from '@tabler/icons-react'
+import {
+  IconAlertCircle,
+  IconPlant,
+  IconPlus,
+  IconTrash,
+} from '@tabler/icons-react'
 
+import AddPlantModal from 'src/components/Plant/AddPlantModal/AddPlantModal'
 import FormOverlay from 'src/components/Shared/Form/Overlay/FormOverlay'
 import { useFilterCustomers } from 'src/hooks/Customers/useFilterCustomers'
 import { useFilterNurseries } from 'src/hooks/Nurseries/useFilterNurseries'
@@ -35,6 +41,7 @@ export const SaleNoteForm: React.FC<SaleNoteFormProps> = ({
   loading,
   defaultValues = {},
 }) => {
+  const [addPlantModalOpened, setAddPlantModalOpened] = useState(false)
   const [modalOpened, setModalOpened] = useState(false)
   const [activePlantTab, setActivePlantTab] = useState<
     'registered' | 'external'
@@ -121,204 +128,223 @@ export const SaleNoteForm: React.FC<SaleNoteFormProps> = ({
   }
 
   return (
-    <Box style={{ position: 'relative' }}>
-      {loading && <FormOverlay />}
-
-      <SaleNoteFormPlantModal
-        opened={modalOpened}
-        tab={activePlantTab}
-        registeredPlantsAdded={form.values.saleDetails.map((x) => x.plantId)}
-        onClose={() => setModalOpened(false)}
-        onAddRegisteredPlant={handleAddRegisteredPlant}
-        onAddExternalPlant={handleAddExternalPlant}
+    <>
+      <AddPlantModal
+        opened={addPlantModalOpened}
+        onClose={() => setAddPlantModalOpened(false)}
       />
+      <Box style={{ position: 'relative' }}>
+        {loading && <FormOverlay />}
 
-      <form onSubmit={form.onSubmit(onSubmit)}>
-        <Stack gap="md">
-          {/* Customer and Nursery Selection */}
-          <Select
-            label="Cliente"
-            placeholder="Seleccione un cliente"
-            {...form.getInputProps('customerId')}
-            data={customers}
-            searchable
-            clearable
-            onSearchChange={handleFilterCustomers}
-            nothingFoundMessage="No se encontraron clientes"
-            disabled={loading || loadingCustomers}
-            required
-          />
+        <SaleNoteFormPlantModal
+          opened={modalOpened}
+          tab={activePlantTab}
+          registeredPlantsAdded={form.values.saleDetails.map((x) => x.plantId)}
+          onClose={() => setModalOpened(false)}
+          onAddRegisteredPlant={handleAddRegisteredPlant}
+          onAddExternalPlant={handleAddExternalPlant}
+        />
 
-          <Select
-            label="Vivero"
-            placeholder="Seleccione un vivero"
-            {...form.getInputProps('nurseryId')}
-            data={nurseries}
-            searchable
-            clearable
-            onSearchChange={handleFilterNurseries}
-            nothingFoundMessage="No se encontraron viveros"
-            disabled={loading || loadingNurseries}
-            required
-          />
+        <form onSubmit={form.onSubmit(onSubmit)}>
+          <Stack gap="md">
+            {/* Customer and Nursery Selection */}
+            <Select
+              label="Cliente"
+              placeholder="Seleccione un cliente"
+              {...form.getInputProps('customerId')}
+              data={customers}
+              searchable
+              clearable
+              onSearchChange={handleFilterCustomers}
+              nothingFoundMessage="No se encontraron clientes"
+              disabled={loading || loadingCustomers}
+              required
+            />
 
-          <Divider my="sm" />
+            <Select
+              label="Vivero"
+              placeholder="Seleccione un vivero"
+              {...form.getInputProps('nurseryId')}
+              data={nurseries}
+              searchable
+              clearable
+              onSearchChange={handleFilterNurseries}
+              nothingFoundMessage="No se encontraron viveros"
+              disabled={loading || loadingNurseries}
+              required
+            />
 
-          {/* Plants Section */}
-          <Tabs defaultValue="registered">
-            <Tabs.List>
-              <Tabs.Tab value="registered">Plantas Registradas</Tabs.Tab>
-              <Tabs.Tab value="external">Plantas Externas</Tabs.Tab>
-            </Tabs.List>
+            <Divider my="sm" />
 
-            <Tabs.Panel value="registered" pt="md">
-              <Group justify="space-between" mb="md">
-                <Text size="lg">Plantas Registradas</Text>
-                <Button
-                  onClick={() => openModal('registered')}
-                  disabled={loading}
-                  variant="outline"
-                  leftSection={<IconPlus size="1rem" />}
-                >
-                  Agregar Planta
-                </Button>
-              </Group>
+            {/* Plants Section */}
+            <Tabs defaultValue="registered">
+              <Tabs.List>
+                <Tabs.Tab value="registered">Plantas Registradas</Tabs.Tab>
+                <Tabs.Tab value="external">Plantas Externas</Tabs.Tab>
+              </Tabs.List>
 
-              {form.values.saleDetails.length === 0 ? (
-                <Alert
-                  icon={<IconAlertCircle size="1rem" />}
-                  title="Sin plantas"
-                  color="blue"
-                  mb="md"
-                >
-                  No hay plantas registradas agregadas
-                </Alert>
-              ) : (
-                <Table striped highlightOnHover>
-                  <Table.Thead>
-                    <Table.Tr>
-                      <Table.Th>Nombre</Table.Th>
-                      <Table.Th>Precio Unitario</Table.Th>
-                      <Table.Th>Cantidad</Table.Th>
-                      <Table.Th>Subtotal</Table.Th>
-                      <Table.Th>Acciones</Table.Th>
-                    </Table.Tr>
-                  </Table.Thead>
-                  <Table.Tbody>
-                    {form.values.saleDetails.map((item, index) => (
-                      <Table.Tr key={index}>
-                        <Table.Td>{item.name}</Table.Td>
-                        <Table.Td>${item.price.toFixed(2)}</Table.Td>
-                        <Table.Td>{item.quantity}</Table.Td>
-                        <Table.Td>
-                          ${(item.price * item.quantity).toFixed(2)}
-                        </Table.Td>
-                        <Table.Td>
-                          <Group gap="xs">
-                            {/* <ActionIcon
+              <Tabs.Panel value="registered" pt="md">
+                <Group justify="space-between" mb="md">
+                  <Text size="lg">Plantas Registradas</Text>
+                  <Group>
+                    <Button
+                      onClick={() => openModal('registered')}
+                      disabled={loading}
+                      variant="outline"
+                      leftSection={<IconPlus size="1rem" />}
+                    >
+                      Agregar Planta
+                    </Button>
+                    <Button
+                      onClick={() => setAddPlantModalOpened(true)}
+                      disabled={loading}
+                      variant="outline"
+                      leftSection={<IconPlant size="1rem" />}
+                      ml="sm"
+                    >
+                      Registrar Nueva Planta
+                    </Button>
+                  </Group>
+                </Group>
+
+                {form.values.saleDetails.length === 0 ? (
+                  <Alert
+                    icon={<IconAlertCircle size="1rem" />}
+                    title="Sin plantas"
+                    color="blue"
+                    mb="md"
+                  >
+                    No hay plantas registradas agregadas
+                  </Alert>
+                ) : (
+                  <Table striped highlightOnHover>
+                    <Table.Thead>
+                      <Table.Tr>
+                        <Table.Th>Nombre</Table.Th>
+                        <Table.Th>Precio Unitario</Table.Th>
+                        <Table.Th>Cantidad</Table.Th>
+                        <Table.Th>Subtotal</Table.Th>
+                        <Table.Th>Acciones</Table.Th>
+                      </Table.Tr>
+                    </Table.Thead>
+                    <Table.Tbody>
+                      {form.values.saleDetails.map((item, index) => (
+                        <Table.Tr key={index}>
+                          <Table.Td>{item.name}</Table.Td>
+                          <Table.Td>${item.price.toFixed(2)}</Table.Td>
+                          <Table.Td>{item.quantity}</Table.Td>
+                          <Table.Td>
+                            ${(item.price * item.quantity).toFixed(2)}
+                          </Table.Td>
+                          <Table.Td>
+                            <Group gap="xs">
+                              {/* <ActionIcon
                               color="blue"
                               onClick={() => handleEditRegisteredPlant(index)}
                             >
                               <IconEdit size="1rem" />
                             </ActionIcon> */}
-                            <ActionIcon
-                              color="red"
-                              onClick={() => handleRemoveRegisteredPlant(index)}
-                            >
-                              <IconTrash size="1rem" />
-                            </ActionIcon>
-                          </Group>
-                        </Table.Td>
+                              <ActionIcon
+                                color="red"
+                                onClick={() =>
+                                  handleRemoveRegisteredPlant(index)
+                                }
+                              >
+                                <IconTrash size="1rem" />
+                              </ActionIcon>
+                            </Group>
+                          </Table.Td>
+                        </Table.Tr>
+                      ))}
+                    </Table.Tbody>
+                  </Table>
+                )}
+              </Tabs.Panel>
+
+              <Tabs.Panel value="external" pt="md">
+                <Group justify="space-between" mb="md">
+                  <Text size="lg">Plantas Externas</Text>
+                  <Button
+                    onClick={() => openModal('external')}
+                    disabled={loading}
+                    variant="outline"
+                    leftSection={<IconPlus size="1rem" />}
+                  >
+                    Agregar Planta
+                  </Button>
+                </Group>
+
+                {form.values.externalPlants.length === 0 ? (
+                  <Alert
+                    icon={<IconAlertCircle size="1rem" />}
+                    title="Sin plantas"
+                    color="blue"
+                    mb="md"
+                  >
+                    No hay plantas externas agregadas
+                  </Alert>
+                ) : (
+                  <Table striped highlightOnHover>
+                    <Table.Thead>
+                      <Table.Tr>
+                        <Table.Th>Nombre</Table.Th>
+                        <Table.Th>Precio Unitario</Table.Th>
+                        <Table.Th>Cantidad</Table.Th>
+                        <Table.Th>Subtotal</Table.Th>
+                        <Table.Th>Acciones</Table.Th>
                       </Table.Tr>
-                    ))}
-                  </Table.Tbody>
-                </Table>
-              )}
-            </Tabs.Panel>
-
-            <Tabs.Panel value="external" pt="md">
-              <Group justify="space-between" mb="md">
-                <Text size="lg">Plantas Externas</Text>
-                <Button
-                  onClick={() => openModal('external')}
-                  disabled={loading}
-                  variant="outline"
-                  leftSection={<IconPlus size="1rem" />}
-                >
-                  Agregar Planta
-                </Button>
-              </Group>
-
-              {form.values.externalPlants.length === 0 ? (
-                <Alert
-                  icon={<IconAlertCircle size="1rem" />}
-                  title="Sin plantas"
-                  color="blue"
-                  mb="md"
-                >
-                  No hay plantas externas agregadas
-                </Alert>
-              ) : (
-                <Table striped highlightOnHover>
-                  <Table.Thead>
-                    <Table.Tr>
-                      <Table.Th>Nombre</Table.Th>
-                      <Table.Th>Precio Unitario</Table.Th>
-                      <Table.Th>Cantidad</Table.Th>
-                      <Table.Th>Subtotal</Table.Th>
-                      <Table.Th>Acciones</Table.Th>
-                    </Table.Tr>
-                  </Table.Thead>
-                  <Table.Tbody>
-                    {form.values.externalPlants.map((item, index) => (
-                      <Table.Tr key={index}>
-                        <Table.Td>{item.name}</Table.Td>
-                        <Table.Td>${item.price.toFixed(2)}</Table.Td>
-                        <Table.Td>{item.quantity}</Table.Td>
-                        <Table.Td>
-                          ${(item.price * item.quantity).toFixed(2)}
-                        </Table.Td>
-                        <Table.Td>
-                          <Group gap="xs">
-                            {/* <ActionIcon
+                    </Table.Thead>
+                    <Table.Tbody>
+                      {form.values.externalPlants.map((item, index) => (
+                        <Table.Tr key={index}>
+                          <Table.Td>{item.name}</Table.Td>
+                          <Table.Td>${item.price.toFixed(2)}</Table.Td>
+                          <Table.Td>{item.quantity}</Table.Td>
+                          <Table.Td>
+                            ${(item.price * item.quantity).toFixed(2)}
+                          </Table.Td>
+                          <Table.Td>
+                            <Group gap="xs">
+                              {/* <ActionIcon
                               color="blue"
                               onClick={() => handleEditExternalPlant(index)}
                             >
                               <IconEdit size="1rem" />
                             </ActionIcon> */}
-                            <ActionIcon
-                              color="red"
-                              onClick={() => handleRemoveExternalPlant(index)}
-                            >
-                              <IconTrash size="1rem" />
-                            </ActionIcon>
-                          </Group>
-                        </Table.Td>
-                      </Table.Tr>
-                    ))}
-                  </Table.Tbody>
-                </Table>
-              )}
-            </Tabs.Panel>
-          </Tabs>
+                              <ActionIcon
+                                color="red"
+                                onClick={() => handleRemoveExternalPlant(index)}
+                              >
+                                <IconTrash size="1rem" />
+                              </ActionIcon>
+                            </Group>
+                          </Table.Td>
+                        </Table.Tr>
+                      ))}
+                    </Table.Tbody>
+                  </Table>
+                )}
+              </Tabs.Panel>
+            </Tabs>
 
-          {!hasPlants && (
-            <Alert color="red" icon={<IconAlertCircle size="1rem" />}>
-              Debes agregar al menos una planta (registrada o externa)
-            </Alert>
-          )}
+            {!hasPlants && (
+              <Alert color="red" icon={<IconAlertCircle size="1rem" />}>
+                Debes agregar al menos una planta (registrada o externa)
+              </Alert>
+            )}
 
-          <Group justify="flex-end" mt="md">
-            <Button
-              type="submit"
-              disabled={loading || !hasPlants}
-              loading={loading}
-            >
-              Guardar Nota de Venta
-            </Button>
-          </Group>
-        </Stack>
-      </form>
-    </Box>
+            <Group justify="flex-end" mt="md">
+              <Button
+                type="submit"
+                disabled={loading || !hasPlants}
+                loading={loading}
+              >
+                Guardar Nota de Venta
+              </Button>
+            </Group>
+          </Stack>
+        </form>
+      </Box>
+    </>
   )
 }

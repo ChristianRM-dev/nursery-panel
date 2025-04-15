@@ -63,13 +63,11 @@ const SaleNotePDF: React.FC<SaleNotePDFProps> = ({ saleNote }) => {
                 <Text style={SaleNotePDFStyles.folioTableHeader}>
                   EXPEDIDO EN
                 </Text>
-              </View>
-              <View style={SaleNotePDFStyles.folioTableRow}>
                 <Text style={SaleNotePDFStyles.folioTableData}>
                   COQUIMATLÁN, COL.
                 </Text>
               </View>
-              <View style={SaleNotePDFStyles.folioTableRow}>
+              <View style={SaleNotePDFStyles.expedidoEnRow}>
                 <Text style={SaleNotePDFStyles.folioTableData}>
                   {formattedDate}
                 </Text>

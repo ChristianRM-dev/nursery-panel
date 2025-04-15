@@ -1,4 +1,3 @@
-
 // web/src/components/SaleNote/SaleNotePDF/SaleNotePDF.styles.ts
 import { StyleSheet } from '@react-pdf/renderer'
 
@@ -33,6 +32,11 @@ export const SaleNotePDFStyles = StyleSheet.create({
     borderColor: '#000',
     width: '100%',
   },
+  expedidoEnRow: {
+    paddingVertical: 3,
+    paddingHorizontal: 5,
+    alignItems: 'center',
+  },
   folioTableRow: {
     borderBottomWidth: 1,
     borderBottomColor: '#000',
@@ -50,9 +54,9 @@ export const SaleNotePDFStyles = StyleSheet.create({
     fontSize: 10,
   },
   headerLogo: {
-    width: 80,
+    width: '100%',
     height: 'auto',
-    maxHeight: 80,
+    maxHeight: '100%',
   },
   nurseryName: {
     fontSize: 14,
