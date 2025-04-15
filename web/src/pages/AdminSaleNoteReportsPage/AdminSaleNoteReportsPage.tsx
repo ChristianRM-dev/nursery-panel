@@ -23,10 +23,12 @@ import {
 } from '@tabler/icons-react'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
+import { PresentationType } from 'types/graphql'
 
 import { Metadata } from '@redwoodjs/web'
 
 import { useGetSaleNotesReport } from 'src/hooks/SaleNotes/useGetSaleNotesReport'
+import { formatPlantPresentationType } from 'src/utils/Formatters'
 
 const AdminSaleNoteReportsPage: React.FC = () => {
   const defaultStartDate = useMemo(() => {
@@ -192,9 +194,9 @@ const AdminSaleNoteReportsPage: React.FC = () => {
                             </Table.Td>
                             <Table.Td>{plant.category}</Table.Td>
                             <Table.Td>
-                              {plant.presentationType}
-                              {plant.presentationDetails &&
-                                ` (${plant.presentationDetails})`}
+                              {formatPlantPresentationType(
+                                plant.presentationType as PresentationType
+                              )}
                             </Table.Td>
                             <Table.Td>{plant.quantity}</Table.Td>
                             <Table.Td>{formatCurrency(plant.price)}</Table.Td>
