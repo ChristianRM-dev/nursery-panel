@@ -9,7 +9,11 @@ import { CustomerTableRow } from './CustomerTable.types'
 export const customerTableConfig: TableConfig<CustomerTableRow> = {
   columns: [
     { field: 'name', header: 'Nombre' },
-    { field: 'phone', header: 'Teléfono' },
+    {
+      field: 'phone',
+      header: 'Teléfono',
+      formatter: (value: string) => <Text>{value || 'No proporcionado'}</Text>,
+    },
     {
       field: 'email',
       header: 'Email',

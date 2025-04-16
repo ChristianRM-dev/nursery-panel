@@ -41,20 +41,29 @@ export const CustomerForm: React.FC<CustomerFormProps> = ({
       <form onSubmit={form.onSubmit(onSubmit)}>
         <TextInput
           label="Nombre"
+          placeholder="Nombre"
           {...form.getInputProps('name')}
           disabled={loading}
         />
         <TextInput
           label="Teléfono"
+          placeholder="Teléfono"
           {...form.getInputProps('phone')}
           disabled={loading}
         />
         <TextInput
           label="Email"
+          placeholder="Email"
           {...form.getInputProps('email')}
           disabled={loading}
         />
-
+        <TextInput
+          label="Dirección"
+          placeholder="Dirección"
+          {...form.getInputProps('address')}
+          disabled={loading}
+          mb="md"
+        />
         <Group justify="flex-end" mt="md">
           <Button type="submit" disabled={loading}>
             Enviar

@@ -14,7 +14,7 @@ export const mapGetPaginatedCustomersItemToCustomerTableRow = (
   return customers.map((customer) => ({
     ...customer,
     email: customer.email || '',
-    // No additional mapping needed as customer fields match directly
+    phone: customer.phone || '',
   }))
 }
 

@@ -151,7 +151,7 @@ const PaginatedTable = <T extends TableRow>({
         // No Rows Message
         !loading && (
           <Flex justify="center" align="center" my="md">
-            <Text>No rows found</Text>
+            <Text>No hay registros</Text>
           </Flex>
         )
       )}

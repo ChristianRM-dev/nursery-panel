@@ -69,8 +69,9 @@ model Category {
 model Customer {
   id        String     @id @default(uuid())
   name      String
-  phone     String     @unique
+  phone     String?    @unique
   email     String?
+  address   String?
   saleNotes SaleNote[]
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt

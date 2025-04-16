@@ -3,8 +3,9 @@ export const schema = gql`
   type Customer {
     id: String!
     name: String!
-    phone: String!
+    phone: String
     email: String
+    address: String
     saleNotes: [SaleNote]!
     createdAt: DateTime!
     updatedAt: DateTime!
@@ -27,14 +28,16 @@ export const schema = gql`
 
   input CreateCustomerInput {
     name: String!
-    phone: String!
+    phone: String
     email: String
+    address: String
   }
 
   input UpdateCustomerInput {
     name: String
     phone: String
     email: String
+    address: String
   }
 
   type Mutation {

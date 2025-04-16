@@ -9,7 +9,7 @@ import { CustomerForm } from 'src/components/Customer/CustomerForm/CustomerForm'
 import { CustomerFormValues } from 'src/components/Customer/CustomerForm/CustomerForm.schema'
 import { useCreateCustomer } from 'src/hooks/Customers/useCreateCustomer'
 import { useNotifications } from 'src/hooks/useNotifications'
-import { mapCustomerFormValuesToCreateCustomerInput } from 'src/utils/Mappers/CustomerMappers'
+import { mapCustomerFormValuesToCreateCustomerInput } from 'src/utils/Mappers'
 
 const AdminNewCustomerPage: React.FC = () => {
   const defaultValues: CustomerFormValues = {

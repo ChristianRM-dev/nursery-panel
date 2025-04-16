@@ -29,7 +29,7 @@ export const customers: QueryResolvers['customers'] = async ({
       sortField,
       sortOrder: validatedSortOrder,
       search: searchTerm,
-      searchFields: ['name', 'phone', 'email'],
+      searchFields: ['name', 'phone', 'email', 'address'], // Added address to searchable fields
     }
   )
 }
@@ -54,8 +54,9 @@ export const createCustomer: MutationResolvers['createCustomer'] = ({
   return db.customer.create({
     data: {
       name: input.name,
-      phone: input.phone,
-      email: input.email,
+      phone: input.phone || null, // Handle optional phone
+      email: input.email || null,
+      address: input.address || null, // Added address field
     },
     include: {
       saleNotes: true,
@@ -69,7 +70,13 @@ export const updateCustomer: MutationResolvers['updateCustomer'] = async ({
 }) => {
   return db.customer.update({
     where: { id },
-    data: input,
+    data: {
+      ...input,
+      // Ensure optional fields are properly handled
+      phone: input.phone === undefined ? undefined : input.phone || null,
+      email: input.email === undefined ? undefined : input.email || null,
+      address: input.address === undefined ? undefined : input.address || null,
+    },
     include: {
       saleNotes: true,
     },

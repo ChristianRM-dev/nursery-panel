@@ -66,8 +66,9 @@ CREATE TABLE "Category" (
 CREATE TABLE "Customer" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
-    "phone" TEXT NOT NULL,
+    "phone" TEXT,
     "email" TEXT,
+    "address" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "deletedAt" TIMESTAMP(3),
