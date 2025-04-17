@@ -23,13 +23,15 @@ interface UseFilterCustomersProps {
   initialQuery?: string
 }
 
+type FilteredCustomers = GetCustomers['customers']['data']
+
 export const useFilterCustomers = ({
   initialQuery = '',
 }: UseFilterCustomersProps) => {
   const [query, setQuery] = useState(initialQuery)
-  const [filteredCustomers, setFilteredCustomers] = useState<
-    { id: string; name: string; phone: string }[]
-  >([])
+  const [filteredCustomers, setFilteredCustomers] = useState<FilteredCustomers>(
+    []
+  )
 
   const { data, loading, error, refetch } = useQuery<
     GetCustomers,

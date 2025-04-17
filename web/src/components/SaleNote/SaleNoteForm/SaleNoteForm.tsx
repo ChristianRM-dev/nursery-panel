@@ -22,6 +22,7 @@ import {
   IconTrash,
 } from '@tabler/icons-react'
 
+import AddCustomerModal from 'src/components/Customer/AddCustomerModal/AddCustomerModal'
 import AddPlantModal from 'src/components/Plant/AddPlantModal/AddPlantModal'
 import FormOverlay from 'src/components/Shared/Form/Overlay/FormOverlay'
 import { useFilterCustomers } from 'src/hooks/Customers/useFilterCustomers'
@@ -42,6 +43,7 @@ export const SaleNoteForm: React.FC<SaleNoteFormProps> = ({
   defaultValues = {},
 }) => {
   const [addPlantModalOpened, setAddPlantModalOpened] = useState(false)
+  const [addCustomerModalOpened, setAddCustomerModalOpened] = useState(false)
   const [modalOpened, setModalOpened] = useState(false)
   const [activePlantTab, setActivePlantTab] = useState<
     'registered' | 'external'
@@ -133,6 +135,10 @@ export const SaleNoteForm: React.FC<SaleNoteFormProps> = ({
         opened={addPlantModalOpened}
         onClose={() => setAddPlantModalOpened(false)}
       />
+      <AddCustomerModal
+        opened={addCustomerModalOpened}
+        onClose={() => setAddCustomerModalOpened(false)}
+      />
       <Box style={{ position: 'relative' }}>
         {loading && <FormOverlay />}
 
@@ -148,18 +154,28 @@ export const SaleNoteForm: React.FC<SaleNoteFormProps> = ({
         <form onSubmit={form.onSubmit(onSubmit)}>
           <Stack gap="md">
             {/* Customer and Nursery Selection */}
-            <Select
-              label="Cliente"
-              placeholder="Seleccione un cliente"
-              {...form.getInputProps('customerId')}
-              data={customers}
-              searchable
-              clearable
-              onSearchChange={handleFilterCustomers}
-              nothingFoundMessage="No se encontraron clientes"
-              disabled={loading || loadingCustomers}
-              required
-            />
+            <Group gap="xs" align="flex-end">
+              <Select
+                label="Cliente"
+                placeholder="Seleccione un cliente"
+                {...form.getInputProps('customerId')}
+                data={customers}
+                searchable
+                clearable
+                onSearchChange={handleFilterCustomers}
+                nothingFoundMessage="No se encontraron clientes"
+                disabled={loading || loadingCustomers}
+                required
+                style={{ flex: 1 }}
+              />
+              <Button
+                onClick={() => setAddCustomerModalOpened(true)}
+                disabled={loading}
+                variant="outline"
+              >
+                Nuevo Cliente
+              </Button>
+            </Group>
 
             <Select
               label="Vivero"

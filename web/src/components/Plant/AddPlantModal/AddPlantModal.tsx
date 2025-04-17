@@ -1,4 +1,4 @@
-// Add this near your other imports in SaleNoteForm.tsx
+// web/src/components/Plant/AddPlantModal/AddPlantModal.tsx
 import { useEffect, useState } from 'react'
 
 import {
@@ -114,6 +114,8 @@ const AddPlantModal: React.FC<AddPlantModalProps> = ({ opened, onClose }) => {
       title="Registrar Nueva Planta"
       size="lg"
       fullScreen
+      closeOnClickOutside={false}
+      closeOnEscape={false}
     >
       {loading && <FormOverlay />}
       <form onSubmit={form.onSubmit(handleSubmit)}>

@@ -1,5 +1,6 @@
 // web/src/hooks/Nurseries/useFilterNurseries.ts
 import { useEffect, useState } from 'react'
+
 import { useQuery, gql } from '@apollo/client'
 import { GetNurseries, GetNurseriesVariables } from 'types/graphql'
 
@@ -21,13 +22,15 @@ interface UseFilterNurseriesProps {
   initialQuery?: string
 }
 
+type FilteredNurseries = GetNurseries['nurseries']['data']
+
 export const useFilterNurseries = ({
   initialQuery = '',
 }: UseFilterNurseriesProps) => {
   const [query, setQuery] = useState(initialQuery)
-  const [filteredNurseries, setFilteredNurseries] = useState<
-    { id: string; name: string }[]
-  >([])
+  const [filteredNurseries, setFilteredNurseries] = useState<FilteredNurseries>(
+    []
+  )
 
   const { data, loading, error, refetch } = useQuery<
     GetNurseries,

@@ -28,14 +28,14 @@ interface UseFilterPlantsProps {
   excludeIds?: string[]
 }
 
+type FilteredPlants = GetPlants['plants']['data']
+
 export const useFilterPlants = ({
   initialQuery = '',
   excludeIds = [],
 }: UseFilterPlantsProps) => {
   const [query, setQuery] = useState(initialQuery)
-  const [filteredPlants, setFilteredPlants] = useState<
-    GetPlants['plants']['data']
-  >([])
+  const [filteredPlants, setFilteredPlants] = useState<FilteredPlants>([])
 
   const { data, loading, error, refetch } = useQuery<
     GetPlants,
