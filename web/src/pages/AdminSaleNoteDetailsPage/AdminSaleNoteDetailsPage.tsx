@@ -1,3 +1,4 @@
+// web/src/pages/AdminSaleNoteDetailsPage/AdminSaleNoteDetailsPage.tsx
 import {
   Title,
   Container,
@@ -6,27 +7,19 @@ import {
   Group,
   Badge,
   Button,
-  Table,
   NumberFormatter,
   LoadingOverlay,
 } from '@mantine/core'
-import {
-  IconArrowLeft,
-  IconEdit,
-  IconPlant,
-  IconLeaf,
-  IconCash,
-  IconCreditCard,
-  IconReceipt,
-  IconPlus,
-} from '@tabler/icons-react'
+import { IconArrowLeft, IconEdit, IconPlus } from '@tabler/icons-react'
 
 import { useParams, navigate, routes } from '@redwoodjs/router'
 import { Metadata } from '@redwoodjs/web'
 
+import { PaymentHistory } from 'src/components/Payment/PaymentHistory/PaymentHistory'
+import { AdminSaleNotePlantDetails } from 'src/components/SaleNote/AdminSaleNotePlantDetails/AdminSaleNotePlantDetails'
 import { useGetPaymentsBySaleNoteId } from 'src/hooks/Payments/useGetPaymentsBySaleNoteId'
 import { useGetSaleNoteById } from 'src/hooks/SaleNotes/useGetSaleNoteById'
-import { formatPaymentMethod, formatSaleNoreStatus } from 'src/utils/Formatters'
+import { formatSaleNoreStatus } from 'src/utils/Formatters'
 
 const AdminSaleNoteDetailsPage: React.FC = () => {
   const { id } = useParams()
@@ -72,19 +65,6 @@ const AdminSaleNoteDetailsPage: React.FC = () => {
     })) || []),
   ]
 
-  // Get payment method icon
-  const getPaymentMethodIcon = (method: string) => {
-    switch (method) {
-      case 'CASH':
-        return <IconCash size={16} />
-      case 'CREDIT_CARD':
-      case 'DEBIT_CARD':
-        return <IconCreditCard size={16} />
-      default:
-        return <IconReceipt size={16} />
-    }
-  }
-
   return (
     <>
       <Metadata
@@ -106,7 +86,7 @@ const AdminSaleNoteDetailsPage: React.FC = () => {
             <Button
               leftSection={<IconPlus size={16} />}
               variant="light"
-              disabled={saleNote.status != 'PARTIALLY_PAID'}
+              disabled={saleNote.status == 'PAID'}
               onClick={() =>
                 navigate(routes.adminAddPaymentToSaleNote({ id: saleNote.id }))
               }
@@ -202,150 +182,20 @@ const AdminSaleNoteDetailsPage: React.FC = () => {
         </Card>
 
         {/* Payment History */}
-        <Card shadow="sm" padding="lg" radius="md" withBorder mb="xl">
-          <Group justify="space-between" mb="md">
-            <Text size="lg" fw={500}>
-              Historial de Pagos
-            </Text>
-            <Button
-              leftSection={<IconPlus size={16} />}
-              variant="light"
-              disabled={saleNote.status != 'PARTIALLY_PAID'}
-              size="sm"
-              onClick={() =>
-                navigate(routes.adminAddPaymentToSaleNote({ id: saleNote.id }))
-              }
-            >
-              Nuevo Pago
-            </Button>
-          </Group>
 
-          {loadingPayments ? (
-            <Text>Cargando pagos...</Text>
-          ) : payments?.length > 0 ? (
-            <Table striped highlightOnHover>
-              <Table.Thead>
-                <Table.Tr>
-                  <Table.Th>Fecha</Table.Th>
-                  <Table.Th>Método</Table.Th>
-                  <Table.Th>Monto</Table.Th>
-                  <Table.Th>Referencia</Table.Th>
-                  <Table.Th>Notas</Table.Th>
-                </Table.Tr>
-              </Table.Thead>
-              <Table.Tbody>
-                {payments.map((payment) => (
-                  <Table.Tr key={payment.id}>
-                    <Table.Td>
-                      {new Date(payment.createdAt).toLocaleDateString()}
-                    </Table.Td>
-                    <Table.Td>
-                      <Group gap="xs">
-                        {getPaymentMethodIcon(payment.method)}
-                        <Text>{formatPaymentMethod(payment.method)}</Text>
-                      </Group>
-                    </Table.Td>
-                    <Table.Td>
-                      <NumberFormatter
-                        prefix="$"
-                        value={payment.amount}
-                        thousandSeparator
-                        decimalScale={2}
-                      />
-                    </Table.Td>
-                    <Table.Td>{payment.reference || '-'}</Table.Td>
-                    <Table.Td>{payment.notes || '-'}</Table.Td>
-                  </Table.Tr>
-                ))}
-              </Table.Tbody>
-              <Table.Tfoot>
-                <Table.Tr>
-                  <Table.Th colSpan={2}>Total Pagado</Table.Th>
-                  <Table.Th>
-                    <NumberFormatter
-                      prefix="$"
-                      value={saleNote.paidAmount}
-                      thousandSeparator
-                      decimalScale={2}
-                    />
-                  </Table.Th>
-                  <Table.Th colSpan={2}></Table.Th>
-                </Table.Tr>
-              </Table.Tfoot>
-            </Table>
-          ) : (
-            <Text>No hay pagos registrados</Text>
-          )}
-        </Card>
+        <PaymentHistory
+          payments={payments}
+          loadingPayments={loadingPayments}
+          saleNoteId={saleNote.id}
+          paidAmount={saleNote.paidAmount}
+          status={saleNote.status}
+        />
 
         {/* Plant Details Table */}
-        <Card shadow="sm" padding="lg" radius="md" withBorder>
-          <Text size="lg" fw={500} mb="md">
-            Plantas Vendidas
-          </Text>
-
-          <Table striped highlightOnHover>
-            <Table.Thead>
-              <Table.Tr>
-                <Table.Th>Planta</Table.Th>
-                <Table.Th>Precio Unitario</Table.Th>
-                <Table.Th>Cantidad</Table.Th>
-                <Table.Th>Subtotal</Table.Th>
-              </Table.Tr>
-            </Table.Thead>
-            <Table.Tbody>
-              {plantDetails.map((plant, index) => (
-                <Table.Tr key={index}>
-                  <Table.Td>
-                    <Group gap="sm">
-                      {plant.isExternal ? (
-                        <IconLeaf size={14} />
-                      ) : (
-                        <IconPlant size={14} />
-                      )}
-                      {plant.name}
-                      {plant.isExternal && (
-                        <Badge size="xs" color="blue" variant="light">
-                          Externa
-                        </Badge>
-                      )}
-                    </Group>
-                  </Table.Td>
-                  <Table.Td>
-                    <NumberFormatter
-                      prefix="$"
-                      value={plant.price}
-                      thousandSeparator
-                      decimalScale={2}
-                    />
-                  </Table.Td>
-                  <Table.Td>{plant.quantity}</Table.Td>
-                  <Table.Td>
-                    <NumberFormatter
-                      prefix="$"
-                      value={plant.total}
-                      thousandSeparator
-                      decimalScale={2}
-                    />
-                  </Table.Td>
-                </Table.Tr>
-              ))}
-            </Table.Tbody>
-            <Table.Tfoot>
-              <Table.Tr>
-                <Table.Th colSpan={3}>Total</Table.Th>
-                <Table.Th>
-                  <NumberFormatter
-                    prefix="$"
-                    value={saleNote.total}
-                    thousandSeparator
-                    decimalScale={2}
-                  />
-                </Table.Th>
-              </Table.Tr>
-            </Table.Tfoot>
-          </Table>
-        </Card>
+        <AdminSaleNotePlantDetails
+          plantDetails={plantDetails}
+          total={saleNote.total}
+        />
       </Container>
     </>
   )

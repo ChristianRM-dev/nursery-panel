@@ -88,20 +88,45 @@ const SaleNotePDF: React.FC<SaleNotePDFProps> = ({ saleNote }) => {
             </View>
 
             {/* Fila Teléfono */}
-            <View style={SaleNotePDFStyles.customerTableRow}>
-              <Text>
-                <Text style={SaleNotePDFStyles.customerLabel}>Teléfono: </Text>
-                <Text>{saleNote.customer.phone || 'N/A'}</Text>
-              </Text>
-            </View>
+            {saleNote.customer.phone && (
+              <>
+                <View style={SaleNotePDFStyles.customerTableRow}>
+                  <Text>
+                    <Text style={SaleNotePDFStyles.customerLabel}>
+                      Teléfono:{' '}
+                    </Text>
+                    <Text>{saleNote.customer.phone}</Text>
+                  </Text>
+                </View>
+              </>
+            )}
 
             {/* Fila Correo */}
-            <View style={SaleNotePDFStyles.customerTableRow}>
-              <Text>
-                <Text style={SaleNotePDFStyles.customerLabel}>Correo: </Text>
-                <Text>{saleNote.customer.phone || 'N/A'}</Text>
-              </Text>
-            </View>
+            {saleNote.customer.email && (
+              <>
+                <View style={SaleNotePDFStyles.customerTableRow}>
+                  <Text>
+                    <Text style={SaleNotePDFStyles.customerLabel}>
+                      Correo:{' '}
+                    </Text>
+                    <Text>{saleNote.customer.email}</Text>
+                  </Text>
+                </View>
+              </>
+            )}
+            {/* Fila Dirección */}
+            {saleNote.customer.address && (
+              <>
+                <View style={SaleNotePDFStyles.customerTableRow}>
+                  <Text>
+                    <Text style={SaleNotePDFStyles.customerLabel}>
+                      Dirección:{' '}
+                    </Text>
+                    <Text>{saleNote.customer.address}</Text>
+                  </Text>
+                </View>
+              </>
+            )}
           </View>
         </View>
 

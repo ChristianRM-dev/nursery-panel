@@ -79,6 +79,12 @@ const AdminAddPaymentToSaleNotePage: React.FC = () => {
           onSubmit={handleSubmit}
           loading={creatingPayment}
           saleNote={saleNote}
+          defaultValues={{
+            amount: 0,
+            method: '',
+            reference: '',
+            notes: '',
+          }}
         />
       </Container>
     </>

@@ -119,6 +119,7 @@ export const updatePayment: MutationResolvers['updatePayment'] = async ({
   input,
 }) => {
   try {
+    // First get the existing payment with sale note
     const existingPayment = await db.payment.findUnique({
       where: { id },
       include: { saleNote: true },
@@ -128,48 +129,68 @@ export const updatePayment: MutationResolvers['updatePayment'] = async ({
       throw new Error('Payment not found')
     }
 
-    // If amount is being updated, we need to adjust the sale note's paid amount
-    if (input.amount !== undefined && input.amount !== existingPayment.amount) {
-      const amountDifference = input.amount - existingPayment.amount
-      const newPaidAmount =
-        existingPayment.saleNote.paidAmount + amountDifference
-      const newStatus = calculateSaleNoteStatus(
-        newPaidAmount,
-        existingPayment.saleNote.total
-      )
+    // Round the payment amount to 2 decimal places to avoid floating point issues
+    const updatedAmount =
+      input.amount !== undefined
+        ? Math.round(input.amount * 100) / 100
+        : existingPayment.amount
 
-      // Update payment and sale note in a transaction
-      return await db.$transaction([
-        db.payment.update({
-          where: { id },
-          data: {
-            amount: input.amount,
-            method: input.method,
-            reference: input.reference,
-            notes: input.notes,
-          },
-          include: {
-            saleNote: true,
-          },
-        }),
-        db.saleNote.update({
+    // Calculate the difference if amount is being updated
+    const amountDifference =
+      input.amount !== undefined ? updatedAmount - existingPayment.amount : 0
+
+    // Update in a transaction to ensure data consistency
+    const result = await db.$transaction(async (prisma) => {
+      // Update the payment
+      const payment = await prisma.payment.update({
+        where: { id },
+        data: {
+          amount: updatedAmount,
+          method: input.method,
+          reference: input.reference,
+          notes: input.notes,
+        },
+      })
+
+      // Only update sale note if payment amount changed
+      if (amountDifference !== 0) {
+        // Calculate new paid amount (rounded to 2 decimals)
+        const newPaidAmount =
+          Math.round(
+            (Number(existingPayment.saleNote.paidAmount) + amountDifference) *
+              100
+          ) / 100
+
+        // Calculate remaining amount (rounded to 2 decimals)
+        const remainingAmount =
+          Math.round(
+            (Number(existingPayment.saleNote.total) - newPaidAmount) * 100
+          ) / 100
+
+        // Determine status (use <= 0.01 tolerance for floating point comparisons)
+        const newStatus =
+          remainingAmount <= 0.01
+            ? 'PAID'
+            : newPaidAmount > 0
+              ? 'PARTIALLY_PAID'
+              : 'PENDING'
+
+        // Update the sale note
+        await prisma.saleNote.update({
           where: { id: existingPayment.saleNoteId },
           data: {
             paidAmount: newPaidAmount,
             status: newStatus,
           },
-        }),
-      ])[0] // Return the updated payment
-    }
+        })
+      }
 
-    // If amount isn't changing, just update the payment
-    return db.payment.update({
-      where: { id },
-      data: {
-        method: input.method,
-        reference: input.reference,
-        notes: input.notes,
-      },
+      return payment
+    })
+
+    // Return the payment with sale note relation
+    return db.payment.findUnique({
+      where: { id: result.id },
       include: {
         saleNote: true,
       },

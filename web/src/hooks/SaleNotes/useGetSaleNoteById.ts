@@ -13,6 +13,8 @@ const GET_SALE_NOTE_BY_ID = gql`
       customer {
         id
         name
+        email
+        address
         phone
       }
       nursery {

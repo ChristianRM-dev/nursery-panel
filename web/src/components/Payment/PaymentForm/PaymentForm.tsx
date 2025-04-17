@@ -10,28 +10,27 @@ import {
   Box,
 } from '@mantine/core'
 import { useForm } from '@mantine/form'
-import { GetSaleNoteById } from 'types/graphql'
 
 import { PaymentFormValues, paymentFormSchema } from './PaymentForm.schema'
 
 interface PaymentFormProps {
   onSubmit: (values: PaymentFormValues) => void
   loading?: boolean
-  saleNote?: GetSaleNoteById['saleNote']
+  defaultValues: PaymentFormValues
+  saleNote?: {
+    total: number
+    paidAmount: number
+  }
 }
 
 export const PaymentForm: React.FC<PaymentFormProps> = ({
   onSubmit,
   loading = false,
   saleNote,
+  defaultValues,
 }) => {
   const form = useForm<PaymentFormValues>({
-    initialValues: {
-      amount: 0,
-      method: '',
-      reference: '',
-      notes: '',
-    },
+    initialValues: defaultValues,
     validate: (values) => {
       const result = paymentFormSchema.safeParse(values)
       if (!result.success) {
@@ -100,7 +99,7 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({
 
         <Group justify="flex-end" mt="md">
           <Button type="submit" loading={loading}>
-            Registrar Pago
+            Enviar
           </Button>
         </Group>
       </form>
