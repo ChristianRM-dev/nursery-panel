@@ -40,7 +40,7 @@ const LoginPage = ({ type }) => {
     if (isAuthenticated && (!shouldShowWebAuthn || webAuthn.isEnabled())) {
       navigate(REDIRECT)
     }
-  }, [isAuthenticated, shouldShowWebAuthn])
+  }, [isAuthenticated, shouldShowWebAuthn, webAuthn])
 
   // Show WebAuthn prompt on page load if enabled
   useEffect(() => {

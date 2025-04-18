@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import {
   TextInput,
@@ -19,8 +19,15 @@ import { Metadata } from '@redwoodjs/web'
 
 import { useAuth } from 'src/auth'
 
-const SignupPage = () => {
+const SignupPage: React.FC = () => {
   const { isAuthenticated, signUp } = useAuth()
+  const [loading, setLoading] = useState(false)
+  const [passwordError, setPasswordError] = useState('')
+  const [formValues, setFormValues] = useState({
+    username: '',
+    password: '',
+    confirmPassword: '',
+  })
 
   // Redirect if already authenticated
   useEffect(() => {
@@ -35,13 +42,44 @@ const SignupPage = () => {
     usernameRef.current?.focus()
   }, [])
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target
+    setFormValues((prev) => ({ ...prev, [name]: value }))
+
+    // Validate password match when either password or confirm password changes
+    if (name === 'password' || name === 'confirmPassword') {
+      if (
+        name === 'password' &&
+        formValues.confirmPassword &&
+        value !== formValues.confirmPassword
+      ) {
+        setPasswordError('Las contraseñas no coinciden')
+      } else if (
+        name === 'confirmPassword' &&
+        formValues.password &&
+        value !== formValues.password
+      ) {
+        setPasswordError('Las contraseñas no coinciden')
+      } else {
+        setPasswordError('')
+      }
+    }
+  }
+
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    const formData = new FormData(event.currentTarget)
-    const username = formData.get('username') as string
-    const password = formData.get('password') as string
 
-    const response = await signUp({ username, password })
+    // Check if passwords match
+    if (formValues.password !== formValues.confirmPassword) {
+      setPasswordError('Las contraseñas no coinciden')
+      return
+    }
+
+    setLoading(true)
+    const response = await signUp({
+      username: formValues.username,
+      password: formValues.password,
+    })
 
     if (response.message) {
       notifications.show({
@@ -65,6 +103,7 @@ const SignupPage = () => {
         icon: <IconCheck />,
       })
     }
+    setLoading(false)
   }
 
   return (
@@ -84,15 +123,38 @@ const SignupPage = () => {
                 label="Nombre de usuario"
                 placeholder="Ingrese su nombre de usuario"
                 ref={usernameRef}
+                value={formValues.username}
+                onChange={handleInputChange}
                 required
               />
               <PasswordInput
                 name="password"
                 label="Contraseña"
                 placeholder="Ingrese su contraseña"
+                value={formValues.password}
+                onChange={handleInputChange}
                 required
               />
-              <Button type="submit" fullWidth>
+              <PasswordInput
+                name="confirmPassword"
+                label="Confirmar contraseña"
+                placeholder="Confirme su contraseña"
+                value={formValues.confirmPassword}
+                onChange={handleInputChange}
+                error={passwordError}
+                required
+              />
+              <Button
+                type="submit"
+                fullWidth
+                disabled={
+                  loading ||
+                  !!passwordError ||
+                  !formValues.username ||
+                  !formValues.password ||
+                  !formValues.confirmPassword
+                }
+              >
                 Registrarse
               </Button>
             </Stack>

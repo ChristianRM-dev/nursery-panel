@@ -92,6 +92,7 @@ const AdminEditSaleNotePaymentPage: React.FC = () => {
           onSubmit={handleSubmit}
           loading={updatingPayment}
           saleNote={payment.saleNote}
+          payment={{ amout: payment.amount }}
           defaultValues={initialFormValues}
         />
       </Container>

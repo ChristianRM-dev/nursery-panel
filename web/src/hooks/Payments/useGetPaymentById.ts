@@ -16,6 +16,7 @@ const GET_PAYMENT_BY_ID = gql`
         id
         folio
         total
+        status
         paidAmount
       }
     }
