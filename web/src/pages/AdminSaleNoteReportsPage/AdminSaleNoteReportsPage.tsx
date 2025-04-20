@@ -1,5 +1,6 @@
 // web/src/pages/AdminSaleNoteReportsPage/AdminSaleNoteReportsPage.tsx
 import { useMemo, useState } from 'react'
+import { useRef } from 'react'
 
 import {
   Card,
@@ -12,6 +13,7 @@ import {
   LoadingOverlay,
   Accordion,
   Badge,
+  NumberFormatter,
 } from '@mantine/core'
 import { DatePickerInput } from '@mantine/dates'
 import {
@@ -21,16 +23,21 @@ import {
   IconX,
   IconLeaf,
 } from '@tabler/icons-react'
+import { IconCopy } from '@tabler/icons-react'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
+import html2canvas from 'html2canvas'
 import { PresentationType } from 'types/graphql'
 
 import { Metadata } from '@redwoodjs/web'
 
 import { useGetSaleNotesReport } from 'src/hooks/SaleNotes/useGetSaleNotesReport'
+import { useNotifications } from 'src/hooks/useNotifications'
 import { formatPlantPresentationType } from 'src/utils/Formatters'
 
 const AdminSaleNoteReportsPage: React.FC = () => {
+  const { showSuccessNotification, showErrorNotification } = useNotifications()
+  const reportRef = useRef<HTMLDivElement>(null)
   const defaultStartDate = useMemo(() => {
     const currentDate = new Date()
     currentDate.setMonth(currentDate.getMonth() - 1)
@@ -59,11 +66,47 @@ const AdminSaleNoteReportsPage: React.FC = () => {
     return format(new Date(dateString), 'PPP', { locale: es })
   }
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('es-MX', {
-      style: 'currency',
-      currency: 'MXN',
-    }).format(amount)
+  const handleCopyAsImage = async () => {
+    if (!reportRef.current || !reportData || reportData.length === 0) return
+    try {
+      const canvas = await html2canvas(reportRef.current, {
+        scale: 2,
+        backgroundColor: 'tomato',
+        logging: false,
+        useCORS: true,
+      })
+
+      canvas.toBlob(async (blob) => {
+        if (!blob) return
+
+        try {
+          await navigator.clipboard.write([
+            new ClipboardItem({ 'image/png': blob }),
+          ])
+          showSuccessNotification(
+            'Reporte copiado como imagen. Puedes pegarlo en WhatsApp.'
+          )
+        } catch (err) {
+          console.error('Error al copiar:', err)
+          // Alternativa: Descargar la imagen
+          const link = document.createElement('a')
+          link.download = `reporte-ventas-${new Date().toISOString()}.png`
+          link.href = canvas.toDataURL('image/png')
+          link.click()
+          showErrorNotification(
+            'No se pudo copiar al portapapeles, pero se descargó la imagen'
+          )
+        }
+      })
+    } catch (error) {
+      console.error('Error al generar imagen:', error)
+    }
+  }
+
+  const formatDateRangeText = (startDate: Date, endDate: Date): string => {
+    return startDate && endDate
+      ? `Del ${format(startDate, 'd MMMM yyyy', { locale: es })} al ${format(endDate, 'd MMMM yyyy', { locale: es })}`
+      : 'Reporte sin rango de fechas'
   }
 
   return (
@@ -72,6 +115,183 @@ const AdminSaleNoteReportsPage: React.FC = () => {
         title="Reporte de Notas de Venta"
         description="Página de reportes de notas de venta"
       />
+      {/* Contenedor oculto para la captura */}
+      <div style={{ position: 'absolute', left: '-9999px' }}>
+        {reportData?.length > 0 && (
+          <div
+            ref={reportRef}
+            style={{
+              padding: '24px',
+              backgroundColor: 'white',
+              fontFamily: 'Arial, sans-serif',
+              width: '794px', // Tamaño A4
+              color: '#333', // Color de texto más oscuro
+              lineHeight: '1.5',
+            }}
+          >
+            <table
+              style={{
+                width: '100%',
+                borderCollapse: 'collapse',
+                marginBottom: '10px',
+              }}
+            >
+              <thead>
+                <tr style={{ backgroundColor: '#f5f5f5' }}>
+                  <th colSpan={7}>{formatDateRangeText(startDate, endDate)}</th>
+                </tr>
+                <tr style={{ backgroundColor: '#f5f5f5' }}>
+                  <th style={{ padding: '8px', border: '1px solid #ddd' }}>
+                    Folio
+                  </th>
+                  <th style={{ padding: '8px', border: '1px solid #ddd' }}>
+                    Fecha
+                  </th>
+                  <th style={{ padding: '8px', border: '1px solid #ddd' }}>
+                    Cliente
+                  </th>
+                  <th style={{ padding: '8px', border: '1px solid #ddd' }}>
+                    Planta
+                  </th>
+                  <th style={{ padding: '8px', border: '1px solid #ddd' }}>
+                    Cantidad
+                  </th>
+                  <th style={{ padding: '8px', border: '1px solid #ddd' }}>
+                    Precio
+                  </th>
+                  <th style={{ padding: '8px', border: '1px solid #ddd' }}>
+                    Total
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {reportData.map((note, noteIndex) => (
+                  <>
+                    {note.plantDetails.map((plant, plantIndex) => (
+                      <tr key={`${noteIndex}-${plantIndex}`}>
+                        <td
+                          style={{ padding: '8px', border: '1px solid #ddd' }}
+                        >
+                          {plantIndex === 0 ? note.folio : ''}
+                        </td>
+                        <td
+                          style={{ padding: '8px', border: '1px solid #ddd' }}
+                        >
+                          {plantIndex === 0 ? formatDate(note.createdAt) : ''}
+                        </td>
+                        <td
+                          style={{ padding: '8px', border: '1px solid #ddd' }}
+                        >
+                          {plantIndex === 0 ? note.customer.name : ''}
+                        </td>
+                        <td
+                          style={{ padding: '8px', border: '1px solid #ddd' }}
+                        >
+                          {plant.name} (
+                          {formatPlantPresentationType(
+                            plant.presentationType as PresentationType
+                          )}
+                          )
+                        </td>
+                        <td
+                          style={{
+                            padding: '8px',
+                            border: '1px solid #ddd',
+                            textAlign: 'right',
+                          }}
+                        >
+                          {plant.quantity}
+                        </td>
+                        <td
+                          style={{
+                            padding: '8px',
+                            border: '1px solid #ddd',
+                            textAlign: 'right',
+                          }}
+                        >
+                          <NumberFormatter
+                            prefix="$ "
+                            value={plant.price}
+                            thousandSeparator
+                          />
+                        </td>
+                        <td
+                          style={{
+                            padding: '8px',
+                            border: '1px solid #ddd',
+                            textAlign: 'right',
+                          }}
+                        >
+                          <NumberFormatter
+                            prefix="$ "
+                            value={plant.total}
+                            thousandSeparator
+                          />
+                        </td>
+                      </tr>
+                    ))}
+                    <tr style={{ backgroundColor: '#f8f9fa' }}>
+                      <td
+                        colSpan={6}
+                        style={{
+                          padding: '8px',
+                          border: '1px solid #ddd',
+                          textAlign: 'right',
+                          fontWeight: 'bold',
+                        }}
+                      >
+                        Total nota:
+                      </td>
+                      <td
+                        style={{
+                          padding: '8px',
+                          border: '1px solid #ddd',
+                          textAlign: 'right',
+                          fontWeight: 'bold',
+                        }}
+                      >
+                        <NumberFormatter
+                          prefix="$ "
+                          value={note.total}
+                          thousandSeparator
+                        />
+                      </td>
+                    </tr>
+                    {noteIndex < reportData.length - 1 && (
+                      <tr>
+                        <td colSpan={7} style={{ padding: '10px 0' }}>
+                          <div
+                            style={{
+                              borderBottom: '2px dashed #ddd',
+                              margin: '10px 0',
+                            }}
+                          />
+                        </td>
+                      </tr>
+                    )}
+                  </>
+                ))}
+              </tbody>
+            </table>
+
+            <div
+              style={{
+                marginTop: '20px',
+                textAlign: 'right',
+                fontSize: '18px',
+                fontWeight: 'bold',
+              }}
+            >
+              Total general:{' '}
+              <NumberFormatter
+                prefix="$ "
+                value={reportData.reduce((sum, note) => sum + note.total, 0)}
+                thousandSeparator
+              />
+            </div>
+          </div>
+        )}
+      </div>
 
       <Card withBorder shadow="sm" radius="md">
         <Title order={2} mb="md">
@@ -126,6 +346,15 @@ const AdminSaleNoteReportsPage: React.FC = () => {
             >
               Generar Reporte
             </Button>
+            {reportData?.length > 0 && (
+              <Button
+                onClick={handleCopyAsImage}
+                leftSection={<IconCopy size={16} />}
+                variant="outline"
+              >
+                Copiar como imagen
+              </Button>
+            )}
           </Group>
         </Stack>
 
@@ -147,7 +376,12 @@ const AdminSaleNoteReportsPage: React.FC = () => {
                       </Group>
                       <Group>
                         <Badge variant="light" color="green">
-                          Total: {formatCurrency(note.total)}
+                          Total:{' '}
+                          <NumberFormatter
+                            prefix="$ "
+                            value={note.total}
+                            thousandSeparator
+                          />
                         </Badge>
                         <Text c="dimmed" size="sm">
                           {formatDate(note.createdAt)}
@@ -199,15 +433,35 @@ const AdminSaleNoteReportsPage: React.FC = () => {
                               )}
                             </Table.Td>
                             <Table.Td>{plant.quantity}</Table.Td>
-                            <Table.Td>{formatCurrency(plant.price)}</Table.Td>
-                            <Table.Td>{formatCurrency(plant.total)}</Table.Td>
+                            <Table.Td>
+                              {' '}
+                              <NumberFormatter
+                                prefix="$ "
+                                value={plant.price}
+                                thousandSeparator
+                              />
+                            </Table.Td>
+                            <Table.Td>
+                              {' '}
+                              <NumberFormatter
+                                prefix="$ "
+                                value={plant.total}
+                                thousandSeparator
+                              />
+                            </Table.Td>
                           </Table.Tr>
                         ))}
                       </Table.Tbody>
                       <Table.Tfoot>
                         <Table.Tr>
                           <Table.Th colSpan={6}>Total general</Table.Th>
-                          <Table.Th>{formatCurrency(note.total)}</Table.Th>
+                          <Table.Th>
+                            <NumberFormatter
+                              prefix="$ "
+                              value={note.total}
+                              thousandSeparator
+                            />
+                          </Table.Th>
                         </Table.Tr>
                       </Table.Tfoot>
                     </Table>
