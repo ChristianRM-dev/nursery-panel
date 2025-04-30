@@ -70,23 +70,25 @@ export const saleNote: QueryResolvers['saleNote'] = ({ id }) => {
 export const createSaleNote: MutationResolvers['createSaleNote'] = async ({
   input,
 }) => {
-  const { saleDetails, externalPlants = [], ...rest } = input
+  const { saleDetails = [], externalPlants = [], ...rest } = input
 
   // Type cast externalPlants to ensure correct structure
   const typedExternalPlants = (externalPlants || []) as ExternalPlant[]
 
-  // Calculate total from both sale details and external plants
+  // Calculate total from both sale details and external plants with proper decimal handling
   const detailsTotal = saleDetails.reduce(
-    (sum, item) => sum + item.price * item.quantity,
+    (sum, item) =>
+      sum + Number((item.price || 0).toFixed(2)) * (item.quantity || 0),
     0
   )
 
   const externalTotal = typedExternalPlants.reduce(
-    (sum, plant) => sum + plant.price * plant.quantity,
+    (sum, plant) =>
+      sum + Number((plant.price || 0).toFixed(2)) * (plant.quantity || 0),
     0
   )
 
-  const total = detailsTotal + externalTotal
+  const total = Number((detailsTotal + externalTotal).toFixed(2))
 
   // Generate folio (YYYY-MM-XXX)
   const now = new Date()
@@ -105,12 +107,14 @@ export const createSaleNote: MutationResolvers['createSaleNote'] = async ({
   const result = await db.$transaction(async (prisma) => {
     // First update plant stocks
     for (const detail of saleDetails) {
+      const quantity = detail.quantity || 0
+
       await prisma.plant.update({
         where: { id: detail.plantId },
         data: {
           stock: {
-            // Using GREATEST to ensure stock never goes below 0
-            decrement: detail.quantity,
+            // Using decrement to reduce stock
+            decrement: quantity,
           },
         },
       })
@@ -131,7 +135,7 @@ export const createSaleNote: MutationResolvers['createSaleNote'] = async ({
       }
     }
 
-    // Then create the sale note
+    // Then create the sale note with properly formatted prices
     return prisma.saleNote.create({
       data: {
         ...rest,
@@ -142,8 +146,8 @@ export const createSaleNote: MutationResolvers['createSaleNote'] = async ({
         saleDetails: {
           create: saleDetails.map((detail) => ({
             plantId: detail.plantId,
-            price: detail.quantity * detail.price, // Store total price for the quantity
-            quantity: detail.quantity,
+            price: Number((detail.price || 0).toFixed(2)), // Store unit price with 2 decimals
+            quantity: detail.quantity || 0,
           })),
         },
       },
@@ -172,23 +176,25 @@ export const updateSaleNote: MutationResolvers['updateSaleNote'] = async ({
   const typedExternalPlants = (externalPlants || []) as ExternalPlant[]
 
   // Calculate new total considering both sale details and external plants
-  let total: number | undefined
+  let total: number = 0
   if (saleDetails || typedExternalPlants) {
     const detailsTotal = saleDetails
       ? saleDetails.reduce(
-          (sum, item) => sum + (item.price || 0) * (item.quantity || 0),
+          (sum, item) =>
+            sum + Number((item.price || 0).toFixed(2)) * (item.quantity || 0),
           0
         )
       : 0
 
     const externalTotal = typedExternalPlants
       ? typedExternalPlants.reduce(
-          (sum, plant) => sum + plant.price * plant.quantity,
+          (sum, plant) =>
+            sum + Number((plant.price || 0).toFixed(2)) * (plant.quantity || 0),
           0
         )
       : 0
 
-    total = detailsTotal + externalTotal
+    total = Number((detailsTotal + externalTotal).toFixed(2))
   }
 
   return db.$transaction(async (tx) => {
@@ -224,13 +230,16 @@ export const updateSaleNote: MutationResolvers['updateSaleNote'] = async ({
       // Update or create new details
       await Promise.all(
         saleDetails.map(async (detail) => {
+          const price = Number((detail.price || 0).toFixed(2))
+          const quantity = detail.quantity || 0
+
           if (detail.id) {
             return tx.saleDetail.update({
               where: { id: detail.id },
               data: {
                 plantId: detail.plantId,
-                price: detail.price,
-                quantity: detail.quantity,
+                price,
+                quantity,
               },
             })
           } else {
@@ -238,8 +247,8 @@ export const updateSaleNote: MutationResolvers['updateSaleNote'] = async ({
               data: {
                 saleNoteId: id,
                 plantId: detail.plantId,
-                price: detail.price,
-                quantity: detail.quantity,
+                price,
+                quantity,
               },
             })
           }

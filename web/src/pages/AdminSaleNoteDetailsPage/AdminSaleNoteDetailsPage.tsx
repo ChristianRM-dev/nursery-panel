@@ -43,11 +43,11 @@ const AdminSaleNoteDetailsPage: React.FC = () => {
 
   // Combine registered and external plants with only essential fields
   const plantDetails = [
-    ...(saleNote.saleDetails?.map((detail) => ({
-      name: detail.plant.name,
-      price: detail.price,
-      quantity: detail.quantity,
-      total: detail.price * detail.quantity,
+    ...(saleNote.saleDetails?.map((plantDetail) => ({
+      name: plantDetail.plant.name,
+      price: plantDetail.plant.price,
+      quantity: plantDetail.quantity,
+      total: plantDetail.plant.price * plantDetail.quantity,
       isExternal: false,
     })) || []),
     ...((
