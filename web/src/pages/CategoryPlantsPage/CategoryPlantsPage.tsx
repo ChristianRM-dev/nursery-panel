@@ -1,4 +1,6 @@
 // web/src/pages/CategoryPlantsPage/CategoryPlantsPage.tsx
+import { useEffect } from 'react'
+
 import {
   Container,
   Title,
@@ -10,6 +12,7 @@ import {
   Stack,
   Breadcrumbs,
   Anchor,
+  LoadingOverlay,
 } from '@mantine/core'
 
 import { Link, routes, useParams } from '@redwoodjs/router'
@@ -22,6 +25,14 @@ import classes from './CategoryPlantsPage.module.css'
 const CategoryPlantsPage: React.FC = () => {
   const { id } = useParams()
   const { category, loading, error } = useGetCategoryWithPlants({ id })
+
+  useEffect(() => {
+    console.log('category=>', category)
+  }, [category])
+
+  if (loading) {
+    return <LoadingOverlay visible />
+  }
 
   if (error) return <div>Error al cargar la categoría</div>
   if (!category && !loading) return <div>Categoría no encontrada</div>
