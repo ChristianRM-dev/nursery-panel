@@ -16,13 +16,20 @@ const externalPlantSchema = z.object({
   presentationDetails: z.string().optional(),
 })
 
-export const saleNoteSchema = z.object({
-  customerId: z.string().min(1, { message: 'Seleccione un cliente' }),
-  nurseryId: z.string().min(1, { message: 'Seleccione un vivero' }),
-  saleDetails: z.array(saleDetailSchema).min(1, {
-    message: 'Agregue al menos una planta registrada',
-  }),
-  externalPlants: z.array(externalPlantSchema).optional().default([]),
-})
+export const saleNoteSchema = z
+  .object({
+    customerId: z.string().min(1, { message: 'Seleccione un cliente' }),
+    nurseryId: z.string().min(1, { message: 'Seleccione un vivero' }),
+    saleDetails: z.array(saleDetailSchema).optional().default([]),
+    externalPlants: z.array(externalPlantSchema).optional().default([]),
+  })
+  .refine(
+    (data) => data.saleDetails.length > 0 || data.externalPlants.length > 0,
+    {
+      message:
+        'Debe agregar al menos una planta registrada o una planta externa',
+      path: ['saleDetails'], // or ["externalPlants"], depending on which field you want to highlight
+    }
+  )
 
 export type SaleNoteFormValues = z.infer<typeof saleNoteSchema>
