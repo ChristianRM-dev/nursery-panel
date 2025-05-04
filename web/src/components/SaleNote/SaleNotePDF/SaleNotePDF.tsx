@@ -36,7 +36,7 @@ const SaleNotePDF: React.FC<SaleNotePDFProps> = ({ saleNote }) => {
           {/* Columna 2: Información del vivero (en columna) */}
           <View style={SaleNotePDFStyles.headerInfoColumn}>
             <Text style={SaleNotePDFStyles.nurseryName}>
-              {saleNote.nursery.ownerName}
+              {saleNote.nursery.name}
             </Text>
             <Text>R.F.C: {saleNote.nursery.rfc}</Text>
             <Text>Dirección: {saleNote.nursery.address}</Text>
