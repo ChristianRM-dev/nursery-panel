@@ -8,6 +8,7 @@ const GET_CUSTOMER_BY_ID = gql`
       name
       phone
       email
+      address
       saleNotes {
         id
         folio

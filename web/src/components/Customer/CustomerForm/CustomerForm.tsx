@@ -24,6 +24,7 @@ export const CustomerForm: React.FC<CustomerFormProps> = ({
       name: defaultValues?.name || '',
       phone: defaultValues?.phone || '',
       email: defaultValues?.email || '',
+      address: defaultValues?.address || '',
     },
     validate: (values) => {
       const result = customerSchema.safeParse(values)

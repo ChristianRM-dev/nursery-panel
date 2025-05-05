@@ -16,6 +16,7 @@ const AdminNewCustomerPage: React.FC = () => {
     name: '',
     phone: '',
     email: '',
+    address: '',
   }
 
   const { showSuccessNotification, showErrorNotification } = useNotifications()
