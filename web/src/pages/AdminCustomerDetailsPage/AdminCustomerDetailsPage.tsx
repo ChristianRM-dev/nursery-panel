@@ -86,6 +86,11 @@ const AdminCustomerDetailsPage: React.FC = () => {
           </Group>
 
           <Group mb="sm">
+            <Text fw={500}>Dirección:</Text>
+            <Text>{customer.address || 'No proporcionada'}</Text>
+          </Group>
+
+          <Group mb="sm">
             <Text fw={500}>Notas de Venta:</Text>
             <Badge color="teal" variant="light">
               {customer.saleNotes.length} ventas

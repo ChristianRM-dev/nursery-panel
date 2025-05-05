@@ -42,11 +42,13 @@ const AdminEditCustomerPage: React.FC = () => {
         name: customer.name,
         phone: customer.phone,
         email: customer.email || '',
+        address: customer.address || '',
       }
     : {
         name: '',
         phone: '',
         email: '',
+        address: '',
       }
 
   const handleSubmit = async (values: CustomerFormValues) => {

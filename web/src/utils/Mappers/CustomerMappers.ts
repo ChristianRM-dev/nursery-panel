@@ -28,6 +28,7 @@ export const mapCustomerFormValuesToCreateCustomerInput = (
     name: values.name,
     phone: values.phone,
     email: values.email || null, // Convert empty string to null
+    address: values.address,
   }
 }
 
@@ -41,5 +42,6 @@ export const mapCustomerFormValuesToUpdateCustomerInput = (
     name: values.name,
     phone: values.phone,
     email: values.email || null, // Convert empty string to null
+    address: values.address,
   }
 }
