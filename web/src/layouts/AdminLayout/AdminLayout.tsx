@@ -6,6 +6,7 @@ import {
   Text,
   ActionIcon,
   NavLink,
+  Button,
 } from '@mantine/core'
 import { useMantineColorScheme } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
@@ -94,14 +95,19 @@ const AdminLayout = ({ children }) => {
               Panel de Administración
             </Text>
           </Group>
-          <ActionIcon
-            variant="outline"
-            color={dark ? 'yellow' : 'blue'}
-            onClick={() => toggleColorScheme()}
-            title="Cambiar tema"
-          >
-            {dark ? <IconSun size={18} /> : <IconMoonStars size={18} />}
-          </ActionIcon>
+          <Group>
+            <Button component={Link} to={routes.home()} variant="subtle">
+              Catalogo
+            </Button>
+            <ActionIcon
+              variant="outline"
+              color={dark ? 'yellow' : 'blue'}
+              onClick={() => toggleColorScheme()}
+              title="Cambiar tema"
+            >
+              {dark ? <IconSun size={18} /> : <IconMoonStars size={18} />}
+            </ActionIcon>
+          </Group>
         </Group>
       </AppShell.Header>
 
