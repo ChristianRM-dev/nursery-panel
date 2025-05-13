@@ -10,6 +10,9 @@
       "defaults"
     ]
   },
+  "scripts": {
+    "build:sw": "tsc src/service-worker.ts --outDir public --target es2015 --module esnext --esModuleInterop"
+  },
   "dependencies": {
     "@mantine/carousel": "^7.17.2",
     "@mantine/dates": "^7.17.3",

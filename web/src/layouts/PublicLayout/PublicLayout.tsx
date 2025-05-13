@@ -1,5 +1,5 @@
 // web/src/layouts/PublicLayout/PublicLayout.tsx
-import { Container, AppShell, Group, Text } from '@mantine/core'
+import { Container, AppShell, Group, Text, Button } from '@mantine/core'
 
 import { Link, routes } from '@redwoodjs/router'
 
@@ -22,7 +22,15 @@ const PublicLayout = ({ children }) => {
               Los Laureles
             </Text>
           </Link>
-          <Group gap="lg"></Group>
+          <Group>
+            <Button
+              component={Link}
+              to={routes.adminDashboard()}
+              variant="subtle"
+            >
+              Panel
+            </Button>
+          </Group>
         </Group>
       </AppShell.Header>
       <AppShell.Main>

@@ -18,6 +18,19 @@ if (!redwoodAppElement) {
   )
 }
 
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker
+      .register('/service-worker.js') // será generado desde el TS
+      .then((registration) => {
+        console.log('Service Worker registrado con éxito:', registration)
+      })
+      .catch((error) => {
+        console.error('Error al registrar el Service Worker:', error)
+      })
+  })
+}
+
 if (redwoodAppElement.children?.length > 0) {
   hydrateRoot(
     redwoodAppElement,
