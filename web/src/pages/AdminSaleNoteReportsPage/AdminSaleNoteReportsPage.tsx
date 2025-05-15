@@ -22,11 +22,10 @@ import {
   IconPlant,
   IconX,
   IconLeaf,
+  IconFileExcel,
 } from '@tabler/icons-react'
-import { IconCopy } from '@tabler/icons-react'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
-import html2canvas from 'html2canvas'
 import { PresentationType } from 'types/graphql'
 
 import { Metadata } from '@redwoodjs/web'
@@ -66,40 +65,82 @@ const AdminSaleNoteReportsPage: React.FC = () => {
     return format(new Date(dateString), 'PPP', { locale: es })
   }
 
-  const handleCopyAsImage = async () => {
-    if (!reportRef.current || !reportData || reportData.length === 0) return
+  const handleDownloadCSVFile = () => {
+    if (!reportData || reportData.length === 0) return
+
     try {
-      const canvas = await html2canvas(reportRef.current, {
-        scale: 2,
-        backgroundColor: 'tomato',
-        logging: false,
-        useCORS: true,
+      // Encabezados con estilo en HTML (fondo verde claro y negrita)
+      let csvContent = `
+      <table>
+        <tr style="background-color:#e6f7e6; font-weight:bold;">
+          <th>Folio</th>
+          <th>Fecha</th>
+          <th>Cliente</th>
+          <th>Planta</th>
+          <th>Presentación</th>
+          <th>Cantidad</th>
+          <th>Precio</th>
+          <th>Total</th>
+        </tr>
+    `
+
+      // Agregar filas de datos
+      reportData.forEach((note) => {
+        note.plantDetails.forEach((plant) => {
+          csvContent += `
+          <tr>
+            <td>${note.folio}</td>
+            <td>${formatDate(note.createdAt)}</td>
+            <td>${note.customer.name}</td>
+            <td>${plant.name}</td>
+            <td>${formatPlantPresentationType(plant.presentationType as PresentationType)}</td>
+            <td>${plant.quantity}</td>
+            <td>${plant.price}</td>
+            <td>${plant.total}</td>
+          </tr>
+        `
+        })
+
+        // Fila de subtotal (estilo gris claro)
+        csvContent += `
+        <tr style="background-color:#f5f5f5;">
+          <td colspan="6"></td>
+          <td style="font-weight:bold;">Total nota:</td>
+          <td style="font-weight:bold;">${note.total}</td>
+        </tr>
+      `
       })
 
-      canvas.toBlob(async (blob) => {
-        if (!blob) return
+      // Total general (estilo verde más oscuro)
+      const grandTotal = reportData.reduce((sum, note) => sum + note.total, 0)
+      csvContent += `
+      <tr style="background-color:#d4edda; font-weight:bold;">
+        <td colspan="6"></td>
+        <td>Total general:</td>
+        <td>${grandTotal}</td>
+      </tr>
+    `
 
-        try {
-          await navigator.clipboard.write([
-            new ClipboardItem({ 'image/png': blob }),
-          ])
-          showSuccessNotification(
-            'Reporte copiado como imagen. Puedes pegarlo en WhatsApp.'
-          )
-        } catch (err) {
-          console.error('Error al copiar:', err)
-          // Alternativa: Descargar la imagen
-          const link = document.createElement('a')
-          link.download = `reporte-ventas-${new Date().toISOString()}.png`
-          link.href = canvas.toDataURL('image/png')
-          link.click()
-          showErrorNotification(
-            'No se pudo copiar al portapapeles, pero se descargó la imagen'
-          )
-        }
-      })
+      csvContent += `</table>`
+
+      // Crear un Blob con tipo HTML para que Excel lo interprete
+      const blob = new Blob([csvContent], { type: 'text/html;charset=utf-8;' })
+      const url = URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.setAttribute('href', url)
+      link.setAttribute(
+        'download',
+        `reporte-ventas-${startDate ? format(startDate, 'yyyy-MM-dd') : 'inicio'}-${endDate ? format(endDate, 'yyyy-MM-dd') : 'fin'}.xls` // Extensión .xls para mejor compatibilidad
+      )
+      link.style.visibility = 'hidden'
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+
+      showSuccessNotification('Reporte descargado (abre en Excel)')
     } catch (error) {
-      console.error('Error al generar imagen:', error)
+      console.error('Error al generar el reporte:', error)
+      showErrorNotification('Error al generar el archivo')
     }
   }
 
@@ -348,11 +389,10 @@ const AdminSaleNoteReportsPage: React.FC = () => {
             </Button>
             {reportData?.length > 0 && (
               <Button
-                onClick={handleCopyAsImage}
-                leftSection={<IconCopy size={16} />}
-                variant="outline"
+                onClick={handleDownloadCSVFile}
+                leftSection={<IconFileExcel size={16} />}
               >
-                Copiar como imagen
+                Descargar como CSV
               </Button>
             )}
           </Group>
@@ -396,7 +436,7 @@ const AdminSaleNoteReportsPage: React.FC = () => {
                           <Table.Th>Tipo</Table.Th>
                           <Table.Th>Nombre</Table.Th>
                           <Table.Th>Categoría</Table.Th>
-                          <Table.Th>Presentación</Table.Th>
+                          <Table.Th>Presentacion</Table.Th>
                           <Table.Th>Cantidad</Table.Th>
                           <Table.Th>Precio unitario</Table.Th>
                           <Table.Th>Total</Table.Th>
