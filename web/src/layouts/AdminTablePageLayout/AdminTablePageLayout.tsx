@@ -1,7 +1,7 @@
 // web/src/layouts/AdminTablePageLayout/AdminTablePageLayout.tsx
 import React, { memo } from 'react'
 
-import { Title, Container } from '@mantine/core'
+import { Title, Container, Group } from '@mantine/core'
 
 import { FloatingActionButton } from 'src/components/Shared/FloatingActionButton/FloatingActionButton'
 
@@ -9,6 +9,7 @@ interface AdminTablePageLayoutProps {
   title: string
   children: React.ReactNode
   onFabClick?: () => void
+  actionButtons?: React.ReactNode
 }
 
 /**
@@ -16,13 +17,16 @@ interface AdminTablePageLayoutProps {
  * It includes a title, a content area (for the table), and a floating action button (FAB).
  */
 export const AdminTablePageLayout: React.FC<AdminTablePageLayoutProps> = memo(
-  ({ title, children, onFabClick }) => {
+  ({ title, children, onFabClick, actionButtons }) => {
     return (
       <Container size="xl" py="xs">
         {/* Page Title */}
-        <Title order={1} mb="xl">
-          {title}
-        </Title>
+        <Group justify={'space-between'}>
+          <Title order={1} mb="xl">
+            {title}
+          </Title>
+          {actionButtons}
+        </Group>
 
         {/* Content Area (Mainly for Tables) */}
         <div>{children}</div>

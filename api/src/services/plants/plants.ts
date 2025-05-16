@@ -2,6 +2,7 @@ import type { QueryResolvers, MutationResolvers } from 'types/graphql'
 
 import { uploadToBlob, safeDeleteFromBlob } from 'src/lib/blob'
 import { db } from 'src/lib/db'
+import { generatePlantsExcel } from 'src/lib/excel/plants'
 import { paginate } from 'src/lib/pagination'
 
 export const plants: QueryResolvers['plants'] = async ({
@@ -208,3 +209,13 @@ export const publicPlant = ({ id }) => {
     },
   })
 }
+export const downloadPlantsExcel: QueryResolvers['downloadPlantsExcel'] =
+  async () => {
+    const plants = await db.plant.findMany() // Obtener todas las plantas
+    const excelBuffer = await generatePlantsExcel(plants)
+
+    // Convertir a base64 para enviarlo por GraphQL
+    return {
+      content: excelBuffer,
+    }
+  }
