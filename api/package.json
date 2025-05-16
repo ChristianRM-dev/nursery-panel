@@ -6,6 +6,7 @@
     "@redwoodjs/api": "8.6.1",
     "@redwoodjs/auth-dbauth-api": "8.6.1",
     "@redwoodjs/graphql-server": "8.6.1",
-    "@simplewebauthn/server": "^7"
+    "@simplewebauthn/server": "^7",
+    "exceljs": "^4.4.0"
   }
 }

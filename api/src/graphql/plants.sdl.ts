@@ -47,6 +47,11 @@ export const schema = gql`
     ): PlantsResponse! @requireAuth
     plant(id: String!): Plant @requireAuth
     publicPlant(id: String!): PublicPlant @skipAuth
+    downloadPlantsExcel: DownloadResult! @requireAuth
+  }
+
+  type DownloadResult {
+    content: String!
   }
 
   input CreatePlantInput {
