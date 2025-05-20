@@ -1,7 +1,7 @@
 {
   "name": "Vivero Los Laureles",
   "short_name": "RedwoodApp",
-  "start_url": "/",
+  "start_url": "/admin/dashboard",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#ffffff",
