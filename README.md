@@ -50,4 +50,9 @@ git clone https://github.com/tu-usuario/nursery-management-system.git
 # Navigate to the project folder
 cd nursery-management-system
 
-# Open with your preferred web server or IDE with live preview
+# Install dependencies
+yarn install
+
+# Start the development server (both API and Web sides)
+yarn rw dev
+
